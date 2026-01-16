@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,96 @@
   to {
     transform: rotate(360deg);
   }
+} */
+ * {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+li, ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+/* ================================================== */
+header {
+  width: 100%;
+  height: 70px;
+  background: #9FD9FD;
+}
+.header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px; 
+}
+.logo {
+  width: 180px;
+}
+.logo img{
+  width: 150px;
+}
+nav {
+  height: 100px;
+  align-content: center;
+  width: 45%;
+}
+nav ul {
+  display: flex;
+  justify-content: space-between;
+}
+nav ul li{
+  font-size: 20px;
+  font-weight: bold;
+}
+nav ul li a {
+  color: #2c2c2c;
+}
+
+/* ========================================== */
+main {
+  width: 100%;
+}
+.main-page {
+  background: url(./images/mainbg.png) no-repeat;
+  background-size: 100% 820px;
+  width: 100%;
+  height: 820px;
+  position: relative;
+}
+.main-page-contents{
+  width: 750px;
+  border: 1px solid #000;
+  position: absolute;
+  top: 150px;
+  left: 150px;
+}
+.main-page-contents h1 {
+  font-size: 36px;
+  font-weight: bold;
+  color: #000;
+}
+.main-page-contents p {
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 180px;
+  color: #000;
+}
+.main-page-contents img {
+  width: 450px;
+}
+/* ================================================ */
+.main-page-mypage {
+  height: 540px;
+}
+.main-page-mypage-header {
+  border: 1px solid #000;
 }
