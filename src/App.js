@@ -13,16 +13,16 @@ import MemberInput from './pages/MemberInput.jsx';
 function App() {
   return (
     <div className='App'>
-    <Header/>
-    {/* <LoginHeader/> */}
-    {/* <Main/> */}
-    {/* <Community/> */}
-    <CommunityView/>
-    {/* <CommunityInput/> */}
-    {/* <Login/> */}
-    {/* <MemberInput/> */}
+      <Header/>
+      {/* <LoginHeader /> */}
+      {/* <Main/> */}
+      {/* <Community/> */}
+      {/* <CommunityView/> */}
+      <CommunityInput/>
+      {/* <Login /> */}
+      {/* <MemberInput/> */}
     </div>
-  ); 
+  );
 }
 
 export default App;
