@@ -7,18 +7,20 @@ import CommunityInput from './pages/CommunityInput.jsx';
 import CommunityView from './pages/CommunityView.jsx';
 import Login from './pages/Login.jsx';
 import LoginHeader from './components/loginheader.jsx';
+import MemberInput from './pages/MemberInput.jsx';
 
 
 function App() {
   return (
     <div className='App'>
-    {/* <Header/> */}
-    <LoginHeader/>
+    <Header/>
+    {/* <LoginHeader/> */}
     {/* <Main/> */}
     {/* <Community/> */}
-    {/* <CommunityView/> */}
+    <CommunityView/>
     {/* <CommunityInput/> */}
-    <Login/>
+    {/* <Login/> */}
+    {/* <MemberInput/> */}
     </div>
   ); 
 }
