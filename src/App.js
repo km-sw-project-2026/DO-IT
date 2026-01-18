@@ -19,12 +19,12 @@ function App() {
         <Header/>
         {/* <LoginHeader /> */}
         <Routes>
-          <Route path="/" element={<CommunityView />}></Route>
-          {/* <Route path="/community" element={<Community />}></Route>
+          <Route path="/" element={<Main />}></Route>
+          <Route path="/community" element={<Community />}></Route>
           <Route path="/view" element={<CommunityView />}></Route>
           <Route path="/input" element={<CommunityInput />}></Route>
           <Route path='/login' element={<Login />}></Route>
-          <Route path='/memberinput' element={<MemberInput />}></Route> */}
+          <Route path='/memberinput' element={<MemberInput />}></Route>
         </Routes>
       </div>
     </BrowserRouter>
