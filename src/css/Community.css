@@ -1,0 +1,129 @@
+.Community-header {
+  text-align: center;
+  padding: 20px;
+  margin: 30px 0 20px;
+}
+
+.Community-header .search input:focus {
+  outline: none;
+}
+
+.Community-header .search input {
+  width: 522px;
+  height: 52px;
+  border: 3px solid #3FB5FF;
+  border-radius: 4px 0px 0px 4px;
+  padding: 10px;
+  color: #2c2c2c;
+  font-size: 16px;
+}
+
+.Community-header .search button {
+  background: #3FB5FF;
+  width: 52px;
+  height: 52px;
+  position: absolute;
+  border-radius: 0px 4px 4px 0px;
+}
+
+.Community-header .search button img {
+  width: 31px;
+  filter: invert(100%);
+}
+.Community-main {
+  width: 934px;
+  margin: 0 auto;
+  border-top: 1px solid #000;
+}
+
+.Community-main-title {
+  border-bottom: 1px solid rgba(0, 0, 0, .5);
+}
+
+.Community-main-title-content {
+  padding: 10px 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Community-main-title h2 {
+  width: 300px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.Community-main-title .Community-title-content {
+  width: 300px;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Community-main-title .Community-title-content span {
+  font-size: 16px;
+  font-weight: bold;
+}
+.Community-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  display: flex;
+}
+
+.Community-footer-content {
+  width: 934px;
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+
+}
+
+.Community-footer .page-number {
+  width: 60%;
+  text-align: center;
+  height: 60px;
+  margin: 0 auto;
+}
+
+.Community-footer .page-number button {
+  width: 40px;
+  height: 40px;
+  margin: 0 5px;
+  border: 1px solid #898989;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.Community-footer .page-number button:hover {
+  background: #a5a5a5;
+}
+
+.Community-footer .page-number .prev,
+.Community-footer .page-number .next {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.Community-footer .page-number span {
+  font-size: 30px;
+  font-weight: 400;
+  margin: 0 10px;
+}
+
+.Community-footer .write-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #65BAED;
+  position: absolute;
+  right: 50px;
+}
+
+.Community-footer .write-button img {
+  width: 30px;
+  filter: invert(100%);
+}

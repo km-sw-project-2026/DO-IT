@@ -1,5 +1,7 @@
+import '../css/Community.css';
 import React from "react";
 import CommunityPost from "../components/CommunityPost";
+
 
 function Community() {
     return (

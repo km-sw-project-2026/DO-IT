@@ -1,3 +1,5 @@
+import '../css/MemberInput.css';
+
 function MemberInput() {
     return (
         <div className="member-input-page">

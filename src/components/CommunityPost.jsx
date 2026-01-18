@@ -1,3 +1,5 @@
+import '../css/CommunityPost.css';
+
 function CommunityPost() {
     return (
         <div className="Community-post">

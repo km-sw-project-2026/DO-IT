@@ -1,3 +1,4 @@
+import'../css/CommunityView.css';
 import React from "react";
 import Comment from "../components/comment";
 

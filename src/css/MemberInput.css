@@ -1,0 +1,107 @@
+.member-input-page {
+  width: 100%;
+  height: 100vh;
+  background: #92D5FF;
+  position: relative;
+}
+
+.member-input-bg {
+  width: 895px;
+  height: 797px;
+  background: #FFFFFF;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, .25) 0px 0px 10px;
+}
+
+.member-input-content {
+  width: 638px;
+  margin: 0 auto;
+}
+
+.member-input-content input {
+  width: 638px;
+  height: 55px;
+  padding-left: 10px;
+  background: #EDEDED;
+  color: #838383;
+  border: 1px solid #A9A9A9;
+  font-size: 20px;
+  font-weight: normal;
+  margin-bottom: 25px;
+  border-radius: 8px;
+}
+
+.member-input-content input:focus {
+  outline: none;
+}
+
+.member-input-bg h3 {
+  text-align: center;
+  align-items: center;
+  padding: 50px;
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.member-input-content p {
+  font-size: 16px;
+  text-align: left;
+
+  margin-bottom: 10px;
+}
+
+.member-input-content .username {
+  width: 638px;
+  display: flex;
+  gap: 20px;
+}
+
+.member-input-content .username .userid-label {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.member-input-content .username .userid-label input {
+  margin: 0;
+}
+
+.member-input-content .username .userid .userid-check {
+  width: 90px;
+  height: 35px;
+  background: #009DFF;
+  border: 1px solid #009DFF;
+  font-size: 14px;
+  font-weight: normal;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.member-input-content .username input {
+  width: 250px;
+  margin-right: 18px;
+}
+
+.member-input-bg .confirm {
+  position: absolute;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.member-input-bg button {
+  width: 638px;
+  height: 80px;
+  background: #009DFF;
+  border: 1px solid #009DFF;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 6px;
+  color: #fff;
+}

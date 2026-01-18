@@ -1,0 +1,26 @@
+.Community-post-content {
+  padding: 10px 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, .5);
+}
+
+.Community-post-content:hover {
+  background: #F3F3F3;
+}
+
+.Community-post-content h4 {
+  width: 300px;
+  font-size: 16px;
+  font-weight: normal;
+  text-align: center;
+}
+
+.Community-post-content .Community-content {
+  width: 280px;
+  padding: 0 40px;
+  display: flex;
+  font-size: 14px;
+  justify-content: space-between;
+}

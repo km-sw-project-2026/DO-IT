@@ -13,9 +13,9 @@ import MemberInput from './pages/MemberInput.jsx';
 function App() {
   return (
     <div className='App'>
-      <Header/>
+      {/* <Header/> */}
       {/* <LoginHeader /> */}
-      <Main/>
+      {/* <Main/> */}
       {/* <Community/> */}
       {/* <CommunityView/> */}
       {/* <CommunityInput/> */}

@@ -1,0 +1,87 @@
+.login-page {
+  width: 100%;
+  height: calc(100vh - 70px);
+  background: #92D5FF;
+  position: relative;
+}
+
+.login-page-content {
+  width: 895px;
+  height: 638px;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, .25) 0px 0px 10px;
+}
+
+.login-page-content h3 {
+  text-align: center;
+  align-items: center;
+  padding: 50px;
+  font-size: 36px;
+  font-weight: 400;
+  color: #000;
+  margin-bottom: 40px;
+}
+
+.login-page-content input {
+  width: 638px;
+  height: 65px;
+  padding-left: 10px;
+  background: #EDEDED;
+  color: #838383;
+  border: 1px solid #A9A9A9;
+  font-size: 20px;
+  font-weight: normal;
+  margin-bottom: 25px;
+  border-radius: 8px;
+}
+
+.login-page-content input:focus {
+  outline: none;
+}
+
+.login-page-content .login_bt {
+  width: 638px;
+  display: flex;
+  gap: 10px;
+}
+
+.login-page-content .login_bt .keep-login {
+  width: 30px;
+  height: 30px;
+}
+
+.login-page-content .login_bt p {
+  font-size: 16px;
+}
+
+.login-page-content .confirm {
+  position: absolute;
+  bottom: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-page-content button {
+  width: 638px;
+  height: 80px;
+  background: #009DFF;
+  border: 1px solid #009DFF;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.members {
+  color: #838383;
+  padding: 10px;
+  margin-right: 450px;
+}
