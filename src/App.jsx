@@ -17,8 +17,6 @@ import { UserLayout } from './components/UserLayout.jsx';
 function App() {
 
   return (
-    <BrowserRouter>
-      <div className='App'>
         <Routes>
           <Route element={<MainLayout/>}>
           <Route path="/" element={<Main />}></Route>
@@ -32,8 +30,6 @@ function App() {
           <Route path='/memberinput' element={<MemberInput />}></Route>
           </Route>
         </Routes>
-      </div>
-    </BrowserRouter>
   )
 }
 
