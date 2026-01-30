@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Main() {
     return (
         <main>
@@ -16,7 +18,7 @@ function Main() {
     <section className='main-page-mypage'>
       <div className='main-page-mypage-header'>
         <h2>나만의 <span>자료함</span></h2>
-        <button>자료함 바로가기</button>
+        <button>자료함 바로가기</button> 
       </div>
       <div></div>
     </section>

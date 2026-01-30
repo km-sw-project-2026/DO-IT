@@ -8,7 +8,7 @@ function LoginHeader() {
       <div className='login-header-inner'>
         <div className='logo'>
           <Link to={'/'}>
-            <img src='./images/logo.png' alt='로고'/>
+            <img src='/images/logo.png' alt='로고'/>
           </Link>
         </div>
         <nav>
@@ -20,8 +20,8 @@ function LoginHeader() {
           </ul>
         </nav>
         <div className='user'>
-          <Link to={"/Login"}><a href='#' className='login'>로그인</a></Link>/
-          <Link to={"/memberinput"}><a href='#' className='new-user'>회원가입</a></Link>
+          <Link to={"/Login"} className='login'>로그인</Link>
+          <Link to={"/memberinput"} className='new-user'>회원가입</Link>
         </div>
         </div>
     </header>

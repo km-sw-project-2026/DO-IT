@@ -4,12 +4,12 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "do-it",
+	"name": "doit",
 	"main": "worker/index.js",
 	"compatibility_date": "2025-09-27",
-	"assets": {
-		"not_found_handling": "single-page-application"
-	},
+	// "assets": {
+	// 	"not_found_handling": "single-page-application"
+	// },
 	"observability": {
 		"enabled": true
 	},

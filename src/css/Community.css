@@ -58,12 +58,13 @@
   width: 300px;
   padding: 0 40px;
   display: flex;
-  justify-content: space-between;
 }
 
 .Community-main-title .Community-title-content span {
+  width: 33.33%;   /* 컬럼 동일하게 */
   font-size: 16px;
   font-weight: bold;
+  text-align: center;
 }
 .Community-footer {
   position: absolute;

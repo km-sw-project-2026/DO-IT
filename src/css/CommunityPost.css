@@ -1,5 +1,5 @@
 .Community-post-content {
-  padding: 10px 45px;
+  padding: 10px 35px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,9 +18,14 @@
 }
 
 .Community-post-content .Community-content {
-  width: 280px;
+  width: 300px;
   padding: 0 40px;
   display: flex;
   font-size: 14px;
-  justify-content: space-between;
+}
+
+.Community-post-content .Community-content span {
+  width: 33.33%;   /* 제목이랑 동일 */
+  text-align: center;
+  display: block;
 }

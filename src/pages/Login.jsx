@@ -17,7 +17,7 @@ function Login() {
                         <button>
                             로그인
                         </button>
-                        <Link to={"/memberinput"}><a href='#' className='new-user'>회원가입</a></Link>
+                        <Link to={"/memberinput"} className='new-user'>회원가입</Link>
                     </div>
                 </div>
             </div>
