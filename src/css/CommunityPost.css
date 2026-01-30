@@ -18,8 +18,8 @@
 }
 
 .Community-post-content .Community-content {
-  width: 300px;
-  padding: 0 40px;
+  width: 310px;
+  /* padding: 0 40px; */
   display: flex;
   font-size: 14px;
 }

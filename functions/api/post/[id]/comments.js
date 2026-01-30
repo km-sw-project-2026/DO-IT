@@ -10,14 +10,21 @@ export async function onRequestGet({ env, params }) {
   if (!Number.isFinite(id)) return json({ message: "invalid id" }, 400);
 
   const { results } = await env.D1_DB.prepare(
-    `SELECT comment_id, content, created_at, user_id
-     FROM community_comment
-     WHERE post_id = ? AND deleted_at IS NULL
-     ORDER BY comment_id DESC`
+    `SELECT
+       c.comment_id,
+       c.content,
+       c.created_at,
+       c.user_id,
+       u.nickname AS commenter_nickname
+     FROM community_comment c
+     JOIN user u ON u.user_id = c.user_id
+     WHERE c.post_id = ? AND c.deleted_at IS NULL
+     ORDER BY c.comment_id DESC`
   ).bind(id).all();
 
   return json(results);
 }
+
 
 export async function onRequestPost({ env, params, request }) {
   const id = Number(params.id);

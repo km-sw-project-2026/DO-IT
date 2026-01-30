@@ -19,10 +19,15 @@ export async function onRequestGet({ env, params }) {
   ).bind(id).run();
 
   const post = await env.D1_DB.prepare(
-    `SELECT post_id, title, content, view_count, created_at, updated_at, user_id
-     FROM community_post
-     WHERE post_id = ? AND deleted_at IS NULL`
-  ).bind(id).first();
+  `SELECT
+     p.post_id, p.title, p.content, p.view_count,
+     p.created_at, p.updated_at, p.user_id,
+     u.nickname AS author_nickname
+   FROM community_post p
+   JOIN user u ON u.user_id = p.user_id
+   WHERE p.post_id = ? AND p.deleted_at IS NULL`
+).bind(id).first();
+
 
   if (!post) return json({ message: "not found" }, 404);
   return json(post);

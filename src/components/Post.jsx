@@ -42,6 +42,37 @@ const Post = () => {
     }
   }, [post]);
 
+  // ✅ (스탭 2-2) 댓글 신고 함수
+  const reportComment = async (comment) => {
+    // 글 작성자만 신고 가능 (UI에서도 막지만, 안전하게 한번 더 체크)
+    if (post?.user_id !== currentUserId) {
+      alert("글 작성자만 신고할 수 있어요.");
+      return;
+    }
+
+    const reason = window.prompt("신고 사유를 입력해줘 (예: 욕설/스팸/도배)");
+    if (!reason) return;
+
+    const resp = await fetch("/api/report", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        reporter_id: currentUserId,       // 신고하는 사람(글 작성자)
+        reported_id: comment.user_id,     // 신고 당하는 사람(댓글 작성자)
+        report_type: "COMMENT",
+        report_content: `post_id=${id} comment_id=${comment.comment_id} reason=${reason}`,
+      }),
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      alert(data?.message || "신고 실패");
+      return;
+    }
+
+    alert("신고 접수 완료!");
+  };
+
   // 댓글 작성
   const addComment = async () => {
     if (!newComment.trim()) return;
@@ -108,7 +139,6 @@ const Post = () => {
     }
 
     alert("삭제 완료!");
-    // 우회로 유지: 홈으로 이동 (직접 /post 새로고침 404 방지)
     window.location.href = "/";
   };
 
@@ -144,6 +174,12 @@ const Post = () => {
       {!isEditing ? (
         <>
           <h1>{post.title}</h1>
+
+          {/* ✅ 글 작성자 닉네임 표시 */}
+          <p>
+            <small>작성자: {post.author_nickname ?? "(알 수 없음)"}</small>
+          </p>
+
           <p>{post.content}</p>
         </>
       ) : (
@@ -157,7 +193,7 @@ const Post = () => {
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
             rows={8}
-            style={{ width: "100%", padding: 8, marginTop: 8 }}
+            style={{ width: "100%", padding: "8px", marginTop: 8 }}
           />
         </>
       )}
@@ -182,6 +218,7 @@ const Post = () => {
 
       <div style={{ marginTop: 10 }}>
         {comments.length === 0 && <p>댓글이 없습니다.</p>}
+
         {comments.map((c) => {
           const kstCommentTime = new Date(
             c.created_at.replace(" ", "T") + "Z"
@@ -192,8 +229,26 @@ const Post = () => {
               key={c.comment_id}
               style={{ borderBottom: "1px solid #eee", padding: "6px 0" }}
             >
-              <div>{c.content}</div>
-              <small>{kstCommentTime}</small>
+              {/* ✅ 댓글 + 신고 버튼 한 줄에 배치 */}
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <div>{c.content}</div>
+
+                {/* ✅ 글 작성자만 신고 버튼 보임 */}
+                {post.user_id === currentUserId && (
+                  <button
+                    type="button"
+                    onClick={() => reportComment(c)}
+                    style={{ fontSize: 12 }}
+                  >
+                    신고
+                  </button>
+                )}
+              </div>
+
+              {/* ✅ 댓글 작성자 닉네임 표시 */}
+              <small>
+                {c.commenter_nickname ?? "(알 수 없음)"} · {kstCommentTime}
+              </small>
             </div>
           );
         })}

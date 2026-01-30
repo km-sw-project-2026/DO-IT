@@ -14,6 +14,7 @@ export async function onRequestGet({ env }) {
       p.view_count,
       p.created_at,
       p.user_id,
+      u.nickname AS author_nickname,
       (
         SELECT COUNT(*)
         FROM community_comment c
@@ -21,6 +22,7 @@ export async function onRequestGet({ env }) {
           AND c.deleted_at IS NULL
       ) AS comment_count
     FROM community_post p
+    JOIN user u ON u.user_id = p.user_id
     WHERE p.deleted_at IS NULL
     ORDER BY p.post_id DESC
     LIMIT 50
