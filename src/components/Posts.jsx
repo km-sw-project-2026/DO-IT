@@ -20,8 +20,7 @@ function Community() {
         setErrorMsg("");
 
         // ✅ page/limit 적용
-        // const resp = await fetch(`/api/posts?page=${page}&limit=10`);
-        const resp = await fetch("https://do-it.shinyubin08.workers.dev/api/posts?page=1&limit=10");
+        const resp = await fetch(`/api/posts?page=${page}&limit=10`);
         if (!resp.ok) throw new Error("failed to fetch posts");
         const data = await resp.json();
 
@@ -81,7 +80,7 @@ function Community() {
             onChange={(e) => setKeyword(e.target.value)}
           />
           <button type="button">
-            <img src="./images/icon/search1.png" alt="검색" />
+            <img src="/images/icon/search1.png" alt="검색" />
           </button>
         </div>
       </div>
