@@ -14,7 +14,7 @@ function LoginHeader() {
         <nav>
           <ul>
             <Link to="/"><li>멘토/멘티</li></Link>
-            <Link to="/community"><li>커뮤니티</li></Link>
+            <Link to="/post"><li>커뮤니티</li></Link>
             <Link to="/"><li>캘린더</li></Link>
             <Link to="/"><li>마이페이지</li></Link>
           </ul>

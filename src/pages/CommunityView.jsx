@@ -55,7 +55,7 @@ function CommunityView() {
                 </div>
             </div>
             <div className="Community-view-footer">
-                <Link to={'/community'}><button className="back">돌아가기</button></Link>
+                <Link to={'/post'}><button className="back">돌아가기</button></Link>
             </div>
         </div>
     );
