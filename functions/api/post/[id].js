@@ -5,90 +5,111 @@ function json(data, status = 200) {
   });
 }
 
+function getId(params) {
+  const id = Number(params?.id);
+  return Number.isFinite(id) && id > 0 ? id : null;
+}
+
 /**
  * GET /api/post/:id
  * - 게시글 상세 조회 (+ 조회수 1 증가)
  */
 export async function onRequestGet({ env, params }) {
-  const id = Number(params.id);
-  if (!Number.isFinite(id)) return json({ message: "invalid id" }, 400);
+  const id = getId(params);
+  if (!id) return json({ message: "invalid id" }, 400);
 
-  // 조회수 +1
+  // 조회수 +1 (글이 없으면 업데이트는 그냥 0 rows)
   await env.D1_DB.prepare(
     "UPDATE community_post SET view_count = view_count + 1 WHERE post_id = ?"
-  ).bind(id).run();
+  )
+    .bind(id)
+    .run();
 
+  // ✅ user 테이블은 예약어 충돌 날 수 있어서 "user"로 감싸는 게 안전함
   const post = await env.D1_DB.prepare(
-  `SELECT
-     p.post_id, p.title, p.content, p.view_count,
-     p.created_at, p.updated_at, p.user_id,
-     u.nickname AS author_nickname
-   FROM community_post p
-   JOIN user u ON u.user_id = p.user_id
-   WHERE p.post_id = ? AND p.deleted_at IS NULL`
-).bind(id).first();
-
+    `SELECT
+       p.post_id,
+       p.title,
+       p.content,
+       p.view_count,
+       p.created_at,
+       p.updated_at,
+       p.user_id,
+       u.nickname AS author_nickname
+     FROM community_post p
+     LEFT JOIN "user" u ON u.user_id = p.user_id
+     WHERE p.post_id = ? AND p.deleted_at IS NULL`
+  )
+    .bind(id)
+    .first();
 
   if (!post) return json({ message: "not found" }, 404);
-  return json(post);
+  return json(post, 200);
 }
 
 /**
  * PUT /api/post/:id
- * - 내 글만 수정
  * body: { title, content, user_id }
  */
 export async function onRequestPut({ env, params, request }) {
-  const id = Number(params.id);
-  if (!Number.isFinite(id)) return json({ message: "invalid id" }, 400);
+  const id = getId(params);
+  if (!id) return json({ message: "invalid id" }, 400);
 
-  const body = await request.json();
-  const title = (body?.title ?? "").trim();
-  const content = (body?.content ?? "").trim();
+  const body = await request.json().catch(() => ({}));
+  const title = String(body?.title ?? "").trim();
+  const content = String(body?.content ?? "").trim();
   const userId = Number(body?.user_id);
 
-  if (!userId) return json({ message: "user_id required" }, 400);
+  if (!Number.isFinite(userId) || userId <= 0)
+    return json({ message: "invalid user_id" }, 400);
   if (!title || !content) return json({ message: "title/content required" }, 400);
 
   const row = await env.D1_DB.prepare(
     "SELECT user_id FROM community_post WHERE post_id = ? AND deleted_at IS NULL"
-  ).bind(id).first();
+  )
+    .bind(id)
+    .first();
 
   if (!row) return json({ message: "not found" }, 404);
   if (Number(row.user_id) !== userId) return json({ message: "forbidden" }, 403);
 
   await env.D1_DB.prepare(
     "UPDATE community_post SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE post_id = ?"
-  ).bind(title, content, id).run();
+  )
+    .bind(title, content, id)
+    .run();
 
-  return json({ ok: true });
+  return json({ ok: true }, 200);
 }
 
 /**
  * DELETE /api/post/:id
- * - 내 글만 삭제(소프트 삭제)
  * body: { user_id }
  */
 export async function onRequestDelete({ env, params, request }) {
-  const id = Number(params.id);
-  if (!Number.isFinite(id)) return json({ message: "invalid id" }, 400);
+  const id = getId(params);
+  if (!id) return json({ message: "invalid id" }, 400);
 
-  let body = {};
-  try { body = await request.json(); } catch {}
+  const body = await request.json().catch(() => ({}));
   const userId = Number(body?.user_id);
 
-  if (!userId) return json({ message: "user_id required" }, 400);
+  if (!Number.isFinite(userId) || userId <= 0)
+    return json({ message: "invalid user_id" }, 400);
 
   const row = await env.D1_DB.prepare(
     "SELECT user_id FROM community_post WHERE post_id = ? AND deleted_at IS NULL"
-  ).bind(id).first();
+  )
+    .bind(id)
+    .first();
 
   if (!row) return json({ message: "not found" }, 404);
   if (Number(row.user_id) !== userId) return json({ message: "forbidden" }, 403);
 
   await env.D1_DB.prepare(
     "UPDATE community_post SET deleted_at = CURRENT_TIMESTAMP WHERE post_id = ?"
-  ).bind(id).run();
+  )
+    .bind(id)
+    .run();
 
-  return json({ ok: true });
+  return json({ ok: true }, 200);
 }

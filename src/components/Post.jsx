@@ -1,9 +1,22 @@
 import "../css/CommunityView.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function CommunityView() {
-  const { id } = useParams();
+  const params = useParams();
+  // ✅ 라우터 param이 id일 수도 있고 post_id일 수도 있어서 둘 다 대응
+  const rawId = params.id ?? params.post_id ?? params.postId;
+  const postId = useMemo(() => {
+    const n = Number(rawId);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }, [rawId]);
+
+  console.log("URL params:", params);
+  console.log("rawId:", rawId, "postId:", postId);
+
+
+
+  // ✅ 숫자로 변환 + 안전 처리
 
   // ✅ 임시 로그인 유저(나중에 로그인 붙이면 바꾸기)
   const currentUserId = 1;
@@ -22,20 +35,63 @@ function CommunityView() {
   // ✅ (선택) 파일 업로드 UI용 state (실제 업로드 API 없으면 UI만 동작)
   const [commentFile, setCommentFile] = useState(null);
 
+
+  // ✅ 댓글 불러오기
+  const fetchCommentsApi = async (pid) => {
+    const resp = await fetch(`/api/post/${pid}/comments`);
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(data?.message || "댓글 불러오기 실패");
+    return Array.isArray(data) ? data : data.comments || [];
+  };
+
+  // ✅ 댓글 작성
+  const createCommentApi = async (pid, content, userId = 1) => {
+    const resp = await fetch(`/api/post/${pid}/comments`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ content, user_id: userId }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(data?.message || "댓글 작성 실패");
+    return data;
+  };
+
+
+
+  // ✅ 댓글만 불러오는 함수
+  const loadComments = async () => {
+    if (!postId) return;
+    const list = await fetchCommentsApi(postId);
+    setComments(Array.isArray(list) ? list : []);
+  };
+
+
+
   const load = async () => {
-    const resp = await fetch(`/api/post/${id}`);
-    const postJson = await resp.json();
+    if (!postId) return;
+
+    const resp = await fetch(`/api/post/${postId}`);
+    const postJson = await resp.json().catch(() => ({}));
     setPost(postJson);
 
-    const cResp = await fetch(`/api/post/${id}/comments`);
-    const cJson = await cResp.json();
-    setComments(Array.isArray(cJson) ? cJson : []);
+    await loadComments(postId);
   };
 
   useEffect(() => {
-    load().catch(console.error);
+    // ✅ id가 이상하면 아예 요청 안 보냄
+    if (!postId) {
+      setPost({ message: "잘못된 게시글 주소입니다." });
+      setComments([]);
+      return;
+    }
+
+    load().catch((e) => {
+      console.error(e);
+      setPost({ message: e?.message || "게시글 로딩 실패" });
+      setComments([]);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [postId]);
 
   useEffect(() => {
     if (post && !post.message) {
@@ -61,11 +117,11 @@ function CommunityView() {
         reporter_id: currentUserId,
         reported_id: comment.user_id,
         report_type: "COMMENT",
-        report_content: `post_id=${id} comment_id=${comment.comment_id} reason=${reason}`,
+        report_content: `post_id=${postId} comment_id=${comment.comment_id} reason=${reason}`,
       }),
     });
 
-    const data = await resp.json();
+    const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
       alert(data?.message || "신고 실패");
       return;
@@ -74,41 +130,39 @@ function CommunityView() {
     alert("신고 접수 완료!");
   };
 
-  // 댓글 작성
+  // ✅ 댓글 작성
   const addComment = async () => {
-    if (!newComment.trim()) return;
+    const text = newComment.trim();
+    if (!text) return;
 
-    // ⚠️ 지금 API는 JSON만 보내는 구조라 file은 포함 안 함(필요하면 FormData로 바꿔야 함)
-    const resp = await fetch(`/api/post/${id}/comments`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        content: newComment,
-        user_id: currentUserId,
-      }),
-    });
-
-    const data = await resp.json();
-    if (!resp.ok) {
-      alert(data?.message || "댓글 작성 실패");
+    if (!postId) {
+      alert("잘못된 게시글 id");
       return;
     }
 
-    setNewComment("");
-    setCommentFile(null);
+    try {
+      await createCommentApi(postId, text, currentUserId);
 
-    const cResp = await fetch(`/api/post/${id}/comments`);
-    setComments(await cResp.json());
+      setNewComment("");
+      setCommentFile(null);
+
+      await loadComments();
+    } catch (e) {
+      alert(e?.message || "댓글 작성 실패");
+    }
   };
+
 
   // ✅ 글 수정 저장
   const saveEdit = async () => {
+    if (!postId) return;
+
     if (!editTitle.trim() || !editContent.trim()) {
       alert("제목/내용을 입력해줘!");
       return;
     }
 
-    const resp = await fetch(`/api/post/${id}`, {
+    const resp = await fetch(`/api/post/${postId}`, {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -118,7 +172,7 @@ function CommunityView() {
       }),
     });
 
-    const data = await resp.json();
+    const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
       alert(data?.message || "수정 실패");
       return;
@@ -131,15 +185,17 @@ function CommunityView() {
 
   // ✅ 글 삭제
   const deletePost = async () => {
+    if (!postId) return;
+
     if (!window.confirm("정말 삭제할까?")) return;
 
-    const resp = await fetch(`/api/post/${id}`, {
+    const resp = await fetch(`/api/post/${postId}`, {
       method: "DELETE",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ user_id: currentUserId }),
     });
 
-    const data = await resp.json();
+    const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
       alert(data?.message || "삭제 실패");
       return;
@@ -161,7 +217,6 @@ function CommunityView() {
     <div className="Community-view">
       <div className="Community-view-header">
         <div className="Community-view-title">
-          {/* 제목: 수정 모드면 input */}
           {!isEditing ? (
             <h2>{post.title}</h2>
           ) : (
@@ -172,7 +227,6 @@ function CommunityView() {
             />
           )}
         </div>
-
 
         <div className="Community-view-info">
           <table className="post-info">
@@ -187,15 +241,8 @@ function CommunityView() {
               <tr>
                 <th>첨부파일</th>
                 <td>
-                  {/* ✅ 네 DB/응답에 파일 필드가 없어서 일단 “없음” 처리
-                      나중에 post.file_name 같은 게 생기면 여기에 넣으면 됨 */}
-                  <span className="file">
-                    {/* 아이콘 경로는 네 프로젝트에 맞게 바꿔줘 */}
-                    {/* <img src="/images/icon/link.png" alt="파일" /> */}
-                    없음
-                  </span>
+                  <span className="file">없음</span>
                 </td>
-
                 <th>작성일자</th>
                 <td>{kstTime}</td>
               </tr>
@@ -205,7 +252,6 @@ function CommunityView() {
       </div>
 
       <div className="Community-view-main">
-        {/* 내용: 수정 모드면 textarea */}
         {!isEditing ? (
           <p className="post-content">{post.content}</p>
         ) : (
@@ -218,7 +264,6 @@ function CommunityView() {
         )}
 
         <div className="comments-section">
-          {/* ✅ 수정/삭제 버튼: 내 글일 때만 */}
           {post.user_id === currentUserId && (
             <div className="post-action-buttons">
               {!isEditing ? (
@@ -229,23 +274,15 @@ function CommunityView() {
                   >
                     ✏ 수정
                   </button>
-
-                  <button
-                    className="post-btn delete"
-                    onClick={deletePost}
-                  >
+                  <button className="post-btn delete" onClick={deletePost}>
                     🗑 삭제
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    className="post-btn save"
-                    onClick={saveEdit}
-                  >
+                  <button className="post-btn save" onClick={saveEdit}>
                     💾 저장
                   </button>
-
                   <button
                     className="post-btn cancel"
                     onClick={() => setIsEditing(false)}
@@ -255,8 +292,8 @@ function CommunityView() {
                 </>
               )}
             </div>
-
           )}
+
           <h3>댓글</h3>
 
           <div className="comments-list">
@@ -281,7 +318,6 @@ function CommunityView() {
                   >
                     <div>{c.content}</div>
 
-                    {/* ✅ 글 작성자만 신고 버튼 보임 */}
                     {post.user_id === currentUserId && (
                       <button
                         type="button"
@@ -301,7 +337,6 @@ function CommunityView() {
             })}
           </div>
 
-          {/* 댓글 작성 */}
           <div className="add-comment">
             <textarea
               placeholder="댓글을 입력하세요"
@@ -309,7 +344,6 @@ function CommunityView() {
               onChange={(e) => setNewComment(e.target.value)}
             />
 
-            {/* (선택) 파일 UI만 유지 */}
             <div className="file-upload-form">
               <input
                 type="file"
