@@ -117,11 +117,11 @@
   transition: transform 0.08s ease, box-shadow 0.12s ease;
 }
 
-.upload-icon-btn img {
+/* .upload-icon-btn img {
   width: 18px;
   height: 18px;
   opacity: 0.9;
-}
+} */
 
 .upload-icon-btn:hover {
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
