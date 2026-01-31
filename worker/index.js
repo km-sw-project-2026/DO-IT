@@ -7,7 +7,7 @@ export default {
 
     if (url.pathname === "/api/posts") {
       // /api/posts 경로로 요청이 들어오면 posts.onRequestGet 호출
-      return posts.onRequestGet({ env });
+      return posts.onRequestGet({url, env});
     } else if (url.pathname.startsWith("/api/post/")) {
       // /api/post/:id 경로로 요청이 들어오면 ID 추출하여 postById.onRequestGet 호출
       const id = url.pathname.replace(/^\/api\/post\/+/, '');
