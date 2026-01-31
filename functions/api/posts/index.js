@@ -5,8 +5,8 @@ function json(data, status = 200) {
   });
 }
 
-export async function onRequestGet({ env, request }) {
-  const url = new URL(request.url);
+export async function onRequestGet({ env, url }) {
+  url = new URL(url);
 
   const page = Math.max(1, Number(url.searchParams.get("page") || 1));
   const limit = 10; // ✅ 한 페이지 10개 고정
