@@ -146,7 +146,7 @@ function CommunityView() {
     }
 
     alert("삭제 완료!");
-    window.location.href = "/community"; // 네 라우트에 맞게 수정
+    window.location.href = "/"; // 네 라우트에 맞게 수정
   };
 
   if (!post) return <div>Loading...</div>;
@@ -173,22 +173,6 @@ function CommunityView() {
           )}
         </div>
 
-        {/* ✅ 수정/삭제 버튼: 내 글일 때만 */}
-        {post.user_id === currentUserId && (
-          <div style={{ margin: "10px 0" }}>
-            {!isEditing ? (
-              <>
-                <button onClick={() => setIsEditing(true)}>수정</button>{" "}
-                <button onClick={deletePost}>삭제</button>
-              </>
-            ) : (
-              <>
-                <button onClick={saveEdit}>저장</button>{" "}
-                <button onClick={() => setIsEditing(false)}>취소</button>
-              </>
-            )}
-          </div>
-        )}
 
         <div className="Community-view-info">
           <table className="post-info">
@@ -234,6 +218,45 @@ function CommunityView() {
         )}
 
         <div className="comments-section">
+          {/* ✅ 수정/삭제 버튼: 내 글일 때만 */}
+          {post.user_id === currentUserId && (
+            <div className="post-action-buttons">
+              {!isEditing ? (
+                <>
+                  <button
+                    className="post-btn edit"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    ✏ 수정
+                  </button>
+
+                  <button
+                    className="post-btn delete"
+                    onClick={deletePost}
+                  >
+                    🗑 삭제
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="post-btn save"
+                    onClick={saveEdit}
+                  >
+                    💾 저장
+                  </button>
+
+                  <button
+                    className="post-btn cancel"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    취소
+                  </button>
+                </>
+              )}
+            </div>
+
+          )}
           <h3>댓글</h3>
 
           <div className="comments-list">

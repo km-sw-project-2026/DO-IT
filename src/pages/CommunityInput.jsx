@@ -10,7 +10,7 @@ function CommunityInput() {
         <div className="Community-input">
             <div className="Community-input-header">
                 <h2>커뮤니티 글 작성</h2>
-                <Link to={"/community"}><button className="close"><img src="./images/icon/close.png" alt="닫기" /></button></Link>
+                <Link to={"/post"}><button className="close"><img src="./images/icon/close.png" alt="닫기" /></button></Link>
             </div>
             <div className="Community-input-main">
                 <div className="Community-input-title">

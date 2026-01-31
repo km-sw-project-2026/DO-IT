@@ -114,10 +114,10 @@
 }
 
 .Community-view-main .comments-section .add-comment .comment-btn {
-  width: 100px;
-  height: 40px;
+  width: 120px;
+  height: 40px; 
   background: #65BAED;
-  border-radius: 10px;
+  border-radius: 5px;
   font-size: 16px;
   font-weight: bold;
   color: #FFFFFF;
@@ -137,8 +137,8 @@
 .Community-view-main .comments-section .add-comment .file-upload-form .custom-file-upload {
   border: 1px solid #ccc;
   width: 120px;
-  display: block;
   height: 40px;
+  display: block;
   line-height: 40px;
   text-align: center;
   cursor: pointer;
@@ -180,4 +180,171 @@
   margin: 0 auto;
   font-size: 20px;
   font-weight: bold;
+}
+/* ================================================== */
+/* 파일 업로드 전체 박스 */
+.file-upload-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* 실제 input 숨기기 */
+.file-upload-form input[type="file"] {
+  display: none;
+}
+
+/* 커스텀 버튼 */
+/* .custom-file-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+} */
+
+/* hover 효과 */
+.custom-file-upload:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.45);
+  background: linear-gradient(135deg, #4338ca, #4f46e5);
+}
+
+/* 클릭 느낌 */
+.custom-file-upload:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
+}
+
+/* 파일명 표시 */
+.file-name {
+  font-size: 14px;
+  color: #444;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  min-width: 180px;
+  background: #f9fafb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================= */
+/* 수정/삭제 버튼 영역 */
+.post-action-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0;
+  justify-content: flex-end;
+}
+
+/* 공통 버튼 스타일 */
+.post-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* 수정 버튼 */
+.post-btn.edit {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+}
+
+.post-btn.edit:hover {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  transform: translateY(-2px);
+}
+
+/* 삭제 버튼 */
+.post-btn.delete {
+  background: linear-gradient(135deg, #ef4444, #f87171);
+  color: white;
+}
+
+.post-btn.delete:hover {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  transform: translateY(-2px);
+}
+
+/* 저장 버튼 */
+.post-btn.save {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  color: white;
+}
+
+.post-btn.save:hover {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  transform: translateY(-2px);
+}
+
+/* 취소 버튼 */
+.post-btn.cancel {
+  background: #e5e7eb;
+  color: #333;
+}
+
+.post-btn.cancel:hover {
+  background: #d1d5db;
+}
+/* =============================== */
+.Community-view-main 
+.comments-section 
+.add-comment 
+.file-upload-form 
+.custom-file-upload {
+  border: 1px solid #ccc;
+  width: 120px;
+  height: 40px;
+  display: block;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f8f8f8, #eeeeee);
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+
+  /* 애니메이션 부드럽게 */
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ✅ hover 효과 */
+.Community-view-main 
+.comments-section 
+.add-comment 
+.file-upload-form 
+.custom-file-upload:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  border-color: #6366f1;
+  color: #3730a3;
+}
+
+/* ✅ 클릭(active) 효과 */
+.Community-view-main 
+.comments-section 
+.add-comment 
+.file-upload-form 
+.custom-file-upload:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
 }

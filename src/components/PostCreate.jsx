@@ -111,7 +111,7 @@ function CommunityInput() {
 
     const newId = data?.result?.meta?.last_row_id;
     if (newId) navigate(`/post/${newId}`);
-    else navigate("/community");
+    else navigate("/post");
   };
 
   const msgClass =
