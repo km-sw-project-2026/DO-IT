@@ -9,29 +9,40 @@ function Community() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // ✅ 페이지네이션 state 추가
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     const getPosts = async () => {
       try {
         setLoading(true);
         setErrorMsg("");
 
-        const resp = await fetch("/api/posts");
+        // ✅ page/limit 적용
+        const resp = await fetch(`/api/posts?page=${page}&limit=10`);
         if (!resp.ok) throw new Error("failed to fetch posts");
         const data = await resp.json();
 
-        const list = Array.isArray(data) ? data : data?.posts ?? [];
+        // ✅ 이제 API 응답이 { posts, total_pages, ... } 형태
+        const list = Array.isArray(data) ? data : (data?.posts ?? []);
         setPosts(list);
+
+        // total_pages는 객체일 때만 있으니까 없으면 1
+        setTotalPages(Array.isArray(data) ? 1 : (data?.total_pages ?? 1));
+
       } catch (e) {
         console.error(e);
         setErrorMsg("게시글을 불러오지 못했습니다.");
         setPosts([]);
+        setTotalPages(1);
       } finally {
         setLoading(false);
       }
     };
 
     getPosts();
-  }, []);
+  }, [page]);
 
   const filteredPosts = useMemo(() => {
     const q = keyword.trim().toLowerCase();
@@ -50,6 +61,13 @@ function Community() {
     if (Number.isNaN(d.getTime())) return String(value);
     return d.toLocaleDateString("ko-KR");
   };
+
+  // ✅ 페이지 번호(10개 단위로 보여주기) 계산
+  const pageNumbers = useMemo(() => {
+    const groupStart = Math.floor((page - 1) / 10) * 10 + 1;
+    const groupEnd = Math.min(totalPages, groupStart + 9);
+    return Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i);
+  }, [page, totalPages]);
 
   return (
     <section className="Community">
@@ -97,18 +115,41 @@ function Community() {
           ))}
       </div>
 
+      {/* ✅ 페이지네이션 동작하도록 교체 */}
       <footer className="Community-footer">
         <div className="Community-footer-content">
           <div className="page-number">
-            <button className="prev">←</button>
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>4</button>
-            <button>5</button>
-            <span>...</span>
-            <button>23</button>
-            <button className="next">→</button>
+            <button
+              className="prev"
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              ←
+            </button>
+
+            {pageNumbers.map((num) => (
+              <button
+                key={num}
+                type="button"
+                onClick={() => setPage(num)}
+                style={{
+                  fontWeight: num === page ? "700" : "400",
+                  textDecoration: num === page ? "underline" : "none",
+                }}
+              >
+                {num}
+              </button>
+            ))}
+
+            <button
+              className="next"
+              type="button"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+            >
+              →
+            </button>
           </div>
 
           <Link to={"/post/new"}>
@@ -123,4 +164,3 @@ function Community() {
 }
 
 export default Community;
-

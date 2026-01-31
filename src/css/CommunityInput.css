@@ -84,3 +84,147 @@
 .Community-input-footer button img {
   width: 50px;
 }
+/* ========================================================= */
+/* ===== 업로드 UI 예쁘게 ===== */
+
+.upload-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-icon-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+.upload-icon-btn img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+.upload-icon-btn:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.upload-icon-btn:active {
+  transform: translateY(0px);
+}
+
+.upload-btn {
+  margin-left: auto;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+  transition: opacity 0.12s ease, transform 0.08s ease;
+}
+
+.upload-btn:hover { opacity: 0.9; }
+.upload-btn:active { transform: scale(0.98); }
+
+.upload-hint {
+  font-size: 13px;
+  color: rgba(0,0,0,0.55);
+  padding: 6px 2px;
+}
+
+/* 파일 칩 리스트 */
+.file-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file-chip {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #fff;
+}
+
+.file-chip-name {
+  max-width: 220px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  color: rgba(0,0,0,0.82);
+}
+
+.file-chip-size {
+  font-size: 12px;
+  color: rgba(0,0,0,0.5);
+}
+
+.file-chip-remove {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.7);
+  font-size: 16px;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease;
+}
+
+.file-chip-remove:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+/* 메시지(토스트 느낌) */
+.upload-msg {
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.upload-msg.loading {
+  background: rgba(0,0,0,0.04);
+  color: rgba(0,0,0,0.65);
+}
+
+.upload-msg.ok {
+  background: rgba(34,197,94,0.12);
+  color: rgba(22,101,52,0.95);
+  border-color: rgba(34,197,94,0.25);
+}
+
+.upload-msg.err {
+  background: rgba(239,68,68,0.12);
+  color: rgba(153,27,27,0.95);
+  border-color: rgba(239,68,68,0.25);
+}
