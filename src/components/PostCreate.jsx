@@ -121,7 +121,7 @@ function CommunityInput() {
     <div className="Community-input">
       <div className="Community-input-header">
         <h2>커뮤니티 글 작성</h2>
-        <Link to={"/community"}>
+        <Link to={"/post"}>
           <button className="close">
             <img src="/images/icon/close.png" alt="닫기" />
           </button>

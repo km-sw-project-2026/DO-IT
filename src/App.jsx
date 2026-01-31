@@ -10,27 +10,22 @@ import Posts from './components/Posts';
 import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
 
-
-
 function App() {
-
   return (
     <Routes>
-
-
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Main />}></Route>
+        <Route path="/" element={<Main />} />
         <Route path="/post" element={<Posts />} />
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
       </Route>
 
       <Route element={<UserLayout />}>
-        <Route path='/login' element={<Login />}></Route>
-        <Route path='/memberinput' element={<MemberInput />}></Route>
+        <Route path='/login' element={<Login />} />
+        <Route path='/memberinput' element={<MemberInput />} />
       </Route>
     </Routes>
   )
 }
 
-export default App
+export default App;

@@ -1,7 +1,8 @@
+import "../css/CommunityView.css";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-const Post = () => {
+function CommunityView() {
   const { id } = useParams();
 
   // ✅ 임시 로그인 유저(나중에 로그인 붙이면 바꾸기)
@@ -18,15 +19,17 @@ const Post = () => {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
 
-  // 공통 로드 함수 (상세 + 댓글)
+  // ✅ (선택) 파일 업로드 UI용 state (실제 업로드 API 없으면 UI만 동작)
+  const [commentFile, setCommentFile] = useState(null);
+
   const load = async () => {
     const resp = await fetch(`/api/post/${id}`);
-    const postResp = await resp.json();
-    setPost(postResp);
+    const postJson = await resp.json();
+    setPost(postJson);
 
     const cResp = await fetch(`/api/post/${id}/comments`);
     const cJson = await cResp.json();
-    setComments(cJson);
+    setComments(Array.isArray(cJson) ? cJson : []);
   };
 
   useEffect(() => {
@@ -34,7 +37,6 @@ const Post = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // post가 로드되면 수정 입력칸 기본값 세팅
   useEffect(() => {
     if (post && !post.message) {
       setEditTitle(post.title ?? "");
@@ -42,9 +44,8 @@ const Post = () => {
     }
   }, [post]);
 
-  // ✅ (스탭 2-2) 댓글 신고 함수
+  // ✅ 댓글 신고 함수 (글 작성자만 가능)
   const reportComment = async (comment) => {
-    // 글 작성자만 신고 가능 (UI에서도 막지만, 안전하게 한번 더 체크)
     if (post?.user_id !== currentUserId) {
       alert("글 작성자만 신고할 수 있어요.");
       return;
@@ -57,8 +58,8 @@ const Post = () => {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        reporter_id: currentUserId,       // 신고하는 사람(글 작성자)
-        reported_id: comment.user_id,     // 신고 당하는 사람(댓글 작성자)
+        reporter_id: currentUserId,
+        reported_id: comment.user_id,
         report_type: "COMMENT",
         report_content: `post_id=${id} comment_id=${comment.comment_id} reason=${reason}`,
       }),
@@ -77,10 +78,14 @@ const Post = () => {
   const addComment = async () => {
     if (!newComment.trim()) return;
 
+    // ⚠️ 지금 API는 JSON만 보내는 구조라 file은 포함 안 함(필요하면 FormData로 바꿔야 함)
     const resp = await fetch(`/api/post/${id}/comments`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ content: newComment, user_id: currentUserId }),
+      body: JSON.stringify({
+        content: newComment,
+        user_id: currentUserId,
+      }),
     });
 
     const data = await resp.json();
@@ -90,6 +95,8 @@ const Post = () => {
     }
 
     setNewComment("");
+    setCommentFile(null);
+
     const cResp = await fetch(`/api/post/${id}/comments`);
     setComments(await cResp.json());
   };
@@ -139,126 +146,175 @@ const Post = () => {
     }
 
     alert("삭제 완료!");
-    window.location.href = "/";
+    window.location.href = "/community"; // 네 라우트에 맞게 수정
   };
 
   if (!post) return <div>Loading...</div>;
   if (post?.message) return <div>Error: {post.message}</div>;
 
   // 게시글 시간 KST
-  const kstTime = new Date(post.created_at.replace(" ", "T") + "Z").toLocaleString(
-    "ko-KR",
-    { timeZone: "Asia/Seoul" }
-  );
+  const kstTime = new Date(
+    post.created_at?.replace(" ", "T") + "Z"
+  ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
 
   return (
-    <div>
-      {/* ✅ 내 글일 때만 수정/삭제 */}
-      {post.user_id === currentUserId && (
-        <div style={{ margin: "10px 0" }}>
+    <div className="Community-view">
+      <div className="Community-view-header">
+        <div className="Community-view-title">
+          {/* 제목: 수정 모드면 input */}
           {!isEditing ? (
-            <>
-              <button onClick={() => setIsEditing(true)}>수정</button>{" "}
-              <button onClick={deletePost}>삭제</button>
-            </>
+            <h2>{post.title}</h2>
           ) : (
-            <>
-              <button onClick={saveEdit}>저장</button>{" "}
-              <button onClick={() => setIsEditing(false)}>취소</button>
-            </>
+            <input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              style={{ width: "100%", padding: 8 }}
+            />
           )}
         </div>
-      )}
 
-      {/* 제목/내용: 수정 모드면 입력칸 */}
-      {!isEditing ? (
-        <>
-          <h1>{post.title}</h1>
+        {/* ✅ 수정/삭제 버튼: 내 글일 때만 */}
+        {post.user_id === currentUserId && (
+          <div style={{ margin: "10px 0" }}>
+            {!isEditing ? (
+              <>
+                <button onClick={() => setIsEditing(true)}>수정</button>{" "}
+                <button onClick={deletePost}>삭제</button>
+              </>
+            ) : (
+              <>
+                <button onClick={saveEdit}>저장</button>{" "}
+                <button onClick={() => setIsEditing(false)}>취소</button>
+              </>
+            )}
+          </div>
+        )}
 
-          {/* ✅ 글 작성자 닉네임 표시 */}
-          <p>
-            <small>작성자: {post.author_nickname ?? "(알 수 없음)"}</small>
-          </p>
+        <div className="Community-view-info">
+          <table className="post-info">
+            <tbody>
+              <tr>
+                <th>작성자</th>
+                <td>{post.author_nickname ?? "(알 수 없음)"}</td>
+                <th>조회수</th>
+                <td>{post.view_count ?? 0}</td>
+              </tr>
 
-          <p>{post.content}</p>
-        </>
-      ) : (
-        <>
-          <input
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          />
+              <tr>
+                <th>첨부파일</th>
+                <td>
+                  {/* ✅ 네 DB/응답에 파일 필드가 없어서 일단 “없음” 처리
+                      나중에 post.file_name 같은 게 생기면 여기에 넣으면 됨 */}
+                  <span className="file">
+                    {/* 아이콘 경로는 네 프로젝트에 맞게 바꿔줘 */}
+                    {/* <img src="/images/icon/link.png" alt="파일" /> */}
+                    없음
+                  </span>
+                </td>
+
+                <th>작성일자</th>
+                <td>{kstTime}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="Community-view-main">
+        {/* 내용: 수정 모드면 textarea */}
+        {!isEditing ? (
+          <p className="post-content">{post.content}</p>
+        ) : (
           <textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            rows={8}
+            rows={10}
             style={{ width: "100%", padding: "8px", marginTop: 8 }}
           />
-        </>
-      )}
+        )}
 
-      <p>
-        <small>
-          작성일: {kstTime} / 조회수: {post.view_count}
-        </small>
-      </p>
+        <div className="comments-section">
+          <h3>댓글</h3>
 
-      <hr />
+          <div className="comments-list">
+            {comments.length === 0 && <p>댓글이 없습니다.</p>}
 
-      <h3>댓글</h3>
-      <div>
-        <input
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="댓글을 입력하세요"
-        />
-        <button onClick={addComment}>등록</button>
-      </div>
+            {comments.map((c) => {
+              const kstCommentTime = new Date(
+                c.created_at?.replace(" ", "T") + "Z"
+              ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
 
-      <div style={{ marginTop: 10 }}>
-        {comments.length === 0 && <p>댓글이 없습니다.</p>}
-
-        {comments.map((c) => {
-          const kstCommentTime = new Date(
-            c.created_at.replace(" ", "T") + "Z"
-          ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
-
-          return (
-            <div
-              key={c.comment_id}
-              style={{ borderBottom: "1px solid #eee", padding: "6px 0" }}
-            >
-              {/* ✅ 댓글 + 신고 버튼 한 줄에 배치 */}
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <div>{c.content}</div>
-
-                {/* ✅ 글 작성자만 신고 버튼 보임 */}
-                {post.user_id === currentUserId && (
-                  <button
-                    type="button"
-                    onClick={() => reportComment(c)}
-                    style={{ fontSize: 12 }}
+              return (
+                <div
+                  key={c.comment_id}
+                  style={{ borderBottom: "1px solid #eee", padding: "10px 0" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 8,
+                    }}
                   >
-                    신고
-                  </button>
-                )}
-              </div>
+                    <div>{c.content}</div>
 
-              {/* ✅ 댓글 작성자 닉네임 표시 */}
-              <small>
-                {c.commenter_nickname ?? "(알 수 없음)"} · {kstCommentTime}
-              </small>
+                    {/* ✅ 글 작성자만 신고 버튼 보임 */}
+                    {post.user_id === currentUserId && (
+                      <button
+                        type="button"
+                        onClick={() => reportComment(c)}
+                        style={{ fontSize: 12 }}
+                      >
+                        신고
+                      </button>
+                    )}
+                  </div>
+
+                  <small>
+                    {c.commenter_nickname ?? "(알 수 없음)"} · {kstCommentTime}
+                  </small>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 댓글 작성 */}
+          <div className="add-comment">
+            <textarea
+              placeholder="댓글을 입력하세요"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+
+            {/* (선택) 파일 UI만 유지 */}
+            <div className="file-upload-form">
+              <input
+                type="file"
+                id="file-upload"
+                onChange={(e) => setCommentFile(e.target.files?.[0] ?? null)}
+              />
+              <span className="file-name">
+                {commentFile ? commentFile.name : "선택된 파일이 없습니다"}
+              </span>
+              <label htmlFor="file-upload" className="custom-file-upload">
+                <i className="fa fa-cloud-upload"></i> 파일 선택
+              </label>
             </div>
-          );
-        })}
+
+            <button className="comment-btn" onClick={addComment}>
+              댓글 작성
+            </button>
+          </div>
+        </div>
       </div>
 
-      <p style={{ marginTop: 16 }}>
-        <Link to="/">홈으로</Link> | <Link to="/post">목록</Link>
-      </p>
+      <div className="Community-view-footer">
+        <Link to={"/post"}>
+          <button className="back">돌아가기</button>
+        </Link>
+      </div>
     </div>
   );
-};
+}
 
-export default Post;
+export default CommunityView;

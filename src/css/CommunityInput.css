@@ -72,8 +72,8 @@
 }
 
 .Community-input-footer .Community-input-button {
-  width: 100px;
-  height: 57px;
+  width: 80px;
+  height: 50px;
   background: #65BAED;
   border-radius: 10px;
   font-size: 20px;
@@ -91,7 +91,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding: 10px 12px;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 14px;
@@ -108,7 +108,7 @@
 .upload-icon-btn {
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(0,0,0,0.08);
+  /* border: 1px solid rgba(0,0,0,0.08); */
   border-radius: 12px;
   background: #fff;
   display: flex;
