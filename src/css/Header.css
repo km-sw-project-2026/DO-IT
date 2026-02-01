@@ -51,3 +51,29 @@ nav ul li a {
   border-radius: 5px;
   background: #ffff;
 }
+/* ============================================ */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.user-nickname {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}

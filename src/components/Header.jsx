@@ -71,7 +71,8 @@ function Header() {
             </>
           ) : (
             <div className="user-info">
-              <img className="user-avatar" src={profileSrc} alt="프로필" />
+              {/* src={profileSrc} */}
+              <img className="user-avatar" src="/images/profile.jpg" alt="프로필" />
               <span className="user-nickname">{user.nickname}</span>
               <button className="logout-btn" type="button" onClick={onLogout}>
                 로그아웃
