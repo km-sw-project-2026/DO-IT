@@ -57,8 +57,7 @@ export default {
       if (request.method === "POST") {
         return comments.onRequestPost({ env, params, request });
       }
-
-      // ✅ 여기 추가: 댓글 삭제
+      // ✅ 여기 추가!!
       if (request.method === "DELETE") {
         return comments.onRequestDelete({ env, params, request });
       }

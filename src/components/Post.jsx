@@ -64,22 +64,30 @@ function CommunityView() {
 
     if (!window.confirm("댓글을 삭제할까요?")) return;
 
-    const resp = await fetch(`/api/post/${postId}/comments`, {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        comment_id: commentId,
-        user_id: currentUserId,
-      }),
-    });
+    try {
+      const resp = await fetch(`/api/post/${postId}/comments`, {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          comment_id: commentId,
+          user_id: currentUserId,
+        }),
+      });
 
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
-      alert(data?.message || "댓글 삭제 실패");
-      return;
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        alert(data?.message || "댓글 삭제 실패");
+        return;
+      }
+
+      // 선택: 알림
+      // alert("댓글 삭제 완료!");
+
+      await loadComments();
+    } catch (e) {
+      console.error(e);
+      alert("네트워크 오류로 댓글 삭제 실패");
     }
-
-    await loadComments();
   };
 
   // ✅ 댓글만 불러오는 함수
@@ -308,30 +316,54 @@ function CommunityView() {
         )}
 
         <div className="comments-section">
-          {/* ✅ 글 작성자만 수정/삭제 버튼 */}
-          {currentUserId && post.user_id === currentUserId && (
-            <div className="post-action-buttons">
-              {!isEditing ? (
-                <>
-                  <button className="post-btn edit" onClick={() => setIsEditing(true)}>
-                    ✏ 수정
-                  </button>
-                  <button className="post-btn delete" onClick={deletePost}>
-                    🗑 삭제
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button className="post-btn save" onClick={saveEdit}>
-                    💾 저장
-                  </button>
-                  <button className="post-btn cancel" onClick={() => setIsEditing(false)}>
-                    취소
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          {/* ✅ 작성자 OR 관리자만 게시글 관리 버튼 표시 */}
+          {currentUserId &&
+            (Number(post.user_id) === Number(currentUserId) || me?.role === "ADMIN") && (
+              <div className="post-action-buttons">
+                {!isEditing ? (
+                  <>
+                    {/* ✏ 수정은 작성자만 가능 */}
+                    {Number(post.user_id) === Number(currentUserId) && (
+                      <button
+                        type="button"
+                        className="post-btn edit"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        ✏ 수정
+                      </button>
+                    )}
+
+                    {/* 🗑 삭제는 작성자 OR 관리자 */}
+                    <button
+                      type="button"
+                      className="post-btn delete"
+                      onClick={deletePost}
+                    >
+                      🗑 삭제
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="post-btn save"
+                      onClick={saveEdit}
+                    >
+                      💾 저장
+                    </button>
+
+                    <button
+                      type="button"
+                      className="post-btn cancel"
+                      onClick={() => setIsEditing(false)}
+                    >
+                      취소
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
 
           <h3>댓글</h3>
 
@@ -360,16 +392,17 @@ function CommunityView() {
                     <div>{c.content}</div>
 
                     <div style={{ display: "flex", gap: 8 }}>
-                      {/* ✅ 내 댓글만 삭제 가능 */}
-                      {currentUserId && Number(c.user_id) === Number(currentUserId) && (
-                        <button
-                          type="button"
-                          onClick={() => deleteComment(c.comment_id)}
-                          style={{ fontSize: 12 }}
-                        >
-                          삭제
-                        </button>
-                      )}
+                      {/* ✅ 내 댓글 OR 관리자만 삭제 가능 */}
+                      {currentUserId &&
+                        (Number(c.user_id) === Number(currentUserId) || me?.role === "ADMIN") && (
+                          <button
+                            type="button"
+                            onClick={() => deleteComment(c.comment_id)}
+                            style={{ fontSize: 12 }}
+                          >
+                            삭제
+                          </button>
+                        )}
 
                       {/* ✅ 글 작성자만 신고 가능 */}
                       {currentUserId && post.user_id === currentUserId && (
@@ -390,6 +423,7 @@ function CommunityView() {
                 </div>
               );
             })}
+
           </div>
 
           <div className="add-comment">

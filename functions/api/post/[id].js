@@ -93,23 +93,48 @@ export async function onRequestDelete({ env, params, request }) {
   const body = await request.json().catch(() => ({}));
   const userId = Number(body?.user_id);
 
-  if (!Number.isFinite(userId) || userId <= 0)
+  if (!Number.isFinite(userId) || userId <= 0) {
     return json({ message: "invalid user_id" }, 400);
+  }
 
+  // ✅ 1) 게시글 존재 + 작성자 조회 (row 없으면 not found)
+  const row = await env.D1_DB.prepare(
+    `SELECT user_id
+     FROM community_post
+     WHERE post_id = ?
+       AND deleted_at IS NULL
+     LIMIT 1`
+  )
+    .bind(id)
+    .first();
+
+  if (!row) return json({ message: "not found" }, 404);
+
+  // ✅ 2) 요청자 role 조회
   const requester = await env.D1_DB.prepare(
-    `SELECT role FROM "user" WHERE user_id = ? LIMIT 1`
-  ).bind(userId).first();
+    `SELECT role
+     FROM "user"
+     WHERE user_id = ?
+     LIMIT 1`
+  )
+    .bind(userId)
+    .first();
 
   const isAdmin = requester?.role === "ADMIN";
   const isOwner = Number(row.user_id) === userId;
 
+  // ✅ 3) 작성자도 아니고 관리자도 아니면 금지
   if (!isOwner && !isAdmin) return json({ message: "forbidden" }, 403);
 
+  // ✅ 4) 소프트 삭제
   await env.D1_DB.prepare(
-    "UPDATE community_post SET deleted_at = CURRENT_TIMESTAMP WHERE post_id = ?"
+    `UPDATE community_post
+     SET deleted_at = CURRENT_TIMESTAMP
+     WHERE post_id = ?`
   )
     .bind(id)
     .run();
 
   return json({ ok: true }, 200);
 }
+
