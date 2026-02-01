@@ -169,25 +169,19 @@ export default {
     // /api/admin/notice (공지 설정/해제)
     // ---------------------------
     if (path === "/api/admin/notice") {
-      if (request.method === "POST") {
-        return adminNotice.onRequestPost({ env, request });
-      }
+      if (request.method === "OPTIONS") return adminNotice.onRequestOptions({ request });
+      if (request.method === "POST") return adminNotice.onRequestPost({ request, env });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
-
     // ---------------------------
     // /api/admin/ban (차단/해제)
     // ---------------------------
     if (path === "/api/admin/ban") {
-      if (request.method === "POST") {
-        return adminBan.onRequestPost({ env, request });
-      }
-      if (request.method === "PUT") {
-        return adminBan.onRequestPut({ env, request });
-      }
+      if (request.method === "OPTIONS") return adminBan.onRequestOptions({ request });
+      if (request.method === "POST") return adminBan.onRequestPost({ request, env });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
