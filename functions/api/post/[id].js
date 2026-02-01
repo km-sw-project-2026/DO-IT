@@ -96,14 +96,14 @@ export async function onRequestDelete({ env, params, request }) {
   if (!Number.isFinite(userId) || userId <= 0)
     return json({ message: "invalid user_id" }, 400);
 
-  const row = await env.D1_DB.prepare(
-    "SELECT user_id FROM community_post WHERE post_id = ? AND deleted_at IS NULL"
-  )
-    .bind(id)
-    .first();
+  const requester = await env.D1_DB.prepare(
+    `SELECT role FROM "user" WHERE user_id = ? LIMIT 1`
+  ).bind(userId).first();
 
-  if (!row) return json({ message: "not found" }, 404);
-  if (Number(row.user_id) !== userId) return json({ message: "forbidden" }, 403);
+  const isAdmin = requester?.role === "ADMIN";
+  const isOwner = Number(row.user_id) === userId;
+
+  if (!isOwner && !isAdmin) return json({ message: "forbidden" }, 403);
 
   await env.D1_DB.prepare(
     "UPDATE community_post SET deleted_at = CURRENT_TIMESTAMP WHERE post_id = ?"

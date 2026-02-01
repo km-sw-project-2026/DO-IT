@@ -93,7 +93,7 @@ export async function onRequestDelete({ env, params, request }) {
   }
 
   try {
-    // ✅ 댓글 존재 + 같은 post인지 + 삭제 안 됨 + 작성자 확인
+    // ✅ 댓글 존재 + 같은 post인지 + 삭제 안 됨 + 작성자 확인을 위한 row
     const row = await env.D1_DB.prepare(
       `SELECT user_id
        FROM community_comment
@@ -107,7 +107,21 @@ export async function onRequestDelete({ env, params, request }) {
 
     if (!row) return json({ message: "not found" }, 404);
 
-    if (Number(row.user_id) !== userId) {
+    // ✅ 요청자(userId)가 ADMIN인지 확인
+    const requester = await env.D1_DB.prepare(
+      `SELECT role
+       FROM "user"
+       WHERE user_id = ?
+       LIMIT 1`
+    )
+      .bind(userId)
+      .first();
+
+    const isAdmin = requester?.role === "ADMIN";
+    const isOwner = Number(row.user_id) === userId;
+
+    // ✅ 작성자도 아니고 관리자도 아니면 금지
+    if (!isOwner && !isAdmin) {
       return json({ message: "forbidden" }, 403);
     }
 

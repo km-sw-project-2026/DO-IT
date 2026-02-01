@@ -46,7 +46,9 @@ export async function onRequestGet({ env, url }) {
     JOIN "user" u ON u.user_id = p.user_id   -- 🔥 여기 중요!
 
     WHERE p.deleted_at IS NULL
-    ORDER BY p.post_id DESC
+    ORDER BY p.is_notice DESC,
+         p.pinned_at DESC,
+         p.post_id DESC
     LIMIT ? OFFSET ?
   `).bind(limit, offset).all();
 

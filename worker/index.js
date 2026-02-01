@@ -15,6 +15,13 @@ import * as idCheck from "../functions/api/auth/id-ckack.js";
 // ✅ 로그인 API
 import * as login from "../functions/api/auth/login.js";
 
+import * as report from "../functions/api/report/index.js";
+import * as adminReports from "../functions/api/admin/reports.js";
+import * as adminNotice from "../functions/api/admin/notice.js";
+import * as adminBan from "../functions/api/admin/ban.js";
+
+
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -129,6 +136,65 @@ export default {
         headers: { "content-type": "application/json" },
       });
     }
+
+    // ---------------------------
+    // /api/report (신고 접수)
+    // ---------------------------
+    if (path === "/api/report") {
+      if (request.method === "POST") {
+        return report.onRequestPost({ env, request });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/admin/reports (신고 목록/처리)
+    // ---------------------------
+    if (path === "/api/admin/reports") {
+      if (request.method === "GET") {
+        return adminReports.onRequestGet({ env, request });
+      }
+      if (request.method === "POST") {
+        return adminReports.onRequestPost({ env, request });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/admin/notice (공지 설정/해제)
+    // ---------------------------
+    if (path === "/api/admin/notice") {
+      if (request.method === "POST") {
+        return adminNotice.onRequestPost({ env, request });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/admin/ban (차단/해제)
+    // ---------------------------
+    if (path === "/api/admin/ban") {
+      if (request.method === "POST") {
+        return adminBan.onRequestPost({ env, request });
+      }
+      if (request.method === "PUT") {
+        return adminBan.onRequestPut({ env, request });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
 
     return new Response(null, { status: 404 });
   },

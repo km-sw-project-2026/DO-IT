@@ -9,6 +9,7 @@ import { UserLayout } from './components/UserLayout.jsx';
 import Posts from './components/Posts';
 import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
@@ -18,8 +19,8 @@ function App() {
         <Route path="/post" element={<Posts />} />
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Route>
-
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />
         <Route path='/memberinput' element={<MemberInput />} />
