@@ -154,7 +154,7 @@ function Community() {
 
           <Link to={"/post/new"}>
             <button className="write-button">
-              <img src="./images/icon/pan.png" alt="" />
+              <img src="/images/icon/pan.png" alt="" />
             </button>
           </Link>
         </div>

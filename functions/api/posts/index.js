@@ -42,6 +42,7 @@ export async function onRequestGet({ env, url }) {
     ORDER BY p.post_id DESC
     LIMIT ? OFFSET ?
   `).bind(limit, offset).all();
+  console.log(limit, offset);
 
   return json({
     page,
