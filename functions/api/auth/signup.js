@@ -22,7 +22,7 @@ function corsHeaders(request) {
 async function hashPassword(password) {
   const enc = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iterations = 120000;
+  const iterations = 10000;
 
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
