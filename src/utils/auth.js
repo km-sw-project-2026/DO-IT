@@ -3,3 +3,7 @@ export function getCurrentUser() {
   if (!raw) return null;
   try { return JSON.parse(raw); } catch { return null; }
 }
+export function isAdmin() {
+  const me = getCurrentUser();
+  return me?.role === "ADMIN";
+}

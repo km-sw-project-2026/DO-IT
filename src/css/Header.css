@@ -77,3 +77,7 @@ nav ul li a {
   border-radius: 8px;
   cursor: pointer;
 }
+.admin-menu {
+  color: crimson;
+  font-weight: bold;
+}

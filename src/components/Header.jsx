@@ -1,28 +1,21 @@
 import "../css/Header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getCurrentUser, isAdmin } from "../utils/auth";
 
 function Header() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // ✅ 저장소에서 user 읽기 (keepLogin이면 localStorage, 아니면 sessionStorage)
-  const readUser = () => {
-    const u =
-      localStorage.getItem("user") || sessionStorage.getItem("user");
-    try {
-      return u ? JSON.parse(u) : null;
-    } catch {
-      return null;
-    }
-  };
-
+  // ✅ 로그인 정보 불러오기
   useEffect(() => {
-    setUser(readUser());
+    setUser(getCurrentUser());
 
-    // 같은 탭에서 로그인/로그아웃하면 바로 반영되게(간단 폴링)
-    const t = setInterval(() => setUser(readUser()), 500);
-    return () => clearInterval(t);
+    // storage 변경 감지 (다른 탭 포함)
+    const syncUser = () => setUser(getCurrentUser());
+    window.addEventListener("storage", syncUser);
+
+    return () => window.removeEventListener("storage", syncUser);
   }, []);
 
   const onLogout = () => {
@@ -32,17 +25,17 @@ function Header() {
     navigate("/login");
   };
 
-  // ✅ 프로필 이미지 없을 때 기본 이미지
+  // ✅ 프로필 이미지 (없으면 기본)
   const profileSrc =
     user?.profile_image && user.profile_image.trim() !== ""
       ? user.profile_image
-      : "/images/default-profile.png"; // 너 프로젝트에 이 이미지 하나 추가해줘
+      : "/images/default-profile.png";
 
   return (
     <header className="project-header">
       <div className="header-inner">
         <div className="logo">
-          <Link to={"/"}>
+          <Link to="/">
             <img src="/images/logo.png" alt="로고" />
           </Link>
         </div>
@@ -50,31 +43,52 @@ function Header() {
         <nav>
           <ul>
             <li>멘토/멘티</li>
-            <Link to={"/post"}>
+
+            <Link to="/post">
               <li>커뮤니티</li>
             </Link>
+
             <li>캘린더</li>
             <li>마이페이지</li>
+
+            {/* ✅ 관리자 전용 메뉴 */}
+            {user && isAdmin() && (
+              <Link to="/admin">
+                <li className="admin-menu">관리자</li>
+              </Link>
+            )}
           </ul>
         </nav>
 
-        {/* ✅ 로그인 전/후 UI 분기 */}
+        {/* ✅ 로그인 전/후 UI */}
         <div className="user">
           {!user ? (
             <>
-              <Link to={"/login"} className="login">
+              <Link to="/login" className="login">
                 로그인
               </Link>
-              <Link to={"/memberinput"} className="new-user">
+              <Link to="/memberinput" className="new-user">
                 회원가입
               </Link>
             </>
           ) : (
             <div className="user-info">
-              {/* src={profileSrc} */}
-              <img className="user-avatar" src="/images/profile.jpg" alt="프로필" />
-              <span className="user-nickname">{user.nickname}</span>
-              <button className="logout-btn" type="button" onClick={onLogout}>
+              <img
+                className="user-avatar"
+                src={profileSrc}
+                alt="프로필"
+              />
+
+              <span className="user-nickname">
+                {user.nickname}
+                {isAdmin() && <span style={{ color: "crimson" }}> (관리자)</span>}
+              </span>
+
+              <button
+                className="logout-btn"
+                type="button"
+                onClick={onLogout}
+              >
                 로그아웃
               </button>
             </div>
