@@ -9,7 +9,7 @@ export async function onRequestGet({ env, url }) {
   url = new URL(url);
 
   const page = Math.max(1, Number(url.searchParams.get("page") || 1));
-  const limit = 10; // ✅ 한 페이지 10개 고정
+  const limit = 10;
   const offset = (page - 1) * limit;
 
   const totalRow = await env.D1_DB.prepare(`
@@ -29,20 +29,26 @@ export async function onRequestGet({ env, url }) {
       p.view_count,
       p.created_at,
       p.user_id,
+
+      -- ✅ 작성자 정보
       u.nickname AS author_nickname,
+      u.profile_image AS author_profile_image,
+
+      -- ✅ 댓글 수
       (
         SELECT COUNT(*)
         FROM community_comment c
         WHERE c.post_id = p.post_id
           AND c.deleted_at IS NULL
       ) AS comment_count
+
     FROM community_post p
-    JOIN user u ON u.user_id = p.user_id
+    JOIN "user" u ON u.user_id = p.user_id   -- 🔥 여기 중요!
+
     WHERE p.deleted_at IS NULL
     ORDER BY p.post_id DESC
     LIMIT ? OFFSET ?
   `).bind(limit, offset).all();
-  console.log(limit, offset);
 
   return json({
     page,
@@ -52,8 +58,6 @@ export async function onRequestGet({ env, url }) {
     posts: results,
   });
 }
-
-
 
 export async function onRequestPost({ request, env }) {
   const { title, content, user_id } = await request.json();

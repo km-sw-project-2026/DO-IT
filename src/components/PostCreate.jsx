@@ -1,9 +1,14 @@
 import "../css/CommunityInput.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../utils/auth";
 
 function CommunityInput() {
   const navigate = useNavigate();
+
+  // ✅ 로그인 유저 (컴포넌트 안에서 읽기)
+  const me = getCurrentUser();
+  const currentUserId = me?.user_id ?? null;
 
   // ✅ 글 작성 state
   const [title, setTitle] = useState("");
@@ -54,6 +59,13 @@ function CommunityInput() {
   };
 
   const uploadFiles = async () => {
+    // ✅ 로그인 체크
+    if (!currentUserId) {
+      alert("로그인 후 업로드할 수 있어요.");
+      navigate("/login");
+      return;
+    }
+
     if (files.length === 0) {
       setUploadMsg("선택된 파일이 없어요.");
       return;
@@ -73,14 +85,14 @@ function CommunityInput() {
       for (const f of files) {
         const fd = new FormData();
         fd.append("file", f);
-        fd.append("user_id", "1");
+        fd.append("user_id", String(currentUserId));
 
         const resp = await fetch("/api/upload", {
           method: "POST",
           body: fd,
         });
 
-        const data = await resp.json();
+        const data = await resp.json().catch(() => ({}));
         if (!resp.ok) {
           setUploadMsg(data?.message || "업로드 실패");
           return;
@@ -97,13 +109,31 @@ function CommunityInput() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ 로그인 체크
+    if (!currentUserId) {
+      alert("로그인 후 글을 작성할 수 있어요.");
+      navigate("/login");
+      return;
+    }
+
+    const t = title.trim();
+    const c = content.trim();
+    if (!t) {
+      alert("제목을 입력해줘!");
+      return;
+    }
+    if (!c) {
+      alert("내용을 입력해줘!");
+      return;
+    }
+
     const resp = await fetch("/api/posts", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ title, content, user_id: 1 }),
+      body: JSON.stringify({ title: t, content: c, user_id: currentUserId }),
     });
 
-    const data = await resp.json();
+    const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
       alert(data?.message || "작성 실패");
       return;
@@ -114,8 +144,11 @@ function CommunityInput() {
     else navigate("/post");
   };
 
-  const msgClass =
-    uploadMsg.includes("성공") ? "ok" : uploadMsg.includes("중...") ? "loading" : "err";
+  const msgClass = uploadMsg.includes("성공")
+    ? "ok"
+    : uploadMsg.includes("중...")
+    ? "loading"
+    : "err";
 
   return (
     <div className="Community-input">
@@ -149,7 +182,7 @@ function CommunityInput() {
           </div>
         </div>
 
-        {/* ✅ 예쁜 업로드 바 */}
+        {/* ✅ 업로드 바 */}
         <div className="Community-input-footer">
           <div className="upload-bar">
             <div className="upload-actions">
@@ -186,6 +219,7 @@ function CommunityInput() {
               <button type="button" className="upload-btn" onClick={uploadFiles}>
                 업로드
               </button>
+
               <button type="submit" className="Community-input-button">
                 등록
               </button>
@@ -221,7 +255,6 @@ function CommunityInput() {
             {/* 업로드 메시지 */}
             {uploadMsg && <div className={`upload-msg ${msgClass}`}>{uploadMsg}</div>}
           </div>
-
         </div>
       </form>
     </div>

@@ -1,25 +1,22 @@
 import "../css/CommunityView.css";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../utils/auth";
 
 function CommunityView() {
+  const navigate = useNavigate();
+
+  // ✅ 로그인 유저 (컴포넌트 안에서 읽기)
+  const me = getCurrentUser();
+  const currentUserId = me?.user_id ?? null;
+
   const params = useParams();
-  // ✅ 라우터 param이 id일 수도 있고 post_id일 수도 있어서 둘 다 대응
   const rawId = params.id ?? params.post_id ?? params.postId;
+
   const postId = useMemo(() => {
     const n = Number(rawId);
     return Number.isFinite(n) && n > 0 ? n : null;
   }, [rawId]);
-
-  console.log("URL params:", params);
-  console.log("rawId:", rawId, "postId:", postId);
-
-
-
-  // ✅ 숫자로 변환 + 안전 처리
-
-  // ✅ 임시 로그인 유저(나중에 로그인 붙이면 바꾸기)
-  const currentUserId = 1;
 
   const [post, setPost] = useState(null);
 
@@ -27,14 +24,13 @@ function CommunityView() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
-  // ✅ 수정 기능용 state
+  // 수정 기능용 state
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
 
-  // ✅ (선택) 파일 업로드 UI용 state (실제 업로드 API 없으면 UI만 동작)
+  // (선택) 파일 업로드 UI용 state (실제 업로드 API 없으면 UI만 동작)
   const [commentFile, setCommentFile] = useState(null);
-
 
   // ✅ 댓글 불러오기
   const fetchCommentsApi = async (pid) => {
@@ -44,8 +40,8 @@ function CommunityView() {
     return Array.isArray(data) ? data : data.comments || [];
   };
 
-  // ✅ 댓글 작성
-  const createCommentApi = async (pid, content, userId = 1) => {
+  // ✅ 댓글 작성 (기본 userId=1 제거)
+  const createCommentApi = async (pid, content, userId) => {
     const resp = await fetch(`/api/post/${pid}/comments`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -56,16 +52,12 @@ function CommunityView() {
     return data;
   };
 
-
-
   // ✅ 댓글만 불러오는 함수
   const loadComments = async () => {
     if (!postId) return;
     const list = await fetchCommentsApi(postId);
     setComments(Array.isArray(list) ? list : []);
   };
-
-
 
   const load = async () => {
     if (!postId) return;
@@ -74,11 +66,10 @@ function CommunityView() {
     const postJson = await resp.json().catch(() => ({}));
     setPost(postJson);
 
-    await loadComments(postId);
+    await loadComments();
   };
 
   useEffect(() => {
-    // ✅ id가 이상하면 아예 요청 안 보냄
     if (!postId) {
       setPost({ message: "잘못된 게시글 주소입니다." });
       setComments([]);
@@ -102,6 +93,12 @@ function CommunityView() {
 
   // ✅ 댓글 신고 함수 (글 작성자만 가능)
   const reportComment = async (comment) => {
+    if (!currentUserId) {
+      alert("로그인 후 이용하세요.");
+      navigate("/login");
+      return;
+    }
+
     if (post?.user_id !== currentUserId) {
       alert("글 작성자만 신고할 수 있어요.");
       return;
@@ -140,6 +137,12 @@ function CommunityView() {
       return;
     }
 
+    if (!currentUserId) {
+      alert("로그인 후 댓글을 작성할 수 있어요.");
+      navigate("/login");
+      return;
+    }
+
     try {
       await createCommentApi(postId, text, currentUserId);
 
@@ -152,10 +155,15 @@ function CommunityView() {
     }
   };
 
-
   // ✅ 글 수정 저장
   const saveEdit = async () => {
     if (!postId) return;
+
+    if (!currentUserId) {
+      alert("로그인 후 이용하세요.");
+      navigate("/login");
+      return;
+    }
 
     if (!editTitle.trim() || !editContent.trim()) {
       alert("제목/내용을 입력해줘!");
@@ -187,6 +195,12 @@ function CommunityView() {
   const deletePost = async () => {
     if (!postId) return;
 
+    if (!currentUserId) {
+      alert("로그인 후 이용하세요.");
+      navigate("/login");
+      return;
+    }
+
     if (!window.confirm("정말 삭제할까?")) return;
 
     const resp = await fetch(`/api/post/${postId}`, {
@@ -202,7 +216,7 @@ function CommunityView() {
     }
 
     alert("삭제 완료!");
-    window.location.href = "/"; // 네 라우트에 맞게 수정
+    window.location.href = "/post";
   };
 
   if (!post) return <div>Loading...</div>;
@@ -264,14 +278,12 @@ function CommunityView() {
         )}
 
         <div className="comments-section">
-          {post.user_id === currentUserId && (
+          {/* ✅ 글 작성자만 수정/삭제 버튼 */}
+          {currentUserId && post.user_id === currentUserId && (
             <div className="post-action-buttons">
               {!isEditing ? (
                 <>
-                  <button
-                    className="post-btn edit"
-                    onClick={() => setIsEditing(true)}
-                  >
+                  <button className="post-btn edit" onClick={() => setIsEditing(true)}>
                     ✏ 수정
                   </button>
                   <button className="post-btn delete" onClick={deletePost}>
@@ -283,10 +295,7 @@ function CommunityView() {
                   <button className="post-btn save" onClick={saveEdit}>
                     💾 저장
                   </button>
-                  <button
-                    className="post-btn cancel"
-                    onClick={() => setIsEditing(false)}
-                  >
+                  <button className="post-btn cancel" onClick={() => setIsEditing(false)}>
                     취소
                   </button>
                 </>
@@ -304,6 +313,9 @@ function CommunityView() {
                 c.created_at?.replace(" ", "T") + "Z"
               ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
 
+              // ✅ 댓글 닉네임 (API에서 commenter_nickname 내려옴)
+              const nick = c.commenter_nickname ?? "(알 수 없음)";
+
               return (
                 <div
                   key={c.comment_id}
@@ -318,7 +330,8 @@ function CommunityView() {
                   >
                     <div>{c.content}</div>
 
-                    {post.user_id === currentUserId && (
+                    {/* ✅ 글 작성자만 신고 가능 */}
+                    {currentUserId && post.user_id === currentUserId && (
                       <button
                         type="button"
                         onClick={() => reportComment(c)}
@@ -330,7 +343,7 @@ function CommunityView() {
                   </div>
 
                   <small>
-                    {c.commenter_nickname ?? "(알 수 없음)"} · {kstCommentTime}
+                    {nick} · {kstCommentTime}
                   </small>
                 </div>
               );
