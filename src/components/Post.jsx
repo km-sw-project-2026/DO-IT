@@ -6,7 +6,7 @@ import { getCurrentUser } from "../utils/auth";
 function CommunityView() {
   const navigate = useNavigate();
 
-  // ✅ 로그인 유저 (컴포넌트 안에서 읽기)
+  // ✅ 로그인 유저
   const me = getCurrentUser();
   const currentUserId = me?.user_id ?? null;
 
@@ -29,7 +29,7 @@ function CommunityView() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
 
-  // (선택) 파일 업로드 UI용 state (실제 업로드 API 없으면 UI만 동작)
+  // (선택) 파일 업로드 UI용 state
   const [commentFile, setCommentFile] = useState(null);
 
   // ✅ 댓글 불러오기
@@ -40,7 +40,7 @@ function CommunityView() {
     return Array.isArray(data) ? data : data.comments || [];
   };
 
-  // ✅ 댓글 작성 (기본 userId=1 제거)
+  // ✅ 댓글 작성
   const createCommentApi = async (pid, content, userId) => {
     const resp = await fetch(`/api/post/${pid}/comments`, {
       method: "POST",
@@ -50,6 +50,36 @@ function CommunityView() {
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) throw new Error(data?.message || "댓글 작성 실패");
     return data;
+  };
+
+  // ✅ 댓글 삭제 (내 댓글만)
+  const deleteComment = async (commentId) => {
+    if (!postId) return;
+
+    if (!currentUserId) {
+      alert("로그인 후 이용하세요.");
+      navigate("/login");
+      return;
+    }
+
+    if (!window.confirm("댓글을 삭제할까요?")) return;
+
+    const resp = await fetch(`/api/post/${postId}/comments`, {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        comment_id: commentId,
+        user_id: currentUserId,
+      }),
+    });
+
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      alert(data?.message || "댓글 삭제 실패");
+      return;
+    }
+
+    await loadComments();
   };
 
   // ✅ 댓글만 불러오는 함수
@@ -313,7 +343,6 @@ function CommunityView() {
                 c.created_at?.replace(" ", "T") + "Z"
               ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
 
-              // ✅ 댓글 닉네임 (API에서 commenter_nickname 내려옴)
               const nick = c.commenter_nickname ?? "(알 수 없음)";
 
               return (
@@ -330,16 +359,29 @@ function CommunityView() {
                   >
                     <div>{c.content}</div>
 
-                    {/* ✅ 글 작성자만 신고 가능 */}
-                    {currentUserId && post.user_id === currentUserId && (
-                      <button
-                        type="button"
-                        onClick={() => reportComment(c)}
-                        style={{ fontSize: 12 }}
-                      >
-                        신고
-                      </button>
-                    )}
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {/* ✅ 내 댓글만 삭제 가능 */}
+                      {currentUserId && Number(c.user_id) === Number(currentUserId) && (
+                        <button
+                          type="button"
+                          onClick={() => deleteComment(c.comment_id)}
+                          style={{ fontSize: 12 }}
+                        >
+                          삭제
+                        </button>
+                      )}
+
+                      {/* ✅ 글 작성자만 신고 가능 */}
+                      {currentUserId && post.user_id === currentUserId && (
+                        <button
+                          type="button"
+                          onClick={() => reportComment(c)}
+                          style={{ fontSize: 12 }}
+                        >
+                          신고
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <small>

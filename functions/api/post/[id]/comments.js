@@ -10,7 +10,10 @@ function getPostId(params) {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-// GET /api/post/:id/comments
+/**
+ * GET /api/post/:id/comments
+ * - 댓글 목록
+ */
 export async function onRequestGet({ env, params }) {
   const postId = getPostId(params);
   if (!postId) return json({ message: "invalid id" }, 400);
@@ -38,7 +41,11 @@ export async function onRequestGet({ env, params }) {
   }
 }
 
-// POST /api/post/:id/comments
+/**
+ * POST /api/post/:id/comments
+ * body: { content, user_id }
+ * - 댓글 작성
+ */
 export async function onRequestPost({ env, params, request }) {
   const postId = getPostId(params);
   if (!postId) return json({ message: "invalid id" }, 400);
@@ -48,8 +55,9 @@ export async function onRequestPost({ env, params, request }) {
   const userId = Number(body?.user_id);
 
   if (!content) return json({ message: "content required" }, 400);
-  if (!Number.isFinite(userId) || userId <= 0)
+  if (!Number.isFinite(userId) || userId <= 0) {
     return json({ message: "invalid user_id" }, 400);
+  }
 
   try {
     const result = await env.D1_DB.prepare(
@@ -59,6 +67,60 @@ export async function onRequestPost({ env, params, request }) {
       .run();
 
     return json({ ok: true, result }, 201);
+  } catch (e) {
+    return json({ message: e?.message || "server error" }, 500);
+  }
+}
+
+/**
+ * DELETE /api/post/:id/comments
+ * body: { comment_id, user_id }
+ * - 내 댓글만 삭제 가능(작성자 체크)
+ */
+export async function onRequestDelete({ env, params, request }) {
+  const postId = getPostId(params);
+  if (!postId) return json({ message: "invalid id" }, 400);
+
+  const body = await request.json().catch(() => ({}));
+  const commentId = Number(body?.comment_id);
+  const userId = Number(body?.user_id);
+
+  if (!Number.isFinite(commentId) || commentId <= 0) {
+    return json({ message: "invalid comment_id" }, 400);
+  }
+  if (!Number.isFinite(userId) || userId <= 0) {
+    return json({ message: "invalid user_id" }, 400);
+  }
+
+  try {
+    // ✅ 댓글 존재 + 같은 post인지 + 삭제 안 됨 + 작성자 확인
+    const row = await env.D1_DB.prepare(
+      `SELECT user_id
+       FROM community_comment
+       WHERE comment_id = ?
+         AND post_id = ?
+         AND deleted_at IS NULL
+       LIMIT 1`
+    )
+      .bind(commentId, postId)
+      .first();
+
+    if (!row) return json({ message: "not found" }, 404);
+
+    if (Number(row.user_id) !== userId) {
+      return json({ message: "forbidden" }, 403);
+    }
+
+    // ✅ 소프트 삭제
+    await env.D1_DB.prepare(
+      `UPDATE community_comment
+       SET deleted_at = CURRENT_TIMESTAMP
+       WHERE comment_id = ?`
+    )
+      .bind(commentId)
+      .run();
+
+    return json({ ok: true }, 200);
   } catch (e) {
     return json({ message: e?.message || "server error" }, 500);
   }
