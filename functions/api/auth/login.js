@@ -93,13 +93,39 @@ export async function onRequestPost({ request, env }) {
 
     // ✅ 유저 조회
     const user = await env.D1_DB.prepare(
-      `SELECT user_id, login_id, email, password, nickname, profile_image, role
-       FROM user
-       WHERE login_id = ?
-       LIMIT 1`
+      `SELECT user_id, login_id, email, password, nickname, profile_image, role, banned_until
+   FROM "user"
+   WHERE login_id = ?
+   LIMIT 1`
     )
       .bind(login_id)
       .first();
+
+    // ❗ 아이디 존재 체크 먼저 (없으면 바로 에러)
+    if (!user) {
+      return json({ message: "아이디가 올바르지 않습니다." }, 401, headers);
+    }
+
+    // ✅ 차단 체크 (← 네가 붙인 코드 위치 여기!)
+    if (user?.banned_until) {
+      const until = new Date(String(user.banned_until).replace(" ", "T") + "Z");
+      const now = new Date();
+
+      if (!Number.isNaN(until.getTime()) && until > now) {
+        return json(
+          {
+            message: `차단된 계정입니다. (${until.toLocaleString("ko-KR", {
+              timeZone: "Asia/Seoul",
+            })} 까지)`,
+            code: "BANNED",
+            banned_until: user.banned_until,
+          },
+          403,
+          headers
+        );
+      }
+    }
+
 
     // 아이디가 없거나 비번이 틀리면 같은 메시지(보안상)
     if (!user) {

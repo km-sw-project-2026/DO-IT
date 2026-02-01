@@ -66,30 +66,35 @@ export default function AdminPage() {
 
 
     const banUser = async () => {
-        const target_user_id = Number(banUserId);
-        if (!target_user_id) return alert("차단할 user_id를 입력하세요.");
+        const target = String(banUserId).trim();
+        if (!target) return alert("차단할 유저의 user_id(숫자) 또는 아이디를 입력하세요.");
 
         const resp = await fetch("/api/admin/ban", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, target_user_id, days: banDays }),
+            body: JSON.stringify({
+                user_id: adminId,
+                target,        // ✅ 숫자든 문자열이든 그대로
+                days: banDays,
+            }),
         });
+
         const data = await resp.json().catch(() => ({}));
         if (!resp.ok) return alert(data?.message || "차단 실패");
-        alert("차단 완료!");
+        alert(data?.message || "차단 완료!");
     };
 
     const unbanUser = async () => {
-        const target_user_id = Number(banUserId);
-        if (!target_user_id) return alert("해제할 user_id를 입력하세요.");
+        const target = String(banUserId).trim();
+        if (!target) return alert("해제할 유저의 user_id(숫자) 또는 아이디를 입력하세요.");
 
         const resp = await fetch("/api/admin/ban", {
-            method: "POST", // ✅ PUT ❌ POST로 통일
+            method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
                 user_id: adminId,
-                target_user_id,
-                days: 0, // ✅ 0이면 해제
+                target,
+                days: 0,
             }),
         });
 
