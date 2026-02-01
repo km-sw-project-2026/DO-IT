@@ -7,13 +7,15 @@ function CommunityPost({ post }) {
   return (
     <div className="Community-post">
       <div className="Community-post-content">
-        <h4>{post.title}</h4>
+        <Link to={`/post/${post.post_id}`} className="Community-post-link">
+          <h4>{post.title}</h4>
 
-        <div className="Community-content">
-          <span className="view">{post.view_count || 0}</span>
-          <span className="date">{kstDate}</span>
-          <span className="Comment">{post.comment_count || 0}</span>
-        </div>
+          <div className="Community-content">
+            <span className="view">{post.view_count || 0}</span>
+            <span className="date">{kstDate}</span>
+            <span className="Comment">{post.comment_count || 0}</span>
+          </div>
+        </Link>
       </div>
     </div>
   );
