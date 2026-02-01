@@ -7,9 +7,9 @@
 	"name": "do-it",
 	"main": "worker/index.js",
 	"compatibility_date": "2025-09-27",
-	// "assets": {
-	// 	"not_found_handling": "single-page-application"
-	// },
+	"assets": {
+		"not_found_handling": "single-page-application"
+	},
 	"observability": {
 		"enabled": true
 	},
