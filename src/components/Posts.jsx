@@ -9,6 +9,10 @@ function Community() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
+  const userData = useMemo(() => {
+    return localStorage.getItem("user") || sessionStorage.getItem("user");
+  }, []);
+
   // ✅ 페이지네이션 state 추가
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -152,11 +156,14 @@ function Community() {
             </button>
           </div>
 
-          <Link to={"/post/new"}>
-            <button className="write-button">
-              <img src="./images/icon/pan.png" alt="" />
-            </button>
-          </Link>
+          {
+            userData &&
+            <Link to={"/post/new"}>
+              <button className="write-button">
+                <img src="./images/icon/pan.png" alt="" />
+              </button>
+            </Link>
+          }
         </div>
       </footer>
     </section>

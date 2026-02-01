@@ -29,11 +29,8 @@
   color: #000;
   margin-bottom: 40px;
 }
-.login-page-content form {
-  width: 100%;
-  text-align: center;
-  border: 1px solid #000
-  
+.login-page-contents{
+  width: 638px;
 }
 .login-page-content input {
   width: 638px;
