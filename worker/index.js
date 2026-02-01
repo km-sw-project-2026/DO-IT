@@ -6,6 +6,14 @@ import * as postById from "../functions/api/post/[id].js";
 // ✅ 댓글 목록/작성
 import * as comments from "../functions/api/post/[id]/comments.js";
 
+// ✅ 회원가입 API
+import * as signup from "../functions/api/auth/signup.js";
+
+// ✅ 아이디 중복 확인 API
+import * as idCheck from "../functions/api/auth/id-ckack.js";
+
+//  ✅ 로그인 API
+import * as login from "../functions/api/auth/login.js";
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -73,6 +81,50 @@ export default {
         headers: { "content-type": "application/json" },
       });
     }
+    // ---------------------------
+    // /api/signup
+    // ---------------------------
+    if (path === "/api/signup") {
+      if (request.method === "OPTIONS") {
+        return signup.onRequestOptions({ request });
+      }
+      if (request.method === "POST") {
+        return signup.onRequestPost({ request, env });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/id-check
+    // ---------------------------
+    if (path === "/api/id-check") {
+      if (request.method === "OPTIONS") {
+        return idCheck.onRequestOptions({ request });
+      }
+      if (request.method === "POST") {
+        return idCheck.onRequestPost({ request, env });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/login
+    // ---------------------------
+    if (path === "/api/login") {
+      if (request.method === "OPTIONS") return login.onRequestOptions({ request });
+      if (request.method === "POST") return login.onRequestPost({ request, env });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
 
     // 여기까지 오면 API 아닌 요청 → SPA/정적 파일은 기존 방식대로면 assets로 넘겨야 하는데
     // 너는 지금 404만 주고 있었음.
