@@ -147,8 +147,8 @@ function CommunityInput() {
   const msgClass = uploadMsg.includes("성공")
     ? "ok"
     : uploadMsg.includes("중...")
-    ? "loading"
-    : "err";
+      ? "loading"
+      : "err";
 
   return (
     <div className="Community-input">
@@ -166,10 +166,14 @@ function CommunityInput() {
           <div className="Community-input-title">
             <input
               type="text"
-              placeholder="제목을 입력하세요."
+              placeholder="제목을 입력하세요. (최대 20자)"
               value={title}
+              maxLength={20}
               onChange={(e) => setTitle(e.target.value)}
             />
+            <div style={{ fontSize: 12, color: "#666", textAlign: "right" }}>
+              {title.length} / 20
+            </div>
           </div>
 
           <div className="Community-input-content">

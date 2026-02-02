@@ -12,7 +12,7 @@ function getPostId(params) {
 
 /**
  * GET /api/post/:id/comments
- * - 댓글 목록
+ * - 댓글/대댓글 목록
  */
 export async function onRequestGet({ env, params }) {
   const postId = getPostId(params);
@@ -24,13 +24,18 @@ export async function onRequestGet({ env, params }) {
          c.comment_id,
          c.post_id,
          c.user_id,
+         c.parent_id,
          c.content,
          c.created_at,
          u.nickname AS commenter_nickname
        FROM community_comment c
        LEFT JOIN "user" u ON u.user_id = c.user_id
-       WHERE c.post_id = ? AND c.deleted_at IS NULL
-       ORDER BY c.created_at ASC`
+       WHERE c.post_id = ?
+         AND c.deleted_at IS NULL
+       ORDER BY
+          COALESCE(c.parent_id, c.comment_id) ASC,
+          CASE WHEN c.parent_id IS NULL THEN 0 ELSE 1 END ASC,
+          c.created_at ASC`
     )
       .bind(postId)
       .all();
@@ -43,8 +48,9 @@ export async function onRequestGet({ env, params }) {
 
 /**
  * POST /api/post/:id/comments
- * body: { content, user_id }
- * - 댓글 작성
+ * body: { content, user_id, parent_id? }
+ * - parent_id 없으면 일반 댓글
+ * - parent_id 있으면 대댓글
  */
 export async function onRequestPost({ env, params, request }) {
   const postId = getPostId(params);
@@ -54,16 +60,45 @@ export async function onRequestPost({ env, params, request }) {
   const content = String(body?.content ?? "").trim();
   const userId = Number(body?.user_id);
 
+  // ✅ parent_id는 선택
+  const parentIdRaw = body?.parent_id;
+  const parentId =
+    parentIdRaw === null || parentIdRaw === undefined || parentIdRaw === ""
+      ? null
+      : Number(parentIdRaw);
+
   if (!content) return json({ message: "content required" }, 400);
   if (!Number.isFinite(userId) || userId <= 0) {
     return json({ message: "invalid user_id" }, 400);
   }
+  if (parentId !== null && (!Number.isFinite(parentId) || parentId <= 0)) {
+    return json({ message: "invalid parent_id" }, 400);
+  }
 
   try {
+    // ✅ parentId가 있으면: "해당 부모댓글이 같은 post에 존재하는지" 확인
+    if (parentId !== null) {
+      const parent = await env.D1_DB.prepare(
+        `SELECT comment_id
+         FROM community_comment
+         WHERE comment_id = ?
+           AND post_id = ?
+           AND deleted_at IS NULL
+         LIMIT 1`
+      )
+        .bind(parentId, postId)
+        .first();
+
+      if (!parent) {
+        return json({ message: "parent comment not found" }, 404);
+      }
+    }
+
     const result = await env.D1_DB.prepare(
-      "INSERT INTO community_comment (post_id, user_id, content) VALUES (?, ?, ?)"
+      `INSERT INTO community_comment (post_id, user_id, content, parent_id)
+       VALUES (?, ?, ?, ?)`
     )
-      .bind(postId, userId, content)
+      .bind(postId, userId, content, parentId)
       .run();
 
     return json({ ok: true, result }, 201);
@@ -75,7 +110,7 @@ export async function onRequestPost({ env, params, request }) {
 /**
  * DELETE /api/post/:id/comments
  * body: { comment_id, user_id }
- * - 내 댓글만 삭제 가능(작성자 체크)
+ * - 내 댓글만 삭제 가능(작성자 체크) + ADMIN 가능
  */
 export async function onRequestDelete({ env, params, request }) {
   const postId = getPostId(params);
@@ -93,7 +128,6 @@ export async function onRequestDelete({ env, params, request }) {
   }
 
   try {
-    // ✅ 댓글 존재 + 같은 post인지 + 삭제 안 됨 + 작성자 확인을 위한 row
     const row = await env.D1_DB.prepare(
       `SELECT user_id
        FROM community_comment
@@ -107,7 +141,6 @@ export async function onRequestDelete({ env, params, request }) {
 
     if (!row) return json({ message: "not found" }, 404);
 
-    // ✅ 요청자(userId)가 ADMIN인지 확인
     const requester = await env.D1_DB.prepare(
       `SELECT role
        FROM "user"
@@ -120,12 +153,10 @@ export async function onRequestDelete({ env, params, request }) {
     const isAdmin = requester?.role === "ADMIN";
     const isOwner = Number(row.user_id) === userId;
 
-    // ✅ 작성자도 아니고 관리자도 아니면 금지
     if (!isOwner && !isAdmin) {
       return json({ message: "forbidden" }, 403);
     }
 
-    // ✅ 소프트 삭제
     await env.D1_DB.prepare(
       `UPDATE community_comment
        SET deleted_at = CURRENT_TIMESTAMP

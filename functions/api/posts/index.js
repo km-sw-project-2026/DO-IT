@@ -123,7 +123,13 @@ export async function onRequestGet({ env, url }) {
 
 export async function onRequestPost({ request, env }) {
   const { title, content, user_id } = await request.json();
+  if (!title || title.length > 20) {
+    return json({ message: "제목은 20자 이내로 입력해주세요." }, 400);
+  }
 
+  if (!content) {
+    return json({ message: "내용을 입력해주세요." }, 400);
+  }
   const result = await env.D1_DB.prepare(`
     INSERT INTO community_post(title, content, user_id)
     VALUES (?, ?, ?)

@@ -24,6 +24,10 @@ function CommunityView() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
+  // ✅ 대댓글 입력창 상태
+  const [replyOpen, setReplyOpen] = useState(null); // comment_id
+  const [replyText, setReplyText] = useState("");
+
   // 수정 기능용 state
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
@@ -40,19 +44,24 @@ function CommunityView() {
     return Array.isArray(data) ? data : data.comments || [];
   };
 
-  // ✅ 댓글 작성
-  const createCommentApi = async (pid, content, userId) => {
+  // ✅ 댓글/대댓글 작성 (parent_id 옵션)
+  const createCommentApi = async (pid, content, userId, parentId = null) => {
     const resp = await fetch(`/api/post/${pid}/comments`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ content, user_id: userId }),
+      body: JSON.stringify({
+        content,
+        user_id: userId,
+        parent_id: parentId, // ✅ 대댓글이면 comment_id 넣음
+      }),
     });
+
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) throw new Error(data?.message || "댓글 작성 실패");
     return data;
   };
 
-  // ✅ 댓글 삭제 (내 댓글만)
+  // ✅ 댓글 삭제 (내 댓글 or 관리자)
   const deleteComment = async (commentId) => {
     if (!postId) return;
 
@@ -79,9 +88,6 @@ function CommunityView() {
         alert(data?.message || "댓글 삭제 실패");
         return;
       }
-
-      // 선택: 알림
-      // alert("댓글 삭제 완료!");
 
       await loadComments();
     } catch (e) {
@@ -165,7 +171,7 @@ function CommunityView() {
     alert("신고 접수 완료!");
   };
 
-  // ✅ 댓글 작성
+  // ✅ 최상위 댓글 작성
   const addComment = async () => {
     const text = newComment.trim();
     if (!text) return;
@@ -182,7 +188,7 @@ function CommunityView() {
     }
 
     try {
-      await createCommentApi(postId, text, currentUserId);
+      await createCommentApi(postId, text, currentUserId, null);
 
       setNewComment("");
       setCommentFile(null);
@@ -190,6 +196,27 @@ function CommunityView() {
       await loadComments();
     } catch (e) {
       alert(e?.message || "댓글 작성 실패");
+    }
+  };
+
+  // ✅ 대댓글 작성
+  const addReply = async (parentCommentId) => {
+    const text = replyText.trim();
+    if (!text) return;
+
+    if (!currentUserId) {
+      alert("로그인 후 답글을 작성할 수 있어요.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await createCommentApi(postId, text, currentUserId, parentCommentId);
+      setReplyText("");
+      setReplyOpen(null);
+      await loadComments();
+    } catch (e) {
+      alert(e?.message || "답글 작성 실패");
     }
   };
 
@@ -257,13 +284,158 @@ function CommunityView() {
     window.location.href = "/post";
   };
 
+  // ✅ 댓글 트리 만들기 (parent_id 기준)
+  const commentTree = useMemo(() => {
+    const map = new Map();
+    const roots = [];
+
+    for (const c of comments) {
+      map.set(c.comment_id, { ...c, children: [] });
+    }
+
+    for (const c of comments) {
+      const node = map.get(c.comment_id);
+      const parentId = c.parent_id ?? null;
+      if (parentId && map.has(parentId)) {
+        map.get(parentId).children.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+
+    // children 정렬 (created_at ASC)
+    const sortRec = (arr) => {
+      arr.sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+      for (const n of arr) sortRec(n.children);
+    };
+    sortRec(roots);
+
+    return roots;
+  }, [comments]);
+
   if (!post) return <div>Loading...</div>;
   if (post?.message) return <div>Error: {post.message}</div>;
 
   // 게시글 시간 KST
-  const kstTime = new Date(
-    post.created_at?.replace(" ", "T") + "Z"
-  ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+  const kstTime = new Date(post.created_at?.replace(" ", "T") + "Z").toLocaleString(
+    "ko-KR",
+    { timeZone: "Asia/Seoul" }
+  );
+
+  // ✅ 댓글 한 줄바꿈 보이게
+  const renderTextWithBreaks = (text) => {
+    const s = String(text ?? "");
+    return s.split("\n").map((line, idx) => (
+      <span key={idx}>
+        {line}
+        <br />
+      </span>
+    ));
+  };
+
+  // ✅ 댓글 렌더(재귀)
+  const renderCommentNode = (c, depth = 0) => {
+    const kstCommentTime = new Date(
+      c.created_at?.replace(" ", "T") + "Z"
+    ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+
+    const nick = c.commenter_nickname ?? "(알 수 없음)";
+    const canDelete =
+      currentUserId &&
+      (Number(c.user_id) === Number(currentUserId) || me?.role === "ADMIN");
+
+    return (
+      <div
+        key={c.comment_id}
+        className={`comment-item ${depth > 0 ? "reply-item" : ""}`}
+        style={{
+          borderBottom: depth === 0 ? "1px solid #eee" : "none",
+          padding: "10px 0",
+          marginLeft: depth * 22, // ✅ 들여쓰기
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+          <div className="comment-content">{renderTextWithBreaks(c.content)}</div>
+
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {/* ✅ 답글 버튼 (depth 0일 때만, 원하면 depth 1까지도 허용 가능) */}
+            {currentUserId && depth === 0 && (
+              <button
+                type="button"
+                style={{ fontSize: 12 }}
+                onClick={() => {
+                  setReplyOpen((prev) => (prev === c.comment_id ? null : c.comment_id));
+                  setReplyText("");
+                }}
+              >
+                답글
+              </button>
+            )}
+
+            {/* ✅ 삭제 (내 댓글 or 관리자) */}
+            {canDelete && (
+              <button
+                type="button"
+                onClick={() => deleteComment(c.comment_id)}
+                style={{ fontSize: 12 }}
+              >
+                삭제
+              </button>
+            )}
+
+            {/* ✅ 신고 (글 작성자만) */}
+            {currentUserId && Number(post.user_id) === Number(currentUserId) && (
+              <button
+                type="button"
+                onClick={() => reportComment(c)}
+                style={{ fontSize: 12 }}
+              >
+                신고
+              </button>
+            )}
+          </div>
+        </div>
+
+        <small>
+          {nick} · {kstCommentTime}
+        </small>
+
+        {/* ✅ 답글 입력창 */}
+        {replyOpen === c.comment_id && (
+          <div style={{ marginTop: 8, display: "grid", gap: 6 }}>
+            <textarea
+              placeholder="답글을 입력하세요"
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              rows={3}
+              style={{ width: "100%", padding: 8 }}
+            />
+            <div style={{ display: "flex", gap: 8 }}>
+              <button type="button" onClick={() => addReply(c.comment_id)}>
+                답글 등록
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setReplyOpen(null);
+                  setReplyText("");
+                }}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ children 렌더 */}
+        {c.children?.length > 0 && (
+          <div style={{ marginTop: 8 }}>
+            {c.children.map((child) => renderCommentNode(child, depth + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="Community-view">
@@ -305,7 +477,9 @@ function CommunityView() {
 
       <div className="Community-view-main">
         {!isEditing ? (
-          <p className="post-content">{post.content}</p>
+          <p className="post-content" style={{ whiteSpace: "pre-wrap" }}>
+            {post.content}
+          </p>
         ) : (
           <textarea
             value={editContent}
@@ -344,11 +518,7 @@ function CommunityView() {
                   </>
                 ) : (
                   <>
-                    <button
-                      type="button"
-                      className="post-btn save"
-                      onClick={saveEdit}
-                    >
+                    <button type="button" className="post-btn save" onClick={saveEdit}>
                       💾 저장
                     </button>
 
@@ -364,68 +534,14 @@ function CommunityView() {
               </div>
             )}
 
-
           <h3>댓글</h3>
 
           <div className="comments-list">
-            {comments.length === 0 && <p>댓글이 없습니다.</p>}
-
-            {comments.map((c) => {
-              const kstCommentTime = new Date(
-                c.created_at?.replace(" ", "T") + "Z"
-              ).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
-
-              const nick = c.commenter_nickname ?? "(알 수 없음)";
-
-              return (
-                <div
-                  key={c.comment_id}
-                  style={{ borderBottom: "1px solid #eee", padding: "10px 0" }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 8,
-                    }}
-                  >
-                    <div className="comment-content">{c.content}</div>
-
-                    <div style={{ display: "flex", gap: 8 }}>
-                      {/* ✅ 내 댓글 OR 관리자만 삭제 가능 */}
-                      {currentUserId &&
-                        (Number(c.user_id) === Number(currentUserId) || me?.role === "ADMIN") && (
-                          <button
-                            type="button"
-                            onClick={() => deleteComment(c.comment_id)}
-                            style={{ fontSize: 12 }}
-                          >
-                            삭제
-                          </button>
-                        )}
-
-                      {/* ✅ 글 작성자만 신고 가능 */}
-                      {currentUserId && post.user_id === currentUserId && (
-                        <button
-                          type="button"
-                          onClick={() => reportComment(c)}
-                          style={{ fontSize: 12 }}
-                        >
-                          신고
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <small>
-                    {nick} · {kstCommentTime}
-                  </small>
-                </div>
-              );
-            })}
-
+            {commentTree.length === 0 && <p>댓글이 없습니다.</p>}
+            {commentTree.map((c) => renderCommentNode(c, 0))}
           </div>
 
+          {/* ✅ 최상위 댓글 입력 */}
           <div className="add-comment">
             <textarea
               placeholder="댓글을 입력하세요"
