@@ -29,6 +29,7 @@ export async function onRequestGet({ env, url }) {
       p.view_count,
       p.created_at,
       p.user_id,
+      p.is_notice,
 
       -- ✅ 작성자 정보
       u.nickname AS author_nickname,

@@ -13,7 +13,7 @@ function Community() {
     return localStorage.getItem("user") || sessionStorage.getItem("user");
   }, []);
 
-  // ✅ 페이지네이션 state 추가
+  // ✅ 페이지네이션 state
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -23,18 +23,14 @@ function Community() {
         setLoading(true);
         setErrorMsg("");
 
-        // ✅ page/limit 적용
         const resp = await fetch(`/api/posts?page=${page}&limit=10`);
         if (!resp.ok) throw new Error("failed to fetch posts");
         const data = await resp.json();
 
-        // ✅ 이제 API 응답이 { posts, total_pages, ... } 형태
         const list = Array.isArray(data) ? data : (data?.posts ?? []);
         setPosts(list);
 
-        // total_pages는 객체일 때만 있으니까 없으면 1
         setTotalPages(Array.isArray(data) ? 1 : (data?.total_pages ?? 1));
-
       } catch (e) {
         console.error(e);
         setErrorMsg("게시글을 불러오지 못했습니다.");
@@ -48,6 +44,7 @@ function Community() {
     getPosts();
   }, [page]);
 
+  // ✅ 검색 필터
   const filteredPosts = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     if (!q) return posts;
@@ -59,6 +56,20 @@ function Community() {
     });
   }, [posts, keyword]);
 
+  // ✅ 공지/일반 분리(검색 결과에서도 공지 먼저 보여주기)
+  const { noticePosts, normalPosts } = useMemo(() => {
+    const list = filteredPosts || [];
+    const notice = [];
+    const normal = [];
+
+    for (const p of list) {
+      if (Number(p?.is_notice) === 1) notice.push(p);
+      else normal.push(p);
+    }
+
+    return { noticePosts: notice, normalPosts: normal };
+  }, [filteredPosts]);
+
   const formatDate = (value) => {
     if (!value) return "-";
     const d = new Date(value);
@@ -66,7 +77,7 @@ function Community() {
     return d.toLocaleDateString("ko-KR");
   };
 
-  // ✅ 페이지 번호(10개 단위로 보여주기) 계산
+  // ✅ 페이지 번호(10개 단위)
   const pageNumbers = useMemo(() => {
     const groupStart = Math.floor((page - 1) / 10) * 10 + 1;
     const groupEnd = Math.min(totalPages, groupStart + 9);
@@ -108,18 +119,40 @@ function Community() {
           <p style={{ padding: "12px" }}>게시글이 없습니다.</p>
         )}
 
-        {!loading &&
-          !errorMsg &&
-          filteredPosts.map((post) => (
-            <CommunityPost
-              key={post.post_id}
-              post={post}
-              formatDate={formatDate}
-            />
-          ))}
+        {/* ✅ 공지/고정 섹션: 있을 때만 표시 */}
+        {!loading && !errorMsg && noticePosts.length > 0 && (
+          <div className="notice-section">
+            <div className="notice-section-head">
+              <span className="notice-title">📌 공지(상단 고정)</span>
+              <span className="notice-sub">관리자가 고정한 글이에요</span>
+            </div>
+
+            <div className="notice-list">
+              {noticePosts.map((post) => (
+                <div key={post.post_id} className="notice-row">
+                  <span className="badge-notice">공지</span>
+
+                  {/* ✅ 기존 CommunityPost 재사용 (wrapper로 강조만 줌) */}
+                  <div className="notice-post">
+                    <CommunityPost post={post} formatDate={formatDate} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ✅ 일반 글 목록 */}
+        {!loading && !errorMsg && normalPosts.length > 0 && (
+          <div className="normal-section">
+            {normalPosts.map((post) => (
+              <CommunityPost key={post.post_id} post={post} formatDate={formatDate} />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* ✅ 페이지네이션 동작하도록 교체 */}
+      {/* ✅ 페이지네이션 */}
       <footer className="Community-footer">
         <div className="Community-footer-content">
           <div className="page-number">
@@ -156,14 +189,13 @@ function Community() {
             </button>
           </div>
 
-          {
-            userData &&
+          {userData && (
             <Link to={"/post/new"}>
               <button className="write-button">
                 <img src="./images/icon/pan.png" alt="" />
               </button>
             </Link>
-          }
+          )}
         </div>
       </footer>
     </section>
