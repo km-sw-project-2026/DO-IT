@@ -389,7 +389,7 @@ function CommunityView() {
                       gap: 8,
                     }}
                   >
-                    <div>{c.content}</div>
+                    <div className="comment-content">{c.content}</div>
 
                     <div style={{ display: "flex", gap: 8 }}>
                       {/* ✅ 내 댓글 OR 관리자만 삭제 가능 */}
