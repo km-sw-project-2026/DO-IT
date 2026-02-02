@@ -27,8 +27,8 @@ export async function onRequestGet({ env, params }) {
          c.parent_id,
          c.content,
          c.created_at,
-         u.nickname AS commenter_nickname
-         u.role AS commenter_role  
+         u.nickname AS commenter_nickname,
+         u.role AS commenter_role
        FROM community_comment c
        LEFT JOIN "user" u ON u.user_id = c.user_id
        WHERE c.post_id = ?
