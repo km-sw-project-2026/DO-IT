@@ -44,23 +44,25 @@ function CommunityView() {
     return Array.isArray(data) ? data : data.comments || [];
   };
 
-  // ✅ 댓글/대댓글 작성 (parent_id 옵션)
   const createCommentApi = async (pid, content, userId, parentId = null) => {
     const resp = await fetch(`/api/post/${pid}/comments`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         content,
-        user_id: userId,
-        parent_id: parentId, // ✅ 대댓글이면 comment_id 넣음
+        user_id: Number(userId),
+        parent_id: parentId === null ? null : Number(parentId),
       }),
     });
 
     const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) throw new Error(data?.message || "댓글 작성 실패");
+
+    // ✅ 여기 로그가 제일 중요
+    console.log("댓글 등록 응답:", resp.status, data);
+
+    if (!resp.ok) throw new Error(data?.message || `댓글 작성 실패 (${resp.status})`);
     return data;
   };
-
   // ✅ 댓글 삭제 (내 댓글 or 관리자)
   const deleteComment = async (commentId) => {
     if (!postId) return;
@@ -176,42 +178,30 @@ function CommunityView() {
     const text = newComment.trim();
     if (!text) return;
 
-    if (!postId) {
-      alert("잘못된 게시글 id");
-      return;
-    }
-
-    if (!currentUserId) {
-      alert("로그인 후 댓글을 작성할 수 있어요.");
-      navigate("/login");
-      return;
-    }
+    if (!postId) return alert("postId 없음");
+    if (!currentUserId) return alert("로그인 후 이용");
 
     try {
-      await createCommentApi(postId, text, currentUserId, null);
-
+      await createCommentApi(postId, text, Number(currentUserId), null);
       setNewComment("");
-      setCommentFile(null);
-
       await loadComments();
     } catch (e) {
       alert(e?.message || "댓글 작성 실패");
     }
   };
 
+
+
   // ✅ 대댓글 작성
   const addReply = async (parentCommentId) => {
     const text = replyText.trim();
     if (!text) return;
 
-    if (!currentUserId) {
-      alert("로그인 후 답글을 작성할 수 있어요.");
-      navigate("/login");
-      return;
-    }
+    if (!postId) return alert("postId 없음");
+    if (!currentUserId) return alert("로그인 후 이용");
 
     try {
-      await createCommentApi(postId, text, currentUserId, parentCommentId);
+      await createCommentApi(postId, text, Number(currentUserId), Number(parentCommentId));
       setReplyText("");
       setReplyOpen(null);
       await loadComments();
@@ -428,7 +418,7 @@ function CommunityView() {
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 type="button"
-                onClick={() => submitReply(c.comment_id)} // 네가 만든 대댓글 등록 함수명에 맞춰
+                onClick={() => addReply(c.comment_id)} // 네가 만든 대댓글 등록 함수명에 맞춰
               >
                 대댓글 등록
               </button>
