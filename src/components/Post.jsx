@@ -442,7 +442,7 @@ function CommunityView() {
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 type="button"
-                onClick={() => addReply(c.comment.id)}
+                onClick={() => addReply(c.comment_id)}
                 disabled={isReplySubmitting}
               >
                 {isReplySubmitting ? "작성 중..." : "답글 작성"}
