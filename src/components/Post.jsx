@@ -406,10 +406,14 @@ function CommunityView() {
             <textarea
               placeholder="답글을 입력하세요"
               value={replyText}
+              maxLength={200}
               onChange={(e) => setReplyText(e.target.value)}
               rows={3}
               style={{ width: "100%", padding: 8 }}
             />
+            <div style={{ fontSize: 12, color: "#666", textAlign: "right" }}>
+              {newComment.length} / 200
+            </div>
             <div style={{ display: "flex", gap: 8 }}>
               <button type="button" onClick={() => addReply(c.comment_id)}>
                 답글 등록
@@ -546,8 +550,12 @@ function CommunityView() {
             <textarea
               placeholder="댓글을 입력하세요"
               value={newComment}
+              maxLength={200}
               onChange={(e) => setNewComment(e.target.value)}
             />
+            <div style={{ fontSize: 12, color: "#666", textAlign: "right" }}>
+              {newComment.length} / 200
+            </div>
 
             <div className="file-upload-form">
               <input

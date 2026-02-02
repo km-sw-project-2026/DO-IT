@@ -127,8 +127,8 @@ export async function onRequestPost({ request, env }) {
     return json({ message: "제목은 20자 이내로 입력해주세요." }, 400);
   }
 
-  if (!content) {
-    return json({ message: "내용을 입력해주세요." }, 400);
+  if (!content || content.length > 500) {
+    return json({ message: "내용은 500자 이내로 입력해주세요." }, 400);
   }
   const result = await env.D1_DB.prepare(`
     INSERT INTO community_post(title, content, user_id)

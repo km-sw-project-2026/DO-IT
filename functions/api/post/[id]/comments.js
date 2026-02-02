@@ -67,7 +67,9 @@ export async function onRequestPost({ env, params, request }) {
       ? null
       : Number(parentIdRaw);
 
-  if (!content) return json({ message: "content required" }, 400);
+  if (!content || content.length > 200) {
+    return json({ message: "댓글은 200자 이내로 입력해주세요." }, 400);
+  }
   if (!Number.isFinite(userId) || userId <= 0) {
     return json({ message: "invalid user_id" }, 400);
   }

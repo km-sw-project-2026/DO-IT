@@ -179,10 +179,14 @@ function CommunityInput() {
           <div className="Community-input-content">
             <textarea
               className="Community-input-textarea"
-              placeholder="내용을 입력하세요."
+              placeholder="내용을 입력하세요. (최대 500자)"
               value={content}
+              maxLength={500}
               onChange={(e) => setContent(e.target.value)}
             />
+            <div style={{ fontSize: 12, color: "#666", textAlign: "right" }}>
+              {content.length} / 500
+            </div>
           </div>
         </div>
 
