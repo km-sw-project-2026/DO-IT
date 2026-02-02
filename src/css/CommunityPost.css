@@ -29,3 +29,26 @@
   text-align: center;
   display: block;
 }
+.post-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.post-writer {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* 관리자 뱃지 */
+.badge-admin {
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  background: #e53935;
+  color: white;
+  flex-shrink: 0;
+}

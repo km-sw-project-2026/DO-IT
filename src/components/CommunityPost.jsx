@@ -12,7 +12,18 @@ function CommunityPost({ post }) {
         className="Community-post-content"
         style={{ textDecoration: "none", color: "inherit" }}
       >
-        <h4>{post.title}</h4>
+        {/* ✅ 제목 + 관리자 뱃지 */}
+        <h4 className="post-title">
+          {post.author_role === "ADMIN" && (
+            <span className="badge-admin">ADMIN</span>
+          )}
+          {post.title}
+        </h4>
+
+        {/* ✅ 작성자 표시 */}
+        <div className="post-writer">
+          {post.author_nickname ?? "(알 수 없음)"}
+        </div>
 
         <div className="Community-content">
           <span className="view">{post.view_count || 0}</span>

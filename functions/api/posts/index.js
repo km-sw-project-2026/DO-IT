@@ -90,6 +90,7 @@ export async function onRequestGet({ env, url }) {
       -- ✅ 작성자 정보
       u.nickname AS author_nickname,
       u.profile_image AS author_profile_image,
+      u.role AS author_role, 
 
       -- ✅ 댓글 수
       (

@@ -36,6 +36,7 @@ export async function onRequestGet({ env, params }) {
        p.updated_at,
        p.user_id,
        u.nickname AS author_nickname
+       u.role AS author_role   
      FROM community_post p
      LEFT JOIN "user" u ON u.user_id = p.user_id
      WHERE p.post_id = ? AND p.deleted_at IS NULL`

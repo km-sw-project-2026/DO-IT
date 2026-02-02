@@ -411,17 +411,10 @@ function CommunityView() {
         </div>
 
         <small>
-          <span
-            style={{
-              color: c.commenter_role === "ADMIN" ? "red" : "inherit",
-              fontWeight: c.commenter_role === "ADMIN" ? "700" : "400",
-            }}
-          >
-            {nick}
-            {c.commenter_role === "ADMIN" && "[ADMIN]"}
-          </span>
-          {" · "}
-          {kstCommentTime}
+          {c.commenter_role === "ADMIN" && (
+            <span className="badge-admin">ADMIN</span>
+          )}
+          {nick} · {kstCommentTime}
         </small>
 
         {/* ✅ 대댓글 입력창 */}
@@ -502,14 +495,11 @@ function CommunityView() {
             <tbody>
               <tr>
                 <th>작성자</th>
-                <td
-                  style={{
-                    color: post.author_role === "ADMIN" ? "red" : "inherit",
-                    fontWeight: post.author_role === "ADMIN" ? "700" : "400",
-                  }}
-                >
-                  {post.author_nickname}
-                  {post.author_role === "ADMIN" && " 🔥"}
+                <td>
+                  {post.author_role === "ADMIN" && (
+                    <span className="badge-admin">ADMIN</span>
+                  )}
+                  {post.author_nickname ?? "(알 수 없음)"}
                 </td>
                 <th>조회수</th>
                 <td>{post.view_count ?? 0}</td>
