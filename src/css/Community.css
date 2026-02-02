@@ -135,9 +135,9 @@
 .notice-section {
   margin: 10px 0 14px;
   padding: 12px;
-  border: 1px solid #ffe1a6;
+  border: 1px solid #9FD9FD;
   border-radius: 14px;
-  background: linear-gradient(180deg, #fff8e5 0%, #ffffff 70%);
+  background: linear-gradient(180deg, #9FD9FD 0%, #ffffff 70%);
 }
 
 .notice-section-head {
@@ -151,12 +151,12 @@
 .notice-title {
   font-weight: 800;
   font-size: 14px;
-  color: #7a5600;
+  color: #2c2c2c;
 }
 
 .notice-sub {
   font-size: 12px;
-  color: #9a7a2f;
+  color: #505050;
   opacity: 0.9;
 }
 
@@ -171,7 +171,7 @@
   align-items: flex-start;
   gap: 10px;
   padding: 10px 10px;
-  border: 1px solid rgba(255, 185, 0, 0.35);
+  border: 1px solid #9fd9fd8e;
   border-radius: 12px;
   background: #fff;
 }
@@ -184,7 +184,7 @@
   bottom: 10px;
   width: 4px;
   border-radius: 999px;
-  background: #ffb000;
+  background: #3FB5FF;
 }
 
 .badge-notice {
@@ -195,9 +195,9 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 800;
-  background: #fff4cc;
-  border: 1px solid #ffe08a;
-  color: #7a5600;
+  background: #93d3fc;
+  border: 1px solid #9FD9FD;
+  color: #2c2c2c;
   min-width: 44px;
   height: 26px;
   margin-left: 6px;
