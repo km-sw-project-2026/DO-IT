@@ -173,22 +173,31 @@ function CommunityView() {
     alert("신고 접수 완료!");
   };
 
+  const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
+
   // ✅ 최상위 댓글 작성
   const addComment = async () => {
+    if (isCommentSubmitting) return;           // ✅ 연타 방지
+    if (!postId) return alert("잘못된 게시글 id");
+
     const text = newComment.trim();
     if (!text) return;
 
     if (!postId) return alert("postId 없음");
     if (!currentUserId) return alert("로그인 후 이용");
 
+    setIsCommentSubmitting(true);              // ✅ 잠금
     try {
       await createCommentApi(postId, text, Number(currentUserId), null);
       setNewComment("");
       await loadComments();
     } catch (e) {
       alert(e?.message || "댓글 작성 실패");
+    } finally {
+      setIsCommentSubmitting(false);           // ✅ 잠금 해제
     }
   };
+  
 
 
 
@@ -576,9 +585,10 @@ function CommunityView() {
               </label>
             </div>
 
-            <button className="comment-btn" onClick={addComment}>
-              댓글 작성
+            <button className="comment-btn" onClick={addComment} disabled={isCommentSubmitting}>
+              {isCommentSubmitting ? "작성 중..." : "댓글 작성"}
             </button>
+
           </div>
         </div>
       </div>

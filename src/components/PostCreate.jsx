@@ -105,43 +105,44 @@ function CommunityInput() {
       setUploadMsg("업로드 중 오류 발생");
     }
   };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ 로그인 체크
-    if (!currentUserId) {
-      alert("로그인 후 글을 작성할 수 있어요.");
-      navigate("/login");
-      return;
-    }
+    if (isSubmitting) return;          // ✅ 연타 방지
+    setIsSubmitting(true);             // ✅ 잠금
 
-    const t = title.trim();
-    const c = content.trim();
-    if (!t) {
-      alert("제목을 입력해줘!");
-      return;
-    }
-    if (!c) {
-      alert("내용을 입력해줘!");
-      return;
-    }
+    try {
+      if (!currentUserId) {
+        alert("로그인 후 글을 작성할 수 있어요.");
+        navigate("/login");
+        return;
+      }
 
-    const resp = await fetch("/api/posts", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ title: t, content: c, user_id: currentUserId }),
-    });
+      const t = title.trim();
+      const c = content.trim();
+      if (!t) return alert("제목을 입력해줘!");
+      if (!c) return alert("내용을 입력해줘!");
 
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
-      alert(data?.message || "작성 실패");
-      return;
+      const resp = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title: t, content: c, user_id: currentUserId }),
+      });
+
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        alert(data?.message || "작성 실패");
+        return;
+      }
+
+      const newId = data?.result?.meta?.last_row_id;
+      if (newId) navigate(`/post/${newId}`);
+      else navigate("/post");
+    } finally {
+      setIsSubmitting(false);          // ✅ 잠금 해제
     }
-
-    const newId = data?.result?.meta?.last_row_id;
-    if (newId) navigate(`/post/${newId}`);
-    else navigate("/post");
   };
 
   const msgClass = uploadMsg.includes("성공")
@@ -228,9 +229,10 @@ function CommunityInput() {
                 업로드
               </button>
 
-              <button type="submit" className="Community-input-button">
-                등록
+              <button type="submit" className="Community-input-button" disabled={isSubmitting}>
+                {isSubmitting ? "등록 중..." : "등록"}
               </button>
+
             </div>
 
             {/* 선택 파일 표시 */}
