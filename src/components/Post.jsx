@@ -197,12 +197,15 @@ function CommunityView() {
       setIsCommentSubmitting(false);           // ✅ 잠금 해제
     }
   };
-  
 
+
+  const [isReplySubmitting, setIsReplySubmitting] = useState(false);
 
 
   // ✅ 대댓글 작성
   const addReply = async (parentCommentId) => {
+    if (isReplySubmitting) return; // ✅ 이미 요청 중이면 막기
+
     const text = replyText.trim();
     if (!text) return;
 
@@ -210,14 +213,26 @@ function CommunityView() {
     if (!currentUserId) return alert("로그인 후 이용");
 
     try {
-      await createCommentApi(postId, text, Number(currentUserId), Number(parentCommentId));
+      setIsReplySubmitting(true); // ✅ 잠금 ON
+
+      await createCommentApi(
+        postId,
+        text,
+        Number(currentUserId),
+        Number(parentCommentId)
+      );
+
       setReplyText("");
       setReplyOpen(null);
       await loadComments();
+
     } catch (e) {
       alert(e?.message || "답글 작성 실패");
+    } finally {
+      setIsReplySubmitting(false); // ✅ 잠금 OFF
     }
   };
+
 
   // ✅ 글 수정 저장
   const saveEdit = async () => {
@@ -426,11 +441,12 @@ function CommunityView() {
 
             <div style={{ display: "flex", gap: 8 }}>
               <button
-                type="button"
-                onClick={() => addReply(c.comment_id)} // 네가 만든 대댓글 등록 함수명에 맞춰
+                onClick={() => addReply(comment.id)}
+                disabled={isReplySubmitting}
               >
-                대댓글 등록
+                {isReplySubmitting ? "작성 중..." : "답글 작성"}
               </button>
+
 
               <button
                 type="button"
