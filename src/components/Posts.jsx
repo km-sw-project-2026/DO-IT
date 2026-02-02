@@ -25,7 +25,7 @@ function Community() {
         setErrorMsg("");
 
         // ✅ 서버가 page 기준으로:
-        // - notice_posts: 공지(항상)
+        // - notice_posts: 공지(항상 내려줄 수도 있지만 프론트는 1p에서만 보여줌)
         // - posts: 일반글(1p=8개, 2p~10개)
         const resp = await fetch(`/api/posts?page=${page}`);
         if (!resp.ok) throw new Error("failed to fetch posts");
@@ -83,18 +83,21 @@ function Community() {
   const pageNumbers = useMemo(() => {
     const groupStart = Math.floor((page - 1) / 10) * 10 + 1;
     const groupEnd = Math.min(totalPages, groupStart + 9);
-    return Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i);
+    return Array.from(
+      { length: groupEnd - groupStart + 1 },
+      (_, i) => groupStart + i
+    );
   }, [page, totalPages]);
 
+  // ✅ 게시글 없음 판단
   const nothingToShow = useMemo(() => {
     // 1페이지 → 공지 + 일반글 둘 다 없을 때
     if (page === 1) {
-      return noticePosts.length === 0 && normalPosts.length === 0;
+      return filteredNoticePosts.length === 0 && filteredPosts.length === 0;
     }
-
     // 2페이지 이상 → 일반글만 없을 때
-    return normalPosts.length === 0;
-  }, [page, noticePosts, normalPosts]);
+    return filteredPosts.length === 0;
+  }, [page, filteredNoticePosts, filteredPosts]);
 
   return (
     <section className="Community">
@@ -127,7 +130,7 @@ function Community() {
         {loading && <p style={{ padding: "12px" }}>불러오는 중...</p>}
         {!loading && errorMsg && <p style={{ padding: "12px" }}>{errorMsg}</p>}
 
-        {/* ✅ 공지 섹션: 1페이지에서만 보여주기 */}
+        {/* ✅ 공지 섹션: 1페이지에서만 보여주기 (공지글은 무조건 1페이지에서만 1번) */}
         {!loading && !errorMsg && page === 1 && filteredNoticePosts.length > 0 && (
           <div className="notice-section">
             <div className="notice-section-head">
@@ -154,14 +157,10 @@ function Community() {
         )}
 
         {/* ✅ 일반 게시글 */}
-        {!loading && !errorMsg && normalPosts.length > 0 && (
+        {!loading && !errorMsg && filteredPosts.length > 0 && (
           <div className="normal-section">
-            {normalPosts.map((post) => (
-              <CommunityPost
-                key={post.post_id}
-                post={post}
-                formatDate={formatDate}
-              />
+            {filteredPosts.map((post) => (
+              <CommunityPost key={post.post_id} post={post} formatDate={formatDate} />
             ))}
           </div>
         )}
