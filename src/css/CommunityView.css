@@ -342,3 +342,14 @@
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
 }
+/*대댓글 넓이 고정*/
+.reply-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;       /* ✅ 드래그로 크기 변경 방지 */
+  overflow: auto;     /* ✅ 길어지면 스크롤 */
+  min-height: 90px;   /* ✅ 높이 고정 느낌 (원하면 조절) */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+}

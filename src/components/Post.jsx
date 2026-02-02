@@ -400,24 +400,39 @@ function CommunityView() {
           {nick} · {kstCommentTime}
         </small>
 
-        {/* ✅ 답글 입력창 */}
+        {/* ✅ 대댓글 입력창 */}
         {replyOpen === c.comment_id && (
           <div style={{ marginTop: 8, display: "grid", gap: 6 }}>
             <textarea
-              placeholder="답글을 입력하세요"
+              className="reply-textarea"
+              placeholder="대댓글을 입력하세요"
               value={replyText}
               maxLength={200}
               onChange={(e) => setReplyText(e.target.value)}
               rows={3}
-              style={{ width: "100%", padding: 8 }}
+              style={{
+                width: "100%",
+                padding: 10,
+                boxSizing: "border-box",
+                resize: "none",          // ✅ 크기 변경 막기
+                overflow: "auto",        // ✅ 내용 많아지면 스크롤
+                borderRadius: 8,
+                border: "1px solid #ddd",
+              }}
             />
+
             <div style={{ fontSize: 12, color: "#666", textAlign: "right" }}>
-              {newComment.length} / 200
+              {replyText.length} / 200
             </div>
+
             <div style={{ display: "flex", gap: 8 }}>
-              <button type="button" onClick={() => addReply(c.comment_id)}>
-                답글 등록
+              <button
+                type="button"
+                onClick={() => submitReply(c.comment_id)} // 네가 만든 대댓글 등록 함수명에 맞춰
+              >
+                대댓글 등록
               </button>
+
               <button
                 type="button"
                 onClick={() => {
