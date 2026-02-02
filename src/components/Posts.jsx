@@ -86,8 +86,15 @@ function Community() {
     return Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i);
   }, [page, totalPages]);
 
-  const nothingToShow =
-    filteredNoticePosts.length === 0 && filteredPosts.length === 0;
+  const nothingToShow = useMemo(() => {
+    // 1페이지 → 공지 + 일반글 둘 다 없을 때
+    if (page === 1) {
+      return noticePosts.length === 0 && normalPosts.length === 0;
+    }
+
+    // 2페이지 이상 → 일반글만 없을 때
+    return normalPosts.length === 0;
+  }, [page, noticePosts, normalPosts]);
 
   return (
     <section className="Community">
@@ -120,8 +127,8 @@ function Community() {
         {loading && <p style={{ padding: "12px" }}>불러오는 중...</p>}
         {!loading && errorMsg && <p style={{ padding: "12px" }}>{errorMsg}</p>}
 
-        {/* ✅ 공지 섹션 */}
-        {!loading && !errorMsg && filteredNoticePosts.length > 0 && (
+        {/* ✅ 공지 섹션: 1페이지에서만 보여주기 */}
+        {!loading && !errorMsg && page === 1 && filteredNoticePosts.length > 0 && (
           <div className="notice-section">
             <div className="notice-section-head">
               <span className="notice-title">📌 공지(상단 고정)</span>
@@ -132,7 +139,6 @@ function Community() {
               {filteredNoticePosts.map((post) => (
                 <div key={post.post_id} className="notice-row">
                   <span className="badge-notice">공지</span>
-
                   <div className="notice-post">
                     <CommunityPost post={post} formatDate={formatDate} />
                   </div>
@@ -147,11 +153,15 @@ function Community() {
           <p style={{ padding: "12px" }}>게시글이 없습니다.</p>
         )}
 
-        {/* ✅ 일반 글 목록 */}
-        {!loading && !errorMsg && filteredPosts.length > 0 && (
+        {/* ✅ 일반 게시글 */}
+        {!loading && !errorMsg && normalPosts.length > 0 && (
           <div className="normal-section">
-            {filteredPosts.map((post) => (
-              <CommunityPost key={post.post_id} post={post} formatDate={formatDate} />
+            {normalPosts.map((post) => (
+              <CommunityPost
+                key={post.post_id}
+                post={post}
+                formatDate={formatDate}
+              />
             ))}
           </div>
         )}
