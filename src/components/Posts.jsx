@@ -101,16 +101,6 @@ function Community() {
       </div>
 
       <div className="Community-main">
-        <div className="Community-main-title">
-          <div className="Community-main-title-content">
-            <h2>제목</h2>
-            <div className="Community-title-content">
-              <span className="view">조회수</span>
-              <span className="date">등록일</span>
-              <span className="comment">댓글</span>
-            </div>
-          </div>
-        </div>
         {/* ✅ 공지/고정 섹션: 있을 때만 표시 */}
         {!loading && !errorMsg && noticePosts.length > 0 && (
           <div className="notice-section">
@@ -133,13 +123,23 @@ function Community() {
             </div>
           </div>
         )}
-
+        <div className="Community-main-title">
+          <div className="Community-main-title-content">
+            <h2>제목</h2>
+            <div className="Community-title-content">
+              <span className="view">조회수</span>
+              <span className="date">등록일</span>
+              <span className="comment">댓글</span>
+            </div>
+          </div>
+        </div>
         {loading && <p style={{ padding: "12px" }}>불러오는 중...</p>}
         {!loading && errorMsg && <p style={{ padding: "12px" }}>{errorMsg}</p>}
 
         {!loading && !errorMsg && filteredPosts.length === 0 && (
           <p style={{ padding: "12px" }}>게시글이 없습니다.</p>
         )}
+
 
 
         {/* ✅ 일반 글 목록 */}
