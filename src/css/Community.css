@@ -30,6 +30,7 @@
   width: 31px;
   filter: invert(100%);
 }
+
 .Community-main {
   width: 934px;
   margin: 0 auto;
@@ -61,11 +62,13 @@
 }
 
 .Community-main-title .Community-title-content span {
-  width: 33.33%;   /* 컬럼 동일하게 */
+  width: 33.33%;
+  /* 컬럼 동일하게 */
   font-size: 16px;
   font-weight: bold;
   text-align: center;
 }
+
 .Community-footer {
   position: absolute;
   bottom: 0;
@@ -137,7 +140,7 @@
   padding: 12px;
   border: 1px solid #9FD9FD;
   border-radius: 14px;
-  background: linear-gradient(180deg, #9FD9FD 0%, #ffffff 70%);
+  background: linear-gradient(180deg, #aedaf5 0%, #e6f5fb 50%);
 }
 
 .notice-section-head {
@@ -201,6 +204,7 @@
   min-width: 44px;
   height: 26px;
   margin-left: 6px;
+  margin-top: 10px;
 }
 
 .notice-post {
