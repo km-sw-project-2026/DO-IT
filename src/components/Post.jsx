@@ -441,6 +441,7 @@ function CommunityView() {
 
             <div style={{ display: "flex", gap: 8 }}>
               <button
+                type="button"
                 onClick={() => addReply(comment.id)}
                 disabled={isReplySubmitting}
               >
