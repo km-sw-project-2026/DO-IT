@@ -111,14 +111,6 @@ function Community() {
             </div>
           </div>
         </div>
-
-        {loading && <p style={{ padding: "12px" }}>불러오는 중...</p>}
-        {!loading && errorMsg && <p style={{ padding: "12px" }}>{errorMsg}</p>}
-
-        {!loading && !errorMsg && filteredPosts.length === 0 && (
-          <p style={{ padding: "12px" }}>게시글이 없습니다.</p>
-        )}
-
         {/* ✅ 공지/고정 섹션: 있을 때만 표시 */}
         {!loading && !errorMsg && noticePosts.length > 0 && (
           <div className="notice-section">
@@ -141,6 +133,14 @@ function Community() {
             </div>
           </div>
         )}
+
+        {loading && <p style={{ padding: "12px" }}>불러오는 중...</p>}
+        {!loading && errorMsg && <p style={{ padding: "12px" }}>{errorMsg}</p>}
+
+        {!loading && !errorMsg && filteredPosts.length === 0 && (
+          <p style={{ padding: "12px" }}>게시글이 없습니다.</p>
+        )}
+
 
         {/* ✅ 일반 글 목록 */}
         {!loading && !errorMsg && normalPosts.length > 0 && (
