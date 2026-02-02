@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import CommunityPost from "../components/CommunityPost";
 
 function Community() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]); // ✅ 일반글만
+  const [noticePosts, setNoticePosts] = useState([]); // ✅ 공지글만
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -23,17 +24,20 @@ function Community() {
         setLoading(true);
         setErrorMsg("");
 
-        const resp = await fetch(`/api/posts?page=${page}&limit=10`);
+        // ✅ 서버가 page 기준으로:
+        // - notice_posts: 공지(항상)
+        // - posts: 일반글(1p=8개, 2p~10개)
+        const resp = await fetch(`/api/posts?page=${page}`);
         if (!resp.ok) throw new Error("failed to fetch posts");
         const data = await resp.json();
 
-        const list = Array.isArray(data) ? data : (data?.posts ?? []);
-        setPosts(list);
-
-        setTotalPages(Array.isArray(data) ? 1 : (data?.total_pages ?? 1));
+        setNoticePosts(data?.notice_posts ?? []);
+        setPosts(data?.posts ?? []);
+        setTotalPages(data?.total_pages ?? 1);
       } catch (e) {
         console.error(e);
         setErrorMsg("게시글을 불러오지 못했습니다.");
+        setNoticePosts([]);
         setPosts([]);
         setTotalPages(1);
       } finally {
@@ -45,6 +49,18 @@ function Community() {
   }, [page]);
 
   // ✅ 검색 필터
+  // (주의: 서버 페이징이라 검색은 "현재 페이지에 불러온 목록"에서만 필터링됨)
+  const filteredNoticePosts = useMemo(() => {
+    const q = keyword.trim().toLowerCase();
+    if (!q) return noticePosts;
+
+    return noticePosts.filter((p) => {
+      const title = (p.title ?? "").toLowerCase();
+      const content = (p.content ?? "").toLowerCase();
+      return title.includes(q) || content.includes(q);
+    });
+  }, [noticePosts, keyword]);
+
   const filteredPosts = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     if (!q) return posts;
@@ -55,20 +71,6 @@ function Community() {
       return title.includes(q) || content.includes(q);
     });
   }, [posts, keyword]);
-
-  // ✅ 공지/일반 분리(검색 결과에서도 공지 먼저 보여주기)
-  const { noticePosts, normalPosts } = useMemo(() => {
-    const list = filteredPosts || [];
-    const notice = [];
-    const normal = [];
-
-    for (const p of list) {
-      if (Number(p?.is_notice) === 1) notice.push(p);
-      else normal.push(p);
-    }
-
-    return { noticePosts: notice, normalPosts: normal };
-  }, [filteredPosts]);
 
   const formatDate = (value) => {
     if (!value) return "-";
@@ -83,6 +85,9 @@ function Community() {
     const groupEnd = Math.min(totalPages, groupStart + 9);
     return Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i);
   }, [page, totalPages]);
+
+  const nothingToShow =
+    filteredNoticePosts.length === 0 && filteredPosts.length === 0;
 
   return (
     <section className="Community">
@@ -111,11 +116,12 @@ function Community() {
             </div>
           </div>
         </div>
+
         {loading && <p style={{ padding: "12px" }}>불러오는 중...</p>}
         {!loading && errorMsg && <p style={{ padding: "12px" }}>{errorMsg}</p>}
 
-        {/* ✅ 공지/고정 섹션: 있을 때만 표시 */}
-        {!loading && !errorMsg && noticePosts.length > 0 && (
+        {/* ✅ 공지 섹션 */}
+        {!loading && !errorMsg && filteredNoticePosts.length > 0 && (
           <div className="notice-section">
             <div className="notice-section-head">
               <span className="notice-title">📌 공지(상단 고정)</span>
@@ -123,11 +129,10 @@ function Community() {
             </div>
 
             <div className="notice-list">
-              {noticePosts.map((post) => (
+              {filteredNoticePosts.map((post) => (
                 <div key={post.post_id} className="notice-row">
                   <span className="badge-notice">공지</span>
 
-                  {/* ✅ 기존 CommunityPost 재사용 (wrapper로 강조만 줌) */}
                   <div className="notice-post">
                     <CommunityPost post={post} formatDate={formatDate} />
                   </div>
@@ -136,16 +141,16 @@ function Community() {
             </div>
           </div>
         )}
-        {!loading && !errorMsg && filteredPosts.length === 0 && (
+
+        {/* ✅ 게시글 없음 */}
+        {!loading && !errorMsg && nothingToShow && (
           <p style={{ padding: "12px" }}>게시글이 없습니다.</p>
         )}
 
-
-
         {/* ✅ 일반 글 목록 */}
-        {!loading && !errorMsg && normalPosts.length > 0 && (
+        {!loading && !errorMsg && filteredPosts.length > 0 && (
           <div className="normal-section">
-            {normalPosts.map((post) => (
+            {filteredPosts.map((post) => (
               <CommunityPost key={post.post_id} post={post} formatDate={formatDate} />
             ))}
           </div>
