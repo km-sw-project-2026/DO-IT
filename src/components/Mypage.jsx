@@ -1,4 +1,6 @@
 import "../css/Mypage.css";
+import MypageCommunity from "./MypageCommunity";
+import Mypagedata from "./Mypagedata";
 import { Link } from "react-router-dom";
 
 function Mypage() {
@@ -28,8 +30,8 @@ function Mypage() {
             <div className="mypage-contents">
                 <div className="mypage-contents-inner">
                     <div className="mypage-community">
-                        <h2>내가 쓴 글</h2>
-                        <div className="mypage-community-shadow">
+                        <h2 className="mypage-contents-title">내가 쓴 글</h2>
+                        <div className="mypage-community-contents">
                             <div className="mypage-community-title">
                                 <h2>커뮤니티</h2>
                                 <button>
@@ -37,13 +39,28 @@ function Mypage() {
                                     <img src='/images/icon/Plus.png' alt='' />
                                 </button>
                             </div>
-                            <div className="mypage-community-main"></div>
+                            <div className="mypage-community-main">
+                                <MypageCommunity/>
+                                <MypageCommunity/>
+                                <MypageCommunity/>
+                                <MypageCommunity/>
+                            </div>
                         </div>
                     </div>
                     <div className="mypage-data">
-                        <h2>내 자료함</h2>
+                        <h2 className="mypage-contents-title">내 자료함</h2>
                         <div className="mypage-data-box">
-        
+                            <div className="mypage-data-contents">
+                                <div className="mypage-data-title">
+                                    <h2>자료함</h2>
+                                </div>
+                                <div className="mypage-data-main">
+                                    <Mypagedata/>
+                                    <Mypagedata/>
+                                    <Mypagedata/>
+                                    <Mypagedata/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

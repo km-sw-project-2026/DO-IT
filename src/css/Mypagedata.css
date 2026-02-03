@@ -1,0 +1,11 @@
+.folder-name {
+    width: 98%;
+    padding: 15px 25px;
+    margin: 0 auto;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+}
+.folder-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+}
