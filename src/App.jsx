@@ -10,6 +10,7 @@ import Posts from './components/Posts';
 import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
 import AdminPage from "./pages/AdminPage";
+import Mypage from './components/Mypage.jsx';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path='/mypage' element={<Mypage/>}/>
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

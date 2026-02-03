@@ -49,7 +49,9 @@ function Header() {
             </Link>
 
             <li>캘린더</li>
+            <Link to="/mypage">
             <li>마이페이지</li>
+            </Link>
 
             {/* ✅ 관리자 전용 메뉴 */}
             {user && isAdmin() && (

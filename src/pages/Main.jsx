@@ -6,7 +6,7 @@ function Main() {
     <section className='main-page'>
       
       <div className='main-page-contents'>
-        <img src='./images/logo.png' alt=''/>
+        <img src='/images/logo.png' alt=''/>
         <h1>캘린더에서 친구들과 함께 디데이정리부터 <br></br>
         필기정리 / 정보공유 / 1:1 멘토멘티 서비스까지
         </h1>

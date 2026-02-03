@@ -1,0 +1,140 @@
+.mypage-header {
+    width: 100%;
+    height: 350px;
+    /* border: 1px solid black; */
+    margin-top: 50px;
+    padding: 35px 90px;
+    background: linear-gradient(90deg,#ffc568 ,#AEBCFF 100%);
+}
+.myapge-user-profile {
+    width: 650px;
+    height: 100px;
+    background: #FFFFFF;
+    /* border: 1px solid black; */
+    display: flex;
+    border-radius: 50px;
+}
+.myapge-user-profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+}
+.mypage-header-inner {
+    width: 1550px;
+    /* border: 1px solid #000; */
+    margin: 0 auto;
+}
+.mypage-user-name {
+    padding: 10px 30px;
+}
+.mypage-user-name h2 {
+    font-weight: bold;
+    font-size: 28px;
+    color: #2C2C2C;
+}
+.mypage-user-name p {
+    font-weight: bold;
+    font-size: 22px;
+    color: #2C2C2C;
+}
+.mypage-user-name p span {
+    font-weight: bold;
+    font-size: 22px;
+    color: #FFBB4E;
+}
+.user-setting {
+    width: 180px;
+    height: auto;
+    /* border: 1px solid #000; */
+    display: block;
+    margin-left: auto;
+    align-content: center;
+}
+.setting {
+    display: flex;
+    align-items: center;
+
+}
+.setting img {
+    width: 37px;
+    height: 37px;
+}
+.setting p {
+    font-weight: bold;
+    font-size: 14px;
+    color: #2C2C2C;
+}
+.user-explanation {
+    margin-top: 25px;
+}
+.user-explanation h3 {
+    padding-bottom: 5px;
+    padding-left: 15px;
+}
+.user-explanation p {
+    width: 100%;
+    height: 120px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: #FFFFFF;
+    /* border: 1px solid #000; */
+}
+
+
+
+
+
+
+
+.mypage-contents {
+    width: 100%;
+    height: 100%;
+    /* border: 1px solid #000; */
+}
+.mypage-contents-inner {
+    display: flex;
+    padding: 15px;
+}
+.mypage-community {
+    width: 60%;
+}
+.mypage-community > h2 {
+    font-weight: bold;
+    font-size: 28px;
+    color: #2C2C2C;
+    margin-bottom: 20px;
+    padding: 0 25px;
+}
+.mypage-community-shadow {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 6px 0 black;
+    border-radius: 20px;
+    padding: 10px;
+}
+.mypage-community-title {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #000;
+    padding: 0 30px ;
+}
+.mypage-community-title h2 {
+    font-weight: bold;
+    font-size: 24px;
+    color: #2C2C2C;
+}
+.mypage-community-title button {
+    align-items: center;
+    display: flex;
+}
+.mypage-community-title button p {
+    font-size: 20px;
+    font-weight: 500;
+    color: #2C2C2C;
+}
+.mypage-community-title button img {
+    width: 45px;
+    height: 45px;
+}
+.mypage-community-main {
+    height: 250px;
+}
