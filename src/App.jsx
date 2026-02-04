@@ -11,6 +11,8 @@ import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
 import AdminPage from "./pages/AdminPage";
 import Mypage from './components/Mypage.jsx';
+import MypageMenty from './components/MypageMenty.jsx';
+import ProfileSetting from './components/ProfileSetting.jsx';
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path='/mypage' element={<Mypage/>}/>
+        <Route path='/mypagementy' element={<MypageMenty/>} />
+        <Route path='/mypage' element={<Mypage/>} />
+        <Route path='/profilesetting' element={<ProfileSetting/>} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

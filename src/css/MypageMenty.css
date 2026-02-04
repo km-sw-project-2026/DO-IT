@@ -1,18 +1,17 @@
-.mypage-header {
+.mypagementy-header {
     width: 100%;
     height: 350px;
     /* border: 1px solid black; */
     margin-top: 50px;
     padding: 35px 90px;
-    background: linear-gradient(90deg, #ffc568, #AEBCFF 100%);
+    background: linear-gradient(90deg, #C7EFC2, #AEBCFF 100%);
 }
-
 .profile-button {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.myapge-user-profile {
+.mypagementy-user-profile {
     width: 650px;
     height: 100px;
     background: #FFFFFF;
@@ -21,41 +20,41 @@
     border-radius: 50px;
 }
 
-.myapge-user-profile img {
+.mypagementy-user-profile img {
     width: 100px;
     height: 100px;
     border-radius: 50px;
 }
 
-.mypage-header-inner {
+.mypagementy-header-inner {
     width: 1550px;
     /* border: 1px solid #000; */
     margin: 0 auto;
 }
 
-.mypage-user-name {
+.mypagementy-user-name {
     padding: 10px 30px;
 }
 
-.mypage-user-name h2 {
+.mypagementy-user-name h2 {
     font-weight: bold;
     font-size: 28px;
     color: #2C2C2C;
 }
 
-.mypage-user-name p {
+.mypagementy-user-name p {
     font-weight: bold;
     font-size: 22px;
     color: #2C2C2C;
 }
 
-.mypage-user-name p span {
+.mypagementy-user-name p span {
     font-weight: bold;
     font-size: 22px;
-    color: #FFBB4E;
+    color: #8CE370;
 }
 
-.user-setting {
+.menty-setting {
     width: 180px;
     height: auto;
     /* border: 1px solid #000; */
@@ -83,38 +82,38 @@
 
 /* ========================================================= */
 
-.change-button-mentor {
+.change-button-mentee {
     width: 140px;
     height: 54px;
-    background-color: #FFC568;
+    background: #8CE370;
     border-radius: 29px;
     position: relative;
 }
-.change-button-mentor button {
+.change-button-mentee button {
     width: 83px;
     height: 54px;
     background: #fff;
     border-radius: 29px;
     position: absolute;
     top: 0;
-    left: 0;
+    right: 0;
     font-size: 24px;
     font-weight: bold;
-    color: #FFC568;
+    color: #8CE370;
 }
 
 /* ========================================================= */
 
-.user-explanation {
+.menty-explanation {
     margin-top: 25px;
 }
 
-.user-explanation h3 {
+.menty-explanation h3 {
     padding-bottom: 5px;
     padding-left: 15px;
 }
 
-.user-explanation p {
+.menty-explanation p {
     width: 100%;
     height: 120px;
     padding: 10px 20px;
@@ -124,24 +123,24 @@
 }
 
 /* ====================================================== */
-.mypage-contents {
+.mypagementy-contents {
     width: 100%;
     height: 100%;
     /* border: 1px solid #000; */
 }
 
-.mypage-contents-inner {
+.mypagementy-contents-inner {
     display: flex;
     padding: 10px 45px;
     gap: 30px;
 }
 
 /* ======================================================== */
-.mypage-community {
+.mypagementy-community {
     width: 55%;
 }
 
-.mypage-contents-inner .mypage-contents-title {
+.mypagementy-contents-inner .mypagementy-contents-title {
     font-weight: bold;
     font-size: 28px;
     color: #2C2C2C;
@@ -149,14 +148,14 @@
     padding: 0 40px;
 }
 
-.mypage-community-contents {
+.mypagementy-community-contents {
     background: #FFFFFF;
     box-shadow: 0px 0px 6px 0 rgba(0, 0, 0, 50%);
     border-radius: 20px;
     padding: 10px;
 }
 
-.mypage-community-title {
+.mypagementy-community-title {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #000;
@@ -164,12 +163,12 @@
     align-content: center;
 }
 
-.mypage-community-title h2 {
+.mypagementy-community-title h2 {
     font-weight: bold;
     font-size: 24px;
 }
 
-.mypage-community-title button {
+.mypagementy-community-title button {
     align-items: center;
     display: flex;
     font-size: 20px;
@@ -177,42 +176,42 @@
     color: #2C2C2C;
 }
 
-.mypage-community-title button img {
+.mypagementy-community-title button img {
     width: 45px;
     height: 45px;
 }
 
-.mypage-community-main {
+.mypagementy-community-main {
     height: 250px;
     padding: 10px;
 }
 
 /* ============================================= */
-.mypage-data {
+.mypagementy-data {
     width: 45%;
 }
-.mypage-data-contents {
+.mypagementy-data-contents {
     background: #FFFFFF;
     box-shadow: 0px 0px 6px 0 rgba(0, 0, 0, 50%);
     border-radius: 20px;
     padding: 10px;
 }
 
-.mypage-data-title {
+.mypagementy-data-title {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #000;
     padding: 0 30px;
 }
 
-.mypage-data-title h2 {
+.mypagementy-data-title h2 {
     font-weight: bold;
     font-size: 24px;
     height: 46px;
     align-content: center;
 }
 
-.mypage-data-title button {
+.mypagementy-data-title button {
     align-items: center;
     display: flex;
     font-size: 20px;
@@ -220,37 +219,12 @@
     color: #2C2C2C;
 }
 
-.mypage-data-title button img {
+.mypagementy-data-title button img {
     width: 45px;
     height: 45px;
 }
 
-.mypage-data-main {
+.mypagementy-data-main {
     height: 250px;
     padding: 10px;
-}
-
-/* ============================================================== */
-
-.pop-up {
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 50%);
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    /* display: none; */
-}
-.pop-up-contents {
-    width: 640px;
-    height: 440px;
-    background: #fff;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 17px;
-    padding-left: 30px; 
-    padding-top: 20px;
 }
