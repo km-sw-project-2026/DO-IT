@@ -5,7 +5,7 @@ function ProfileSetting() {
         <div className="profile-setting-inner">
             <div className="profile-setting-header">
                 <h2>프로필 설정</h2>
-                <img src='/images/icon/clos.png' alt="" />
+                <img src='/images/icon/close.png' alt="" />
             </div>
             <div className="profile-setting-set">
                 <div className="profile-setting-list">
