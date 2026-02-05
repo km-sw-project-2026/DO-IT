@@ -30,11 +30,11 @@ function MypageRepository () {
                         </div>
                         <div className="mypagerepository-delete">
                             <img src="" alt="" />
-                            <p>휴지통</p>
+                            <p>바가지</p>
                         </div>
                     </div>
 
-                    
+
                 </div>
             </div>
         </section>
