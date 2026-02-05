@@ -13,6 +13,7 @@ import AdminPage from "./pages/AdminPage";
 import Mypage from './components/Mypage.jsx';
 import MypageMenty from './components/MypageMenty.jsx';
 import ProfileSetting from './components/ProfileSetting.jsx';
+import MypageRepository from './components/MypageRepository.jsx';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/mypagementy' element={<MypageMenty/>} />
         <Route path='/mypage' element={<Mypage/>} />
         <Route path='/profilesetting' element={<ProfileSetting/>} />
+        <Route path='/mypagerepository' element={<MypageRepository/>} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

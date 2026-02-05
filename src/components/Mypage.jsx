@@ -3,7 +3,8 @@ import Mypagedata from "./Mypagedata";
 import MypageCommunity from "./MypageCommunity";
 import ProfileSetting from "./ProfileSetting";
 
-
+// 여기는 Mypagemento 구역입니다.
+// 이름은 바꾸기 무서워서 안바꾼 거니 오해 노노
 
 function Mypage() {
     return (
@@ -11,7 +12,7 @@ function Mypage() {
             <div className="mypage-header">
                 <div className="mypage-header-inner">
                     <div className="profile-button">
-                        <div className="myapge-user-profile">
+                        <div className="mypage-user-profile">
                             <img src='/images/profile.jpg' alt='' />
                             <div className="mypage-user-name">
                                 <h2>환영합니다</h2>
