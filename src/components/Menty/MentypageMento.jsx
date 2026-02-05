@@ -1,4 +1,4 @@
-import "../css/MentypageMento.css";
+// import "../../css/MentypageMento.css";
 function MentypageMento() {
     return (
         <div className="Mento">

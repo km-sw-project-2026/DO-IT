@@ -1,4 +1,5 @@
-import "../css/MypageMenty.css";
+
+import MentypageMento from "./MentypageMento.jsx";
 
 
 function Mentypage() {
