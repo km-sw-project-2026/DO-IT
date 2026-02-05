@@ -16,7 +16,7 @@ function ProfileSetting() {
                 <div className="profile-setting-contents">
                     <div className="profile">
                         <h3>프로필</h3>
-                        <img src="" alt="이미지 넣을 예정" />
+                        <img src='/images/icon/profile.jpg' alt="이미지 넣을 예정" />
                     </div>
                     <div className="nickname">
                         {/* /디비에서 불러올 예정 */}
