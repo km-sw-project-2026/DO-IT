@@ -1,0 +1,162 @@
+.mypagerepository {
+    width: 100%;
+}
+
+.mypagerepository-inner {
+    width: 100%;
+    padding: 0 40px;
+}
+.mypagerepository-header {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #C4C4C4;
+    margin-bottom: 10px;
+}
+
+.mypagerepository-title {
+    display: flex;
+    gap: 30px;
+}
+
+.mypagerepository-title h2 {
+    font-size: 36px;
+    font-weight: bold;
+    align-content: center;
+}
+
+.mypagerepository-title img {
+    width: 30%;
+}
+
+.mypagerepository-header .search input:focus {
+    outline: none;
+}
+
+.mypagerepository-header .search input {
+    width: 522px;
+    height: 62px;
+    border: 3px solid #3FB5FF;
+    border-radius: 4px 0px 0px 4px;
+    padding: 10px;
+    color: #2c2c2c;
+    font-size: 16px;
+}
+
+.mypagerepository-header .search button {
+    background: #3FB5FF;
+    width: 62px;
+    height: 62px;
+    position: absolute;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.mypagerepository-header .search button img {
+    width: 31px;
+    filter: invert(100%);
+}
+
+/* ================================================================ */
+
+.mypagerepository-contents {
+    display: flex;
+    padding: 0 20px;
+    /* border: 1px solid #000; */
+}
+.mypagerepository-inventory {
+    margin-right: 15px;
+}
+.mypagerepository-inventory>button {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    line-height: 25px;
+    align-items: center;
+    padding-left: 15px;
+    font-size: 16px;
+    /* border: 1px solid #000; */
+    gap: 10px;
+}
+
+.mypagerepository-inventory button:hover {
+    background: #E2E2E2;
+    border-radius: 9px;
+}
+
+.mypagerepository-inventory button img {
+    width: 20px;
+    height: 20px;
+}
+
+.mypagerepository-button {}
+
+.mypagerepository-button p {
+    font-weight: 400;
+    font-size: 14px;
+    color: #9D9D9D;
+}
+
+.mypagerepository-button button {
+    padding: 5px 20px;
+    color: #0093EF;
+    border-radius: 9px;
+    border: 1px solid #0093EF;
+}
+
+.Storage-bar {
+    width: 160px;
+    height: 3px;
+    background: #CFCFCF;
+}
+
+.Storage-ber-used {
+    width: 70px;
+    height: 3px;
+    background: #8FFF6D;
+}
+.Storage-capacity {
+    width: 170px;
+    text-align: right;
+    font-size: 14px;
+    padding-bottom: 10px;
+}
+
+/* ==================================================================== */
+
+.mypagerepository-main {
+    width: auto;
+    height: 300px;
+    border: 1px solid #000;
+}
+.mypagerepository-main-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.mypagerepository-main-header > img {
+    width: 40px;
+    height: 40px;
+}
+.mypagerepository-bg {
+    width: 180px;
+    height: 140px;
+}
+.mypagerepository-bg:hover {
+    background: #E6E6E6;
+    border-radius: 10px;
+    width: 180px;
+    height: 140px;
+}
+.mypagerepository-bg img {
+    width: 140px;
+    height: 100px;
+}
+.mypagerepository-bg p {
+    font-weight: bold;
+    font-size: 16px;
+    color: #2C2C2C;
+}
+.mypagerepository-bg button {}
