@@ -46,7 +46,7 @@ function Main() {
           </div>
         </div>
       </section>
-      <section className="main-page-mypage">
+      <section className="main-page-community">
         <div className="recent-wrap">
           <h3>최근 커뮤니티 글</h3>
 
@@ -55,10 +55,10 @@ function Main() {
               <div className="recent-header">
                 <span className="recent-title">커뮤니티</span>
 
-                <div className="recent-action">
+                <button className="recent-action">
                   <span className="recent-more">더보기</span>
-                  <button className="recent-plus">+</button>
-                </div>
+                  <img src="/images/icon/Plus.png" alt="" />
+                </button>
               </div>
 
 
