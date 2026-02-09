@@ -48,38 +48,38 @@ function Main() {
 
         <div className="recent-wrap">
           <h3>최근 커뮤니티 글</h3>
-          
+
           <Link to="/post">
-          <div className="recent-card">
-            <div className="recent-header">
-              <span className="recent-title">커뮤니티</span>
+            <div className="recent-card">
+              <div className="recent-header">
+                <span className="recent-title">커뮤니티</span>
 
-              <div className="recent-action">
-                <span className="recent-more">더보기</span>
-                <button className="recent-plus">+</button>
+                <div className="recent-action">
+                  <span className="recent-more">더보기</span>
+                  <button className="recent-plus">+</button>
+                </div>
               </div>
-            </div>
-            
 
-            <ul className="recent-list">
-              <li>
-                <span>커뮤니티 최신 글 1</span>
-                <span className="recent-date">2025.04.23</span>
-              </li>
-              <li>
-                <span>커뮤니티 최신 글 2</span>
-                <span className="recent-date">2025.04.22</span>
-              </li>
-              <li>
-                <span>커뮤니티 최신 글 3</span>
-                <span className="recent-date">2025.04.21</span>
-              </li>
-              <li>
-                <span>커뮤니티 최신 글 4</span>
-                <span className="recent-date">2025.04.20</span>
-              </li>
-            </ul>
-          </div>
+
+              <ul className="recent-list">
+                <li>
+                  <span>커뮤니티 최신 글 1</span>
+                  <span className="recent-date">2025.04.23</span>
+                </li>
+                <li>
+                  <span>커뮤니티 최신 글 2</span>
+                  <span className="recent-date">2025.04.22</span>
+                </li>
+                <li>
+                  <span>커뮤니티 최신 글 3</span>
+                  <span className="recent-date">2025.04.21</span>
+                </li>
+                <li>
+                  <span>커뮤니티 최신 글 4</span>
+                  <span className="recent-date">2025.04.20</span>
+                </li>
+              </ul>
+            </div>
           </Link>
         </div>
 
