@@ -45,7 +45,8 @@ function Main() {
             </button>
           </div>
         </div>
-
+      </section>
+      <section className="main-page-mypage">
         <div className="recent-wrap">
           <h3>최근 커뮤니티 글</h3>
 
@@ -82,8 +83,7 @@ function Main() {
             </div>
           </Link>
         </div>
-
-      </section>
+</section>
 
       {/* =======================
     1:1 멘토멘티 섹션
