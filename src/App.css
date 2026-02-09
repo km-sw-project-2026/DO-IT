@@ -102,18 +102,15 @@ main {
 
 .main-page-mypage {
   width: 100%;
-  padding-top: 40px;
-  background: #fff; 
+  background: #fff;
 }
 
 /* 헤더 박스(흰색) */
 .main-page-mypage-header {
-  width: min(1100px, 92%);
-  margin: 0 auto 28px;
-
+  margin: 0 auto;
   background: #fff;
   border-radius: 14px;
-  padding: 18px 22px;
+  padding: 18px 52px;
 
   display: flex;
   align-items: center;
@@ -149,7 +146,7 @@ main {
 }
 
 .main-page-mypage-header h2 span {
-  color: #3a8dff;
+  color: #65BAED;
 }
 
 /* 아이콘 */
@@ -158,7 +155,7 @@ main {
   height: 140px;
   object-fit: contain;
   display: block;
-  transform: scaleX(-1);
+  transform: scaleX(-1) rotate(12deg);
 }
 
 /* 자료함 바로가기 버튼 */
@@ -169,7 +166,8 @@ main {
   border-radius: 8px;
   background: #65BAED;
   color: #fff;
-  font-weight: 800;
+  font-size: 24px;
+  font-weight:bold;
 }
 
 .main-page-mypage-header button:hover {
@@ -220,7 +218,7 @@ main {
 
 
 .folder-card p {
-  font-size: 16px;
+  font-size: 28px;
   font-weight: 900;
 }
 
