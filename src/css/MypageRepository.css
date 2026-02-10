@@ -11,13 +11,13 @@
     text-align: center;
     padding: 20px;
     display: flex;
-    justify-content: center;
     align-items: center;
     border-bottom: 1px solid #C4C4C4;
     margin-bottom: 10px;
 }
 
 .mypagerepository-title {
+    margin-left: 220px;
     display: flex;
     gap: 30px;
 }
@@ -37,11 +37,12 @@
 }
 
 .mypagerepository-header .search input {
-    width: 522px;
+    width: 722px;
     height: 62px;
     border: 3px solid #3FB5FF;
     border-radius: 4px 0px 0px 4px;
     padding: 10px;
+    margin-left: 40px;
     color: #2c2c2c;
     font-size: 16px;
 }
@@ -129,16 +130,29 @@
 .mypagerepository-main {
     width: auto;
     height: 300px;
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
 }
 .mypagerepository-main-header {
     display: flex;
     gap: 10px;
     align-items: center;
+    margin-bottom: 25px;
+}
+.mypagerepository-main-header p {
+    color: #2C2C2C;
+    font-weight: bold;
+    font-size: 16px;
 }
 .mypagerepository-main-header > img {
     width: 40px;
     height: 40px;
+}
+.mypagerepository-main-body {
+    display: flex;
+    gap: 20px;
+}
+.mypagerepository-main-body-inner {
+    position: relative;
 }
 .mypagerepository-bg {
     width: 180px;
@@ -159,4 +173,144 @@
     font-size: 16px;
     color: #2C2C2C;
 }
-.mypagerepository-bg button {}
+.mypagerepository-span {
+    display: flex;
+    flex-direction: column;
+    width: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 30px 5px 0;
+}
+.mypagerepository-span span {
+    font-size: 15px;
+    line-height: 8px;
+}
+
+/* ================================================ */
+
+.mypagerepository-file-bottom {
+    width: 100%;
+    height: 300px;
+    /* border: 1px solid #000; */
+}
+.mypagerepository-bottom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.mypagerepository-bottom p {
+    color: #2C2C2C;
+    font-weight: bold;
+    font-size: 16px;
+}
+.mypagerepository-bottom > img {
+    width: 40px;
+    height: 40px;
+}
+.mypagerepository-file-list {
+    width: 1300px;
+}
+.mypagerepository-file-list .mypagerepository-file-name:nth-child(1) {
+    border-bottom: 1px solid #C4C4C4;
+    padding: 0 20px 7px;
+}
+.mypagerepository-file-name {
+    margin-left: 20px;
+    display: flex;
+    /* justify-content: space-between; */
+}
+.mypagerepository-file-name p:nth-child(1) {
+    width: 400px;
+}
+.mypagerepository-file-name p:nth-child(2) {
+    width: 300px;
+}
+.mypagerepository-file-name p:nth-child(3) {
+    width: 200px;
+}
+.mypagerepository-file-name p:nth-child(4) {
+    width: 190px;
+}
+.mypagerepository-file-name p {}
+.mypagerepository-file-suggestion {
+    margin-top: 10px;
+    margin-left: 20px;
+    padding: 0 15px 5px;
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+.mypagerepository-file-suggestion p:nth-child(2) {
+    width: 330px;
+}
+.mypagerepository-file-suggestion p:nth-child(3) {
+    width: 200px;
+}
+.mypagerepository-file-suggestion p:nth-child(4) {
+    width: 190px;
+}
+
+.mypagerepository-file-gather {
+    width: 375px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mypagerepository-file-suggestion img {
+    width: 38px;
+    height: 38px;
+}
+
+/* ===================================================== */
+
+.mypagerepository-file-img-gather {
+    position: relative;
+    display: flex;
+}
+.mypagerepository-file-img-gather button {}
+.mypagerepository-file-img-gather button:nth-child(2) {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+.mypagerepository-file-img-gather img {}
+.mypagerepository-download img {
+    width: 42px;
+    height: 42px;
+}
+.mypagerepository-pan img {
+    width: 33px;
+    height: 33px;
+}
+.mypagerepository-star img {
+    width: 34px;
+    height: 34px;
+}
+.mypagerepository-ooo {
+    display: flex;
+    flex-direction: column;
+    width: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    /* padding: 0 0px 10px 30px; */
+    margin-bottom: 10px;
+    margin-right: -30px;
+}
+.mypagerepository-ooo span {
+    font-size: 18px;
+    line-height: 9px;
+}
+
+.mr-add {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #2c2c2c;
+    border-radius: 50%;
+    margin-top: 2px;
+}
+.mr-add img {
+    width: 18px;
+    height: 18px;
+}
