@@ -47,10 +47,11 @@ function Header() {
             <Link to="/post">
               <li>커뮤니티</li>
             </Link>
-
-            <li>캘린더</li>
+            <Link to="/calendar">
+              <li>캘린더</li>
+            </Link>
             <Link to="/mypage">
-            <li>마이페이지</li>
+              <li>마이페이지</li>
             </Link>
 
             {/* ✅ 관리자 전용 메뉴 */}
