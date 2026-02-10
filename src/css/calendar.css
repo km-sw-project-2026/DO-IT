@@ -1,4 +1,6 @@
-/* =============== 레이아웃 =============== */
+/* =========================
+   Layout
+========================= */
 .cal-wrap {
   width: 100%;
   display: flex;
@@ -16,7 +18,9 @@
   padding: 18px 18px 14px;
 }
 
-/* =============== 헤더 =============== */
+/* =========================
+   Header
+========================= */
 .cal-head {
   display: flex;
   align-items: center;
@@ -43,7 +47,9 @@
   font-weight: 600;
 }
 
-/* =============== 버튼 =============== */
+/* =========================
+   Buttons
+========================= */
 .cal-actions {
   display: flex;
   align-items: center;
@@ -88,7 +94,9 @@
   background: linear-gradient(180deg, #ffffff, #f6f7fb);
 }
 
-/* =============== 요일 헤더 =============== */
+/* =========================
+   Weekdays
+========================= */
 .cal-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -116,7 +124,9 @@
   background: rgba(37, 99, 235, 0.08);
 }
 
-/* =============== 날짜 그리드 =============== */
+/* =========================
+   Calendar Grid
+========================= */
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -124,13 +134,19 @@
   padding: 0 6px 6px;
 }
 
+/* ✅ 숫자 뱃지 안 씀 */
+.cal-count {
+  display: none !important;
+}
+
+/* 날짜 셀 */
 .cal-cell {
   position: relative;
   min-height: 92px;
   border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   background: #fff;
-  padding: 18px 12px 10px; /* 위쪽 공간 확보 */
+  padding: 18px 12px 10px;
   text-align: left;
   cursor: pointer;
   transition: transform 0.12s ease, border-color 0.12s ease;
@@ -145,6 +161,7 @@
   transform: translateY(0px);
 }
 
+/* 날짜 숫자 */
 .cal-date {
   position: absolute;
   top: 6px;
@@ -154,13 +171,13 @@
   color: #111827;
 }
 
-/* 이번달/다른달 */
+/* this month / other month */
 .cal-cell.out {
   opacity: 0.38;
   background: rgba(0, 0, 0, 0.02);
 }
 
-/* 일/토 색 */
+/* sun / sat */
 .cal-cell.sun .cal-date {
   color: #ef4444;
 }
@@ -168,30 +185,56 @@
   color: #2563eb;
 }
 
-/* 오늘 표시 */
+/* today / selected */
 .cal-cell.today {
   border: 3px solid rgba(99, 102, 241, 0.55);
 }
-
-/* 선택 표시 */
 .cal-cell.selected {
   border: 3px solid rgba(17, 24, 39, 0.6);
 }
 
-/* 날짜칸 우상단 개수 */
-.cal-count {
+/* =========================
+   ✅ Date Bars (카테고리 색 막대)
+   - 숫자 바로 아래
+   - 최대 3개
+   - +N은 셀 안에서 고정
+========================= */
+.cal-bars.top {
   position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 11px;
-  font-weight: 900;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.06);
-  color: #111827;
+  left: 10px;
+  right: 10px;
+  top: 28px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  height: 44px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
 }
 
-/* =============== 하단 안내 =============== */
+/* ✅ +N: absolute 제거하고, 아래/오른쪽으로 자연 배치 */
+.cal-more {
+  align-self: flex-end;   /* 오른쪽 */
+  margin-top: auto;       /* 맨 아래 */
+  font-size: 12px;
+  font-weight: 900;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.cal-bar {
+  width: 80px; /* 필요하면 70~90 조절 */
+  height: 10px;
+  border-radius: 999px;
+  display: block;
+}
+
+/* =========================
+   Footer
+========================= */
 .cal-footer {
   display: flex;
   justify-content: space-between;
@@ -207,232 +250,13 @@
   color: #111827;
 }
 
-/* =============== 팝업 오버레이 (가운데 고정) =============== */
+/* =========================
+   Overlay / Modal Base
+========================= */
 .cal-modal-back {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.28);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-/* =============== 사진 스타일 팝업 =============== */
-.cal-modal.photo {
-  width: min(520px, 92%);
-  background: #fff;
-  border-radius: 16px;
-  padding: 18px 18px 22px;
-  position: relative;
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
-}
-
-/* 헤더 */
-.photo-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.photo-title {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.photo-date {
-  font-size: 22px;
-  font-weight: 900;
-  color: #ef4444;
-}
-
-.photo-sub {
-  font-size: 14px;
-  font-weight: 800;
-  color: #111827;
-}
-
-.photo-close {
-  border: none;
-  background: transparent;
-  font-size: 30px;
-  line-height: 1;
-  cursor: pointer;
-  color: #374151;
-}
-
-/* 파란 라인 */
-.photo-topline {
-  height: 2px;
-  width: 100%;
-  margin: 10px 0 14px;
-  background: rgba(59, 130, 246, 0.55);
-  border-radius: 999px;
-}
-
-/* 목록 영역 */
-.photo-list {
-  height: 260px;
-  overflow: auto;
-  padding-right: 6px;
-}
-
-/* 빈 상태 */
-.photo-empty {
-  color: #9ca3af;
-  font-weight: 800;
-  padding: 16px 6px;
-}
-
-/* =============== 일정 카드 =============== */
-.todo-card {
-  display: flex;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
-  margin: 12px 0;
-  overflow: hidden;
-}
-
-.todo-bar {
-  width: 4px;
-}
-
-/* ✅ 요청 색상으로 변경 */
-.todo-bar.시험 { background: #FFD047; }
-.todo-bar.수행 { background: #72CAB5; }
-.todo-bar.숙제 { background: #C799FF; }
-.todo-bar.일정 { background: #E5E7EB; }
-
-.todo-body {
-  flex: 1;
-  padding: 12px 12px;
-}
-
-.todo-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.todo-title {
-  font-size: 14px;
-  font-weight: 900;
-  color: #111827;
-}
-
-.todo-desc {
-  margin-top: 4px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #6b7280;
-}
-
-.todo-del {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
-  color: #9ca3af;
-}
-.todo-del:hover {
-  color: #111827;
-}
-
-/* =============== + 플로팅 버튼 =============== */
-.fab-plus {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-  width: 54px;
-  height: 54px;
-  border-radius: 999px;
-  border: none;
-  background: #60a5fa;
-  color: #0b1220;
-  font-size: 34px;
-  line-height: 54px;
-  cursor: pointer;
-  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.18);
-}
-.fab-plus:hover {
-  filter: brightness(0.95);
-}
-
-/* =============== 일정 추가 폼(현재 JSX: composer) =============== */
-.composer {
-  position: absolute;
-  left: 18px;
-  right: 90px;
-  bottom: 18px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.12);
-}
-
-.composer-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-
-/* 카테고리 칩 */
-.chip {
-  border: none;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  font-weight: 900;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-/* ✅ 현재 JSX는 chip.active에만 걸리므로, active 색은 "선택된 카테고리"에 따라 바꾸기 어려움
-   -> 일단 기본은 시험색으로. (원하면 JSX에서 inline 스타일로 category별 적용 가능) */
-.chip.active {
-  background: #FFD047;
-}
-
-.composer-input {
-  width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 10px;
-  padding: 10px 10px;
-  font-weight: 800;
-  margin-bottom: 8px;
-  outline: none;
-}
-
-.composer-foot {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.composer-add {
-  border: none;
-  background: #60a5fa;
-  color: #fff;
-  font-weight: 900;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.composer-add:hover {
-  filter: brightness(0.95);
-}
-/* =======================
-   공통 오버레이/모달
-======================= */
-.cal-modal-back {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.28);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -444,18 +268,13 @@
   width: min(560px, 92vw);
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 18px 55px rgba(0,0,0,0.18);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
   position: relative;
 }
 
-/* (중요) photo 스타일/ composer 남아있으면 모양 망가질 수 있어서 확실히 무력화 */
-.cal-modal.photo { all: unset; }           /* ✅ 예전 photo 완전 무시 */
-.composer { display: none !important; }    /* ✅ 예전 composer 완전 무시 */
-
-
-/* =======================
-   1) 일정 확인 팝업 (view-ui)
-======================= */
+/* =========================
+   1) View Modal (일정 확인)
+========================= */
 .cal-modal.view-ui {
   padding: 18px 20px 22px;
   width: min(520px, 92vw);
@@ -493,44 +312,57 @@
   height: 2px;
   width: 100%;
   margin: 10px 0 14px;
-  background: rgba(59,130,246,0.55);
+  background: rgba(59, 130, 246, 0.55);
   border-radius: 999px;
 }
 
-/* ✅ 일정 목록 아래에 + 버튼 자리 확보 (겹침 방지) */
+/* ✅ 리스트 + 버튼 겹침 방지 */
 .view-list {
   max-height: 320px;
   overflow: auto;
   padding-right: 6px;
-
-  padding-bottom: 86px; /* ← + 버튼 높이(54) + 여유 */
+  padding-bottom: 90px;
 }
 
-/* 혹시 버튼이 너무 안쪽이면 살짝 올리기 */
-.fab-plus {
-  right: 18px;
-  bottom: 18px; /* 그대로 */
-}
-/* 일정 카드(확인 팝업) */
+/* event cards */
 .event-card {
   display: flex;
   margin: 10px 0;
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   background: #fff;
 }
-.event-bar { width: 4px; }
-.event-body { flex: 1; padding: 12px; }
+
+.event-bar {
+  width: 4px;
+}
+
+.event-body {
+  flex: 1;
+  padding: 12px;
+}
+
 .event-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
 }
-.event-title { font-weight: 900; color: #111827; }
-.event-desc { margin-top: 4px; font-size: 12px; font-weight: 700; color: #6b7280; }
+
+.event-title {
+  font-weight: 900;
+  color: #111827;
+}
+
+.event-desc {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
 .event-del {
   border: none;
   background: transparent;
@@ -538,10 +370,18 @@
   font-size: 18px;
   color: #9ca3af;
 }
-.event-del:hover { color: #111827; }
-.event-empty { padding: 14px 6px; color: #9ca3af; font-weight: 800; }
 
-/* 확인 팝업의 + 버튼 */
+.event-del:hover {
+  color: #111827;
+}
+
+.event-empty {
+  padding: 14px 6px;
+  color: #9ca3af;
+  font-weight: 800;
+}
+
+/* + floating button (view) */
 .fab-plus {
   position: absolute;
   right: 18px;
@@ -555,14 +395,16 @@
   font-size: 34px;
   line-height: 54px;
   cursor: pointer;
-  box-shadow: 0 14px 26px rgba(0,0,0,0.18);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.18);
 }
-.fab-plus:hover { filter: brightness(0.95); }
 
+.fab-plus:hover {
+  filter: brightness(0.95);
+}
 
-/* =======================
-   2) 일정 추가 팝업 (add-ui)
-======================= */
+/* =========================
+   2) Add Modal (일정 추가)
+========================= */
 .cal-modal.add-ui {
   padding: 20px 22px 18px;
   width: min(560px, 92vw);
@@ -593,27 +435,28 @@
   height: 2px;
   width: 100%;
   margin: 10px 0 14px;
-  background: rgba(59,130,246,0.55);
+  background: rgba(59, 130, 246, 0.55);
   border-radius: 999px;
 }
 
-/* 입력 */
+/* inputs */
 .add-input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
   padding: 12px 6px;
   outline: none;
   font-size: 14px;
   font-weight: 800;
 }
+
 .add-input.sub {
   margin-top: 8px;
   font-weight: 700;
   color: #374151;
 }
 
-/* 카테고리 칩 */
+/* category chips */
 .cat-row {
   display: flex;
   gap: 10px;
@@ -632,17 +475,24 @@
   font-size: 12px;
   color: #111827;
 }
+
+/* ✅ 선택된 카테고리 글자 흰색(안전빵) */
+.cat-chip.active {
+  color: #fff !important;
+}
+
 .cat-chip.plus {
   width: 40px;
   padding: 10px 0;
   text-align: center;
 }
+
 .cat-chip.edit {
   background: #f3f4f6;
-  border: 1px solid rgba(0,0,0,0.10);
+  border: 1px solid rgba(0, 0, 0, 0.10);
 }
 
-/* 카테고리 추가 박스 */
+/* category add box */
 .cat-add-box {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -651,14 +501,16 @@
   margin: 8px 0 10px;
   padding: 10px;
   border-radius: 12px;
-  background: rgba(0,0,0,0.03);
+  background: rgba(0, 0, 0, 0.03);
 }
+
 .cat-add-name {
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
   padding: 10px;
   font-weight: 800;
 }
+
 .cat-add-color {
   display: flex;
   align-items: center;
@@ -666,6 +518,7 @@
   font-weight: 800;
   color: #374151;
 }
+
 .cat-add-btn {
   border: none;
   background: #60a5fa;
@@ -676,14 +529,19 @@
   cursor: pointer;
 }
 
-/* 카테고리 편집 박스 */
+.cat-add-btn:hover {
+  filter: brightness(0.95);
+}
+
+/* category edit box */
 .cat-edit-box {
   margin: 8px 0 10px;
   padding: 10px;
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background: #fff;
 }
+
 .cat-edit-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -691,12 +549,14 @@
   align-items: center;
   padding: 8px 0;
 }
+
 .cat-edit-name {
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
   padding: 10px;
   font-weight: 800;
 }
+
 .cat-del-btn {
   border: none;
   background: #e5e7eb;
@@ -705,27 +565,26 @@
   border-radius: 10px;
   cursor: pointer;
 }
+
 .cat-del-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
 .cat-edit-help {
   margin-top: 6px;
   font-size: 12px;
   color: #6b7280;
   font-weight: 700;
 }
-/* ✅ 선택된 카테고리 칩 글자색 흰색 */
-.cat-chip.active {
-  color: #fff !important;
-}
 
-/* 확인 버튼 */
+/* confirm button */
 .add-foot {
   display: flex;
   justify-content: flex-end;
   margin-top: 12px;
 }
+
 .add-confirm {
   border: none;
   background: #60a5fa;
@@ -734,4 +593,8 @@
   padding: 12px 18px;
   border-radius: 10px;
   cursor: pointer;
+}
+
+.add-confirm:hover {
+  filter: brightness(0.95);
 }

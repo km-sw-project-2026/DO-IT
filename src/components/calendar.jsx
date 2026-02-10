@@ -3,12 +3,11 @@ import "../css/calendar.css";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
-// ✅ 기본 카테고리 + 색상 고정
+// ✅ 기본 카테고리 + 색상 고정 (plan 삭제)
 const DEFAULT_CATEGORIES = [
   { id: "exam", name: "시험", color: "#FFD047", locked: true },
   { id: "perf", name: "수행", color: "#72CAB5", locked: true },
   { id: "home", name: "숙제", color: "#C799FF", locked: true },
-  { id: "plan", name: "일정", color: "#E5E7EB", locked: true },
 ];
 
 const LS_CAT = "doit_calendar_categories_v1";
@@ -77,20 +76,33 @@ export default function Calendar() {
     [viewDate]
   );
 
-  // ✅ 로컬 저장 불러오기
+  // ✅ 로컬 저장 불러오기 (+ plan이 저장되어 있어도 자동으로 제거)
   useEffect(() => {
     const savedCats = safeParse(localStorage.getItem(LS_CAT), null);
     if (Array.isArray(savedCats) && savedCats.length) {
-      const map = new Map(savedCats.map((c) => [c.id, c]));
+      const filtered = savedCats.filter((c) => c.id !== "plan"); // ✅ plan 제거
+
+      const map = new Map(filtered.map((c) => [c.id, c]));
       DEFAULT_CATEGORIES.forEach((dc) => {
         if (!map.has(dc.id)) map.set(dc.id, dc);
       });
-      const merged = Array.from(map.values());
-      setCategories(merged);
+
+      setCategories(Array.from(map.values()));
+    } else {
+      setCategories(DEFAULT_CATEGORIES);
     }
 
     const savedEvts = safeParse(localStorage.getItem(LS_EVT), {});
-    if (savedEvts && typeof savedEvts === "object") setEventsByDate(savedEvts);
+    if (savedEvts && typeof savedEvts === "object") {
+      // ✅ 예전 일정 중 categoryId가 plan이면 exam으로 바꿔서 살려줌
+      const fixed = {};
+      for (const k of Object.keys(savedEvts)) {
+        fixed[k] = (savedEvts[k] || []).map((e) =>
+          e.categoryId === "plan" ? { ...e, categoryId: "exam" } : e
+        );
+      }
+      setEventsByDate(fixed);
+    }
   }, []);
 
   // ✅ 로컬 저장
@@ -130,7 +142,10 @@ export default function Calendar() {
   const selectedKey = selectedDate ? keyOfDate(selectedDate) : "";
   const list = selectedKey ? eventsByDate[selectedKey] || [] : [];
 
-  const catById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
+  const catById = useMemo(
+    () => new Map(categories.map((c) => [c.id, c])),
+    [categories]
+  );
 
   // ✅ 한 번 클릭: 선택만
   const onClickDate = (d) => setSelectedDate(d);
@@ -175,15 +190,14 @@ export default function Calendar() {
       id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       title,
       desc,
-      categoryId: selectedCategoryId 
+      categoryId: selectedCategoryId,
     };
 
     setEventsByDate((prev) => {
       const arr = prev[key] ? [...prev[key]] : [];
-      return { ...prev, [key]: [item, ...arr] };
+      return { ...prev, [key]: [item, ...arr] }; // 최신이 앞
     });
 
-    // ✅ 추가 팝업 닫고(=분리), 확인 팝업은 그대로 보여줌
     setIsAddOpen(false);
     setIsCatAddOpen(false);
     setIsCatEditOpen(false);
@@ -212,10 +226,12 @@ export default function Calendar() {
 
   // ✅ 카테고리 업데이트
   const updateCategory = (id, patch) => {
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)));
+    setCategories((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, ...patch } : c))
+    );
   };
 
-  // ✅ 카테고리 삭제(해당 일정은 '일정(plan)'으로 이동)
+  // ✅ 카테고리 삭제(해당 일정은 exam으로 이동)
   const deleteCategory = (id) => {
     const target = categories.find((c) => c.id === id);
     if (!target || target.locked) return;
@@ -224,14 +240,14 @@ export default function Calendar() {
       const next = {};
       for (const k of Object.keys(prev)) {
         next[k] = (prev[k] || []).map((e) =>
-          e.categoryId === id ? { ...e, categoryId: "plan" } : e
+          e.categoryId === id ? { ...e, categoryId: "exam" } : e
         );
       }
       return next;
     });
 
     setCategories((prev) => prev.filter((c) => c.id !== id));
-    if (selectedCategoryId === id) setSelectedCategoryId("plan");
+    if (selectedCategoryId === id) setSelectedCategoryId("exam");
   };
 
   return (
@@ -260,7 +276,10 @@ export default function Calendar() {
 
         <div className="cal-weekdays">
           {WEEKDAYS.map((w, i) => (
-            <div key={w} className={`cal-weekday ${i === 0 ? "sun" : ""} ${i === 6 ? "sat" : ""}`}>
+            <div
+              key={w}
+              className={`cal-weekday ${i === 0 ? "sun" : ""} ${i === 6 ? "sat" : ""}`}
+            >
               {w}
             </div>
           ))}
@@ -274,7 +293,19 @@ export default function Calendar() {
             const dow = d.getDay();
 
             const dateKey = keyOfDate(d);
-            const count = (eventsByDate[dateKey] || []).length;
+            const items = eventsByDate[dateKey] || [];
+
+            // ✅ 오름차순(먼저 추가한 것 -> 위)
+            const bars = items
+              .slice()
+              .reverse()
+              .map((ev) => {
+                const cat = catById.get(ev.categoryId) || catById.get("exam"); // ✅ plan 제거
+                return cat?.color || "#E5E7EB";
+              });
+
+            const visibleBars = bars.slice(0, 3);
+            const moreCount = Math.max(0, bars.length - 3);
 
             return (
               <button
@@ -293,7 +324,19 @@ export default function Calendar() {
                 title="더블클릭: 일정 확인"
               >
                 <div className="cal-date">{d.getDate()}</div>
-                {count > 0 && <div className="cal-count">{count}</div>}
+
+                {bars.length > 0 && (
+                  <div className="cal-bars top">
+                    {visibleBars.map((color, idx) => (
+                      <span
+                        key={`${dateKey}-${idx}`}
+                        className="cal-bar"
+                        style={{ background: color }}
+                      />
+                    ))}
+                    {moreCount > 0 && <span className="cal-more">+{moreCount}</span>}
+                  </div>
+                )}
               </button>
             );
           })}
@@ -305,22 +348,24 @@ export default function Calendar() {
         </div>
       </div>
 
-      {/* ===================== */}
       {/* ✅ 1) 일정 확인 팝업(목록만) */}
-      {/* ===================== */}
       {isViewOpen && selectedDate && (
         <div className="cal-modal-back" onMouseDown={closeAll}>
           <div className="cal-modal view-ui" onMouseDown={(e) => e.stopPropagation()}>
             <div className="view-head">
-              <div className="view-title">{formatHeader(selectedDate)} <span className="view-sub">할 일</span></div>
-              <button className="view-close" type="button" onClick={closeAll}>×</button>
+              <div className="view-title">
+                {formatHeader(selectedDate)} <span className="view-sub">할 일</span>
+              </div>
+              <button className="view-close" type="button" onClick={closeAll}>
+                ×
+              </button>
             </div>
 
             <div className="view-line" />
 
             <div className="view-list">
               {list.map((ev) => {
-                const cat = catById.get(ev.categoryId) || catById.get("plan");
+                const cat = catById.get(ev.categoryId) || catById.get("exam"); // ✅ plan 제거
                 return (
                   <div key={ev.id} className="event-card">
                     <div className="event-bar" style={{ background: cat?.color }} />
@@ -344,7 +389,6 @@ export default function Calendar() {
               {list.length === 0 && <div className="event-empty">등록된 일정이 없어요.</div>}
             </div>
 
-            {/* ✅ 사진처럼 오른쪽 아래 + */}
             <button className="fab-plus" type="button" onClick={openAddPopup} aria-label="일정 추가">
               +
             </button>
@@ -352,15 +396,15 @@ export default function Calendar() {
         </div>
       )}
 
-      {/* ===================== */}
       {/* ✅ 2) 일정 추가 팝업(추가만) */}
-      {/* ===================== */}
       {isAddOpen && selectedDate && (
         <div className="cal-modal-back" onMouseDown={() => setIsAddOpen(false)}>
           <div className="cal-modal add-ui" onMouseDown={(e) => e.stopPropagation()}>
             <div className="add-head">
               <div className="add-title">{formatHeader(selectedDate)}</div>
-              <button className="add-close" type="button" onClick={() => setIsAddOpen(false)}>×</button>
+              <button className="add-close" type="button" onClick={() => setIsAddOpen(false)}>
+                ×
+              </button>
             </div>
 
             <div className="add-line" />
@@ -378,23 +422,25 @@ export default function Calendar() {
               onChange={(e) => setDraftDesc(e.target.value)}
             />
 
-            {/* 카테고리 칩 */}
+            {/* ✅ 카테고리 칩: plan이 로컬에 남아있어도 안 보이게 필터 */}
             <div className="cat-row">
-              {categories.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  className={`cat-chip ${selectedCategoryId === c.id ? "active" : ""}`}
-                  onClick={() => setSelectedCategoryId(c.id)}
-                  style={
-                    selectedCategoryId === c.id
-                      ? { background: c.color, color: "#111827" }
-                      : { background: "#E5E7EB", color: "#111827" }
-                  }
-                >
-                  {c.name}
-                </button>
-              ))}
+              {categories
+                .filter((c) => c.id !== "plan")
+                .map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={`cat-chip ${selectedCategoryId === c.id ? "active" : ""}`}
+                    onClick={() => setSelectedCategoryId(c.id)}
+                    style={
+                      selectedCategoryId === c.id
+                        ? { background: c.color, color: "#fff" }
+                        : { background: "#E5E7EB", color: "#111827" }
+                    }
+                  >
+                    {c.name}
+                  </button>
+                ))}
 
               <button className="cat-chip plus" type="button" onClick={() => setIsCatAddOpen((v) => !v)}>
                 +
@@ -427,35 +473,36 @@ export default function Calendar() {
             {/* 카테고리 편집 */}
             {isCatEditOpen && (
               <div className="cat-edit-box">
-                {categories.map((c) => (
-                  <div key={c.id} className="cat-edit-row">
-                    <input
-                      className="cat-edit-name"
-                      value={c.name}
-                      disabled={c.locked}
-                      onChange={(e) => updateCategory(c.id, { name: e.target.value })}
-                    />
-                    <input
-                      type="color"
-                      value={c.color}
-                      disabled={c.locked}
-                      onChange={(e) => updateCategory(c.id, { color: e.target.value })}
-                    />
-                    <button
-                      className="cat-del-btn"
-                      type="button"
-                      disabled={c.locked}
-                      onClick={() => deleteCategory(c.id)}
-                    >
-                      삭제
-                    </button>
-                  </div>
-                ))}
+                {categories
+                  .filter((c) => c.id !== "plan")
+                  .map((c) => (
+                    <div key={c.id} className="cat-edit-row">
+                      <input
+                        className="cat-edit-name"
+                        value={c.name}
+                        disabled={c.locked}
+                        onChange={(e) => updateCategory(c.id, { name: e.target.value })}
+                      />
+                      <input
+                        type="color"
+                        value={c.color}
+                        disabled={c.locked}
+                        onChange={(e) => updateCategory(c.id, { color: e.target.value })}
+                      />
+                      <button
+                        className="cat-del-btn"
+                        type="button"
+                        disabled={c.locked}
+                        onClick={() => deleteCategory(c.id)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  ))}
                 <div className="cat-edit-help">기본 카테고리는 삭제/수정이 잠겨있어요.</div>
               </div>
             )}
 
-            {/* 확인 버튼 */}
             <div className="add-foot">
               <button className="add-confirm" type="button" onClick={addEvent}>
                 확인
