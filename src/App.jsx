@@ -17,6 +17,7 @@ import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
 import Calendar from './components/calendar.jsx';
+import Mypageposts from './components/mypageposts.jsx';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path='/mrfi' element={<MRFI/>} />
         <Route path='/mrsdb' element={<MRSDB/>} />
         <Route path='/calendar' element={<Calendar />} />
+        <Route path='/mypageposts' element={<Mypageposts/>} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />
