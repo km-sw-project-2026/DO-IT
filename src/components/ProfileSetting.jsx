@@ -33,11 +33,14 @@ export const ProfileSetting = ({ openModal, setOpenModal}) => {
                             <div className="information">
                                 {/* 자기소개/ */}
                                 <h3>정보</h3>
-                                <input type="text" />
+                                <textarea name="information" id="information"></textarea>
                             </div>
                         </div>
                     </div>
-                    <button className="profile-setting-check">확인</button>
+                    <button className="profile-setting-check" 
+                    type="button" onClick={() => {setOpenModal(false);}}>
+                        확인
+                    </button>
                 </div>
             </div>
         </div>

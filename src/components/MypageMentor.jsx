@@ -1,14 +1,14 @@
-import "../css/Mypage.css";
+import "../css/MypageMentor.css";
 import Mypagedata from "./Mypagedata.jsx";
 import MypageCommunity from "./MypageCommunity.jsx";
-import {ProfileSetting} from "./ProfileSetting";
+import {ProfileSetting} from "./ProfileSetting.jsx";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
 // 여기는 Mypagemento 구역입니다.
 // 이름은 바꾸기 무서워서 안바꾼 거니 오해 노노
 
-export default function Mypage() {
+export default function MypageMentor() {
     const [openModal, setOpenModal] = useState(false);
 
     return (

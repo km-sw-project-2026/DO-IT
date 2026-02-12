@@ -10,12 +10,12 @@ import Posts from './components/Posts';
 import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
 import AdminPage from "./pages/AdminPage";
-import Mypage from './components/Mypage.jsx';
 import MypageMenty from './components/MypageMenty.jsx';
 import MypageRepository from './components/MypageRepository.jsx';
 import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
+import MypageMentor from './components/MypageMentor.jsx';
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path='/mypagementy' element={<MypageMenty/>} />
-        <Route path='/mypage' element={<Mypage/>} />
+        <Route path='/mypageMentor' element={<MypageMentor/>} />
         <Route path='/mypagerepository' element={<MypageRepository/>} />
         <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete/>} />
         <Route path='/mrfi' element={<MRFI/>} />
