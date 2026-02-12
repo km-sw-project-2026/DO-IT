@@ -1,33 +1,39 @@
-import "../css/Mypage.css";
-import Mypagedata from "./Mypagedata";
-import MypageCommunity from "./MypageCommunity";
-import ProfileSetting from "./ProfileSetting";
+import "../css/MypageMentor.css";
+import Mypagedata from "./Mypagedata.jsx";
+import MypageCommunity from "./MypageCommunity.jsx";
+import {ProfileSetting} from "./ProfileSetting.jsx";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 
+// 여기는 Mypagemento 구역입니다.
+// 이름은 바꾸기 무서워서 안바꾼 거니 오해 노노
 
+export default function MypageMentor() {
+    const [openModal, setOpenModal] = useState(false);
 
-function Mypage() {
     return (
         <section className="mypage">
             <div className="mypage-header">
                 <div className="mypage-header-inner">
                     <div className="profile-button">
-                        <div className="myapge-user-profile">
+                        <div className="mypage-user-profile">
                             <img src='/images/profile.jpg' alt='' />
                             <div className="mypage-user-name">
                                 <h2>환영합니다</h2>
                                 <p><span>어드민</span>님</p>
                             </div>
                             <div className="user-setting">
-                                <button className="setting">
+                                <button className="setting" type="button" onClick={() => {setOpenModal(true);}}>
                                     <img src='/images/icon/setting.png' alt="" />
-                                    <button>프로필 설정</button>
+                                    <p>프로필 설정</p>
                                 </button>
+                                {openModal ? <ProfileSetting openModal={openModal} setOpenModal={setOpenModal} /> : null}
                             </div>
                         </div>
                         <div className="change-button-mentor">
-                            <button>
+                            <Link to="/MypageMenty"><button>
                                 멘토
-                            </button>
+                            </button></Link>
                         </div>
                     </div>
                     <div className="user-explanation">
@@ -58,27 +64,24 @@ function Mypage() {
                     </div>
                     <div className="mypage-data">
                         <h2 className="mypage-contents-title">내 자료함</h2>
-                        <div className="mypage-data-box">
-                            <div className="mypage-data-contents">
-                                <div className="mypage-data-title">
-                                    <h2>자료함</h2>
-                                </div>
-                                <div className="mypage-data-main">
-                                    <Mypagedata />
-                                    <Mypagedata />
-                                    <Mypagedata />
-                                    <Mypagedata />
+                        <Link to="/mypagerepository">
+                            <div className="mypage-data-box">
+                                <div className="mypage-data-contents">
+                                    <div className="mypage-data-title">
+                                        <h2>자료함</h2>
+                                    </div>
+                                    <div className="mypage-data-main">
+                                        <Mypagedata />
+                                        <Mypagedata />
+                                        <Mypagedata />
+                                        <Mypagedata />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
-            <div className="pop-up">
-                <div className="pop-up-contents"><ProfileSetting /></div>
-            </div>
         </section>
     );
-}
-
-export default Mypage;
+};

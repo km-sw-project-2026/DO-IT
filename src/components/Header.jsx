@@ -29,7 +29,7 @@ function Header() {
   const profileSrc =
     user?.profile_image && user.profile_image.trim() !== ""
       ? user.profile_image
-      : "/images/default-profile.png";
+      : "/images/profile.jpg";
 
   return (
     <header className="project-header">
@@ -47,11 +47,10 @@ function Header() {
             <Link to="/post">
               <li>커뮤니티</li>
             </Link>
-            <Link to="/calendar">
-              <li>캘린더</li>
-            </Link>
+
+            <li>캘린더</li>
             <Link to="/mypage">
-              <li>마이페이지</li>
+            <li>마이페이지</li>
             </Link>
 
             {/* ✅ 관리자 전용 메뉴 */}
