@@ -29,7 +29,7 @@ function Header() {
   const profileSrc =
     user?.profile_image && user.profile_image.trim() !== ""
       ? user.profile_image
-      : "/images/default-profile.png";
+      : "/images/profile.jpg";
 
   return (
     <header className="project-header">
