@@ -14,6 +14,9 @@ export default function MypageMentor() {
     const [bio, setBio] = useState("");
     const [nickname, setNickname] = useState("");
 
+    const [canToggle, setCanToggle] = useState(false);
+    const [isMentor, setIsMentor] = useState(false);
+
     useEffect(() => {
         const me = getCurrentUser();
         if (!me) return;
@@ -35,6 +38,20 @@ export default function MypageMentor() {
             if (d.nickname !== undefined) setNickname(d.nickname);
         };
         window.addEventListener("profile:updated", handler);
+
+        // mentor-status 조회: 멘토 권한이 있으면 토글 허용
+        (async () => {
+            try {
+                const resp = await fetch(`/me/mentor-status?user_id=${me.user_id}`);
+                if (!resp.ok) return;
+                const st = await resp.json();
+                setCanToggle(Boolean(st?.canToggle));
+                setIsMentor(Boolean(st?.isMentor));
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
         return () => window.removeEventListener("profile:updated", handler);
     }, []);
 
@@ -58,9 +75,11 @@ export default function MypageMentor() {
                             </div>
                         </div>
                         <div className="change-button-mentor">
-                            <Link to="/MypageMenty"><button>
-                                멘토
-                            </button></Link>
+                            {canToggle ? (
+                                <Link to="/mypage"><button>멘티</button></Link>
+                            ) : (
+                                <button className="toggle-disabled" type="button" disabled title="멘토 권한이 있어야 전환 가능합니다">✕</button>
+                            )}
                         </div>
                     </div>
                     <div className="user-explanation">

@@ -49,7 +49,7 @@ function Header() {
             </Link>
 
             <Link to="/calendar"><li>캘린더</li></Link>
-            <Link to="/mypageMentor">
+              <Link to="/mypage">
             <li>마이페이지</li>
             </Link>
 
