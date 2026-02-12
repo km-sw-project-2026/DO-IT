@@ -4,7 +4,7 @@
     /* border: 1px solid black; */
     margin-top: 50px;
     padding: 35px 90px;
-    background: linear-gradient(90deg, #C7EFC2, #AEBCFF 100%);
+    background: linear-gradient(90deg, #AEBCFF, #C7EFC2 100%);
 }
 .profile-button {
     display: flex;
@@ -74,7 +74,7 @@
     height: 37px;
 }
 
-.setting button {
+.setting {
     font-weight: bold;
     font-size: 14px;
     color: #2C2C2C;
@@ -131,7 +131,7 @@
 
 .mypagementy-contents-inner {
     display: flex;
-    padding: 10px 45px;
+    padding: 35px 45px;
     gap: 30px;
 }
 
