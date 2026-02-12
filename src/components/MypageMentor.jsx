@@ -1,15 +1,42 @@
 import "../css/MypageMentor.css";
 import Mypagedata from "./Mypagedata.jsx";
 import MypageCommunity from "./MypageCommunity.jsx";
-import {ProfileSetting} from "./ProfileSetting.jsx";
+import { ProfileSetting } from "./ProfileSetting.jsx";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getCurrentUser } from "../utils/auth";
 
 // 여기는 Mypagemento 구역입니다.
 // 이름은 바꾸기 무서워서 안바꾼 거니 오해 노노
 
 export default function MypageMentor() {
     const [openModal, setOpenModal] = useState(false);
+    const [bio, setBio] = useState("");
+    const [nickname, setNickname] = useState("");
+
+    useEffect(() => {
+        const me = getCurrentUser();
+        if (!me) return;
+        setNickname(me.nickname || "");
+        (async () => {
+            try {
+                const res = await fetch(`/api/profile?user_id=${me.user_id}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                setBio(data.user?.bio || "");
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
+        const handler = (ev) => {
+            const d = ev.detail || {};
+            if (d.bio !== undefined) setBio(d.bio);
+            if (d.nickname !== undefined) setNickname(d.nickname);
+        };
+        window.addEventListener("profile:updated", handler);
+        return () => window.removeEventListener("profile:updated", handler);
+    }, []);
 
     return (
         <section className="mypage">
@@ -20,7 +47,7 @@ export default function MypageMentor() {
                             <img src='/images/profile.jpg' alt='' />
                             <div className="mypage-user-name">
                                 <h2>환영합니다</h2>
-                                <p><span>어드민</span>님</p>
+                                <p><span>{nickname || "익명"}</span>님</p>
                             </div>
                             <div className="user-setting">
                                 <button className="setting" type="button" onClick={() => {setOpenModal(true);}}>
@@ -38,7 +65,7 @@ export default function MypageMentor() {
                     </div>
                     <div className="user-explanation">
                         <h3>멘토 설명</h3>
-                        <p>수학만 알려드립니다</p>
+                        <p>{bio || "소개가 없습니다."}</p>
                     </div>
                 </div>
             </div>

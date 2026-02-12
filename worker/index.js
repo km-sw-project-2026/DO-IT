@@ -19,6 +19,7 @@ import * as report from "../functions/api/report/index.js";
 import * as adminReports from "../functions/api/admin/reports.js";
 import * as adminNotice from "../functions/api/admin/notice.js";
 import * as adminBan from "../functions/api/admin/ban.js";
+import * as profile from "../functions/api/profile/index.js";
 
 
 
@@ -182,6 +183,19 @@ export default {
     if (path === "/api/admin/ban") {
       if (request.method === "OPTIONS") return adminBan.onRequestOptions({ request });
       if (request.method === "POST") return adminBan.onRequestPost({ request, env });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/profile (프로필 조회/수정)
+    // ---------------------------
+    if (path === "/api/profile") {
+      if (request.method === "OPTIONS") return profile.onRequestOptions({ request });
+      if (request.method === "GET") return profile.onRequestGet({ request, env, url });
+      if (request.method === "PUT") return profile.onRequestPut({ request, env });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

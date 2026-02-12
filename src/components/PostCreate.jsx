@@ -138,6 +138,12 @@ function CommunityInput() {
       }
 
       const newId = data?.result?.meta?.last_row_id;
+      // 새 글 작성 이벤트 발생
+      try {
+        window.dispatchEvent(new CustomEvent("post:created", { detail: { post_id: newId } }));
+      } catch (e) {
+        console.error("dispatch post:created failed", e);
+      }
       if (newId) navigate(`/post/${newId}`);
       else navigate("/post");
     } finally {
