@@ -16,6 +16,7 @@ import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
+import Calendar from './components/calendar.jsx';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete/>} />
         <Route path='/mrfi' element={<MRFI/>} />
         <Route path='/mrsdb' element={<MRSDB/>} />
+        <Route path='/calendar' element={<Calendar />} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />
