@@ -48,7 +48,7 @@ function Header() {
               <li>커뮤니티</li>
             </Link>
 
-            <li>캘린더</li>
+            <Link to="/calendar"><li>캘린더</li></Link>
             <Link to="/mypageMentor">
             <li>마이페이지</li>
             </Link>
