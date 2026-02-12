@@ -28,7 +28,7 @@ export const ProfileSetting = ({ openModal, setOpenModal}) => {
                             <div className="nickname">
                                 {/* /디비에서 불러올 예정 */}
                                 <h3>이름</h3>
-                                <input type="text" />
+                                <input type="text" readOnly value="어드민" />
                             </div>
                             <div className="information">
                                 {/* 자기소개/ */}

@@ -31,9 +31,9 @@ export default function MypageMentor() {
                             </div>
                         </div>
                         <div className="change-button-mentor">
-                            <button>
+                            <Link to="/MypageMenty"><button>
                                 멘토
-                            </button>
+                            </button></Link>
                         </div>
                     </div>
                     <div className="user-explanation">

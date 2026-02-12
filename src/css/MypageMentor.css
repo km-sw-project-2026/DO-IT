@@ -21,7 +21,7 @@
     border-radius: 50px;
 }
 
-.mypage-user-profile img {
+.mypage-user-profile>img {
     width: 100px;
     height: 100px;
     border-radius: 50px;
@@ -75,8 +75,8 @@
     height: 37px;
 }
 
-.setting button {
-    font-weight: bold;
+.setting{
+    font-weight: bold;  
     font-size: 14px;
     color: #2C2C2C;
 }

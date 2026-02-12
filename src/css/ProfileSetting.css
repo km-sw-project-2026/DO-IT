@@ -59,6 +59,7 @@
     padding: 0 10px;
     font-size: 16px;
     border: 1px solid #B4B4B4;
+    font-weight: bold;
 }
 .profile-setting-contents .information {
     display: flex;
