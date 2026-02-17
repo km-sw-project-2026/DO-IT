@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import "../css/MainCalenderPreview.css";
+import MainCalenderPreview from "../components/MainCalenderPreview";
 
 function Main() {
   return (
@@ -83,8 +85,10 @@ function Main() {
             </div>
           </Link>
         </div>
-</section>
-
+      </section>
+      <div className="main-calendar-center">
+        <MainCalenderPreview/>
+      </div>
       {/* =======================
     1:1 멘토멘티 섹션
 ======================= */}

@@ -1,0 +1,319 @@
+/* =========================
+   Layout (center + size)
+========================= */
+.main-cal-preview-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.main-cal-preview {
+  width: 1124px;
+  height: 692px;
+
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 18px;
+
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  padding: 18px;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+/* =========================
+   Left (calendar)
+========================= */
+.main-cal-left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* header */
+.main-cal-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 6px 4px 12px;
+}
+
+.main-cal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.main-cal-hint {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* weekdays */
+.main-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.main-cal-weekday {
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+/* grid */
+.main-cal-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+/* cell */
+.main-cal-cell {
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  padding: 10px;
+  padding-bottom: 44px; /* ✅ badge/mini list 공간 확보 */
+  position: relative;
+  min-height: 84px;
+  overflow: hidden;
+}
+
+.main-cal-cell.is-out {
+  opacity: 0.45;
+}
+
+.main-cal-cell.has-event {
+  border-color: #dbeafe;
+  background: #f5faff;
+}
+
+.main-cal-daynum {
+  font-size: 13px;
+  font-weight: 800;
+  color: #111827;
+}
+/* =========================
+   Right (side calendar - light theme)
+========================= */
+.main-cal-right {
+  height: 100%;
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 16px;
+  padding: 14px;
+
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  border: 1px solid #e5e7eb;
+}
+
+.side-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.side-head h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.go-btn {
+  border: none;
+  background: #111827;
+  color: #fff;
+  font-weight: 900;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.go-btn:hover {
+  transform: translateY(-1px);
+}
+
+.side-empty {
+  margin-top: 14px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* list */
+.side-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.side-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 11px;
+  color: #64748b;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 1200px) {
+  .main-cal-preview {
+    width: min(1124px, 92vw);
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .main-cal-right {
+    min-height: 260px;
+  }
+}
+/* 날짜칸 */
+.main-cal-cell {
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  padding: 10px;
+  position: relative;
+  min-height: 84px;
+  overflow: hidden;
+}
+
+/* 사진처럼: 날짜 아래에 막대 뱃지 */
+.main-cal-bars {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;   /* 기존 7px → 5px */
+}
+
+.main-cal-bar {
+  height: 6px;     /* 🔥 얇게 */
+  width: 64%;
+  border-radius: 999px;
+}
+
+.main-cal-more {
+  font-size: 11px;
+  font-weight: 800;
+  color: #2563eb;
+  margin-top: 2px;
+}
+/* 보조 캘린더 카드 (사진 느낌) */
+.side-card {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 12px;
+}
+
+/* 왼쪽 컬러 바 */
+.side-accent {
+  width: 6px;
+  border-radius: 999px;
+  flex: 0 0 6px;
+}
+
+/* 카드 내용 */
+.side-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.side-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.side-card-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f172a;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-card-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.main-cal-cell.is-today {
+  border: 2px solid #a5b4fc;
+  background: #eef2ff;
+}
+/* 요일 색상 */
+.main-cal-weekday.sun {
+  color: #ef4444;
+}
+.main-cal-weekday.sat {
+  color: #2563eb;
+}
+
+/* 날짜 숫자 색상 (일/토) */
+.main-cal-cell.is-sun .main-cal-daynum {
+  color: #ef4444;
+}
+.main-cal-cell.is-sat .main-cal-daynum {
+  color: #2563eb;
+}
+
+/* 오늘 표시 */
+.main-cal-cell.is-today {
+  border: 2px solid #a5b4fc;
+  background: #eef2ff;
+}
+
+/* 선택된 날짜 표시 */
+.main-cal-cell.is-selected {
+  outline: 2px solid #111827;
+  outline-offset: -2px;
+}
+
+/* button으로 바뀌어서 기본 스타일 제거 */
+.main-cal-cell {
+  text-align: left;
+  border: 1px solid #eef2f7;
+  cursor: pointer;
+}
+
+/* 오른쪽 선택 날짜 텍스트 */
+.side-picked {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+}
