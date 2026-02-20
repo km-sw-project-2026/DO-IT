@@ -1,5 +1,4 @@
-
-
+import "../../css/Menty/NoMentypage.css";
 
 function NoMentypage() {
     return (

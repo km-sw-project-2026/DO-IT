@@ -36,7 +36,7 @@ function Mentypage() {
                 </div>
             </button>
 
-            <div className="Mento-box">
+            {/* <div className="Mento-box">
                 <MentypageMento />
                 <MentypageMento />
                 <MentypageMento />
@@ -55,9 +55,24 @@ function Mentypage() {
                         <button className="next">→</button>
                     </div>
                 </div>
-            </footer>
+            </footer> */}
+
+
+
+{/* 없을때화면 */}
+
+            <div className="Mento-backup">
+                <img src="#" alt="backup" />
+                <p>아직 멘토가 없어요</p>
+                <span>지원하고 첫번째 멘토되기</span>
+            </div>
+
+            <div className="Mento-backup-button">
+                <button>멘토 지원하기</button>
+            </div>
         </section>
     );
 }
+
 
 export default Mentypage;
