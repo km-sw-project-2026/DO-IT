@@ -1,7 +1,172 @@
-.Mentypage-header {
-    width: 100%;
-    height: 350px;
-    margin-top: 50px;
-    padding: 35px 90px;
-    background: linear-gradient(90deg, #ffc568, #AEBCFF 100%);
+.Mentypage {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.Menty-buttons-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.Menty-button {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    min-width: 120px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.Menty-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.Menty-button img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.Menty-button button {
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+    color: #333;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.filter-button {
+    position: relative;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin: 20px 0 20px 40px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+}
+
+.filter-button p {
+    margin: 0;
+}
+
+.filter-button-inner {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 100;
+    min-width: 130px;
+    margin-top: 4px;
+}
+
+.filter-button:hover .filter-button-inner,
+.filter-button:focus-within .filter-button-inner {
+    display: block;
+}
+
+.filter-button-inner ul {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.filter-button-inner ul li {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    color: #444;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.filter-button-inner ul li:hover {
+    background-color: #f0f8ff;
+    color: #0099cc;
+}
+
+.Mento-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 960px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .Mento-box {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .Mento-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+.Mentypage-footer {
+    padding: 20px 0 40px;
+}
+
+.Mentypage-footer-content {
+    display: flex;
+    justify-content: center;
+}
+
+.page-number {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-number button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
+}
+
+.page-number button:hover {
+    background: #e8f4fb;
+    border-color: #99d6ee;
+}
+
+.page-number button.active {
+    background: #4bbde8;
+    color: #fff;
+    border-color: #4bbde8;
+    font-weight: 700;
+}
+
+.page-number button.prev,
+.page-number button.next {
+    font-size: 1rem;
+    color: #666;
 }

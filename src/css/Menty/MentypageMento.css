@@ -1,0 +1,101 @@
+
+.Mentypage {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.Mentypage-header {
+    background: linear-gradient(135deg, #C7F2BD  0%, #C6D5F5 100% );
+    padding: 100px 20px 60px;
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+.Mentypage-header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.Mentypage-header-inner h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #222;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.Mentypage-header-inner h1 strong {
+    font-weight: 700;
+}
+
+.Mento {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.Mento:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.13);
+}
+
+.Mento-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.Mento-profile img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ddd;
+}
+
+.Mento-profile h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.Mento-job {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding-left: 4px;
+}
+
+.Mento-job span {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.Mento-star {
+    margin-top: 8px;
+}
+
+.star {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.star span {
+    font-size: 1rem;
+    color: #f5a623;
+    letter-spacing: 2px;
+}
+
+.star p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
