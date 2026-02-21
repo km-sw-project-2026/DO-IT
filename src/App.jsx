@@ -14,6 +14,7 @@ import Mypage from './components/Mypage.jsx';
 import MypageMenty from './components/MypageMenty.jsx';
 import ProfileSetting from './components/ProfileSetting.jsx';
 import Mentypage from './components/Menty/Mentypage.jsx';
+import Mentopage from './components/Menty/Mentopage.jsx';
 import Mentoring from './components/Menty/Mentoring.jsx';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path='/mypage' element={<Mypage/>} />
         <Route path='/profilesetting' element={<ProfileSetting/>} />
         <Route path='/mentypage' element={<Mentypage/>}/>
+        <Route path='/mentopage' element={<Mentopage/>}/>
         <Route path='/mentoring' element={<Mentoring/>}/> 
       </Route>
       <Route element={<UserLayout />}>
