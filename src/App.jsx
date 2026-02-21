@@ -16,6 +16,7 @@ import ProfileSetting from './components/ProfileSetting.jsx';
 import Mentypage from './components/Menty/Mentypage.jsx';
 import Mentopage from './components/Menty/Mentopage.jsx';
 import Mentoring from './components/Menty/Mentoring.jsx';
+import Myreview from './components/Menty/Myreview.jsx';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path='/mentypage' element={<Mentypage/>}/>
         <Route path='/mentopage' element={<Mentopage/>}/>
         <Route path='/mentoring' element={<Mentoring/>}/> 
+        <Route path="/myreview" element={<Myreview />} /> 
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />
