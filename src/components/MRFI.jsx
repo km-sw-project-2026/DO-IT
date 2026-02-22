@@ -64,7 +64,7 @@ function MRFI() {
                                     <p>크기</p>
                                 </div>
                                 <div className="mrfi-file-suggestion">
-                                    <input type="checkbox" />
+                                    {/* <input type="checkbox" /> */}
                                     <div className="mrfi-file-gather">
                                         <button><img src="/images/icon/img.png" alt="" /></button>
                                         <p>자료구조 노트필기</p>
@@ -89,10 +89,10 @@ function MRFI() {
                             <div className="mrfi-file-list">
                                 <div className="mrfi-file-name"></div>
                                 <div className="mrfi-file-suggestion">
-                                    <input type="checkbox" />
+                                    {/* <input type="checkbox" /> */}
                                     <div className="mrfi-file-gather">
-                                        <button><img src="/images/icon/img.png" alt="" /></button>
-                                        <p>자료구조 노트필기</p>
+                                        <button><img src="/images/icon/folder.png" alt="" /></button>
+                                        <p>사회</p>
                                     </div>
                                     <p>12월 1일 12:10</p>
                                     <p>.jpg</p  >

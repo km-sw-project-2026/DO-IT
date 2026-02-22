@@ -1,0 +1,280 @@
+.mrsdb {
+    width: 100%;
+}
+
+.mrsdb-inner {
+    width: 100%;
+    padding: 0 40px;
+}
+
+.mrsdb-header {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    border-bottom: 1px solid #C4C4C4;
+    margin-bottom: 10px;
+}
+
+.mrsdb-title {
+    margin-left: 220px;
+    display: flex;
+    gap: 30px;
+}
+
+.mrsdb-title h2 {
+    font-size: 36px;
+    font-weight: bold;
+    align-content: center;
+}
+
+.mrsdb-title img {
+    width: 30%;
+}
+
+.mrsdb-header .search input:focus {
+    outline: none;
+}
+
+.mrsdb-header .search input {
+    width: 722px;
+    height: 62px;
+    border: 3px solid #3FB5FF;
+    border-radius: 4px 0px 0px 4px;
+    padding: 10px;
+    margin-left: 40px;
+    color: #2c2c2c;
+    font-size: 16px;
+}
+
+.mrsdb-header .search button {
+    background: #3FB5FF;
+    width: 62px;
+    height: 62px;
+    position: absolute;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.mrsdb-header .search button img {
+    width: 31px;
+    filter: invert(100%);
+}
+
+/* ================================================================ */
+
+.mrsdb-contents {
+    display: flex;
+    padding: 0 20px;
+    /* border: 1px solid #000; */
+}
+
+.mrsdb-inventory {
+    margin-right: 15px;
+}
+
+.mrsdb-inventory>button {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    line-height: 25px;
+    align-items: center;
+    padding-left: 15px;
+    font-size: 16px;
+    /* border: 1px solid #000; */
+    gap: 10px;
+}
+
+.mrsdb-inventory button:hover {
+    background: #E2E2E2;
+    border-radius: 9px;
+}
+
+.mrsdb-inventory button img {
+    width: 20px;
+    height: 20px;
+}
+
+.mrsdb-button {}
+
+.mrsdb-button p {
+    font-weight: 400;
+    font-size: 14px;
+    color: #9D9D9D;
+}
+
+.mrsdb-button button {
+    padding: 5px 20px;
+    color: #0093EF;
+    border-radius: 9px;
+    border: 1px solid #0093EF;
+}
+
+.Storage-bar {
+    width: 160px;
+    height: 3px;
+    background: #CFCFCF;
+}
+
+.Storage-ber-used {
+    width: 70px;
+    height: 3px;
+    background: #8FFF6D;
+}
+
+.Storage-capacity {
+    width: 170px;
+    text-align: right;
+    font-size: 14px;
+    padding-bottom: 10px;
+}
+.mrsdb-alignment {
+    display: block;
+}
+.mrsdb-alignment .mrsdb-contents-inner:nth-child(1) {
+    margin-bottom: 100px;
+}
+.mrsdb-main-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.mrsdb-main-header p {
+    color: #2C2C2C;
+    font-weight: bold;
+    font-size: 16px;
+}
+.mrsdb-main-header > img {
+    width: 40px;
+    height: 40px;
+}
+
+/* ================================================== */
+
+.mrsdb-file-list {
+    width: 1575px;
+}
+
+.mrsdb-file-list .mrsdb-file-name:nth-child(2) {
+    border-bottom: 1px solid #C4C4C4;
+}
+
+.mrsdb-file-list .mrsdb-file-name:nth-child(1) {
+    border-bottom: 1px solid #C4C4C4;
+    padding: 0 20px 7px;
+}
+
+.mrsdb-file-name {
+    margin-left: 20px;
+    display: flex;
+    /* justify-content: space-between; */
+}
+
+.mrsdb-file-name p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2C2C2C;
+}
+
+.mrsdb-file-name p:nth-child(1) {
+    width: 440px;
+}
+
+.mrsdb-file-name p:nth-child(2) {
+    width: 300px;
+}
+
+.mrsdb-file-name p:nth-child(3) {
+    width: 200px;
+}
+
+.mrsdb-file-name p:nth-child(4) {
+    width: 190px;
+}
+
+.mrsdb-file-suggestion {
+    margin-top: 10px;
+    margin-left: 20px;
+    padding: 0 15px 5px;
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+
+.mrsdb-file-suggestion p:nth-child(2) {
+    width: 335px;
+}
+
+.mrsdb-file-suggestion p:nth-child(3) {
+    width: 195px;
+}
+
+.mrsdb-file-suggestion p:nth-child(4) {
+    width: 195px;
+}
+
+.mrsdb-file-suggestion img {
+    width: 44px;
+    height: 44px;
+}
+.mrsdb-contents-inner {
+    width: 100%;
+    display: block;
+    padding: 0 20px;
+}
+.mrsdb-file-gather {
+    width: 415px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.mrsdb-file-gather img {
+    width: 42px;
+    height: 35px;
+}
+
+.mrsdb-file-img-gather button:nth-child(2) {
+    margin-left: 18px;
+    margin-right: 18px;
+}
+
+.mrsdb-download img {
+    width: 38px;
+    height: 38px;
+}
+.mrsdb-pan img {
+    width: 30px;
+    height: 30px;
+}
+.mrsdb-star img {
+    width: 31px;
+    height: 31px;
+}
+
+.mrsdb-file-img-gather {
+    position: relative;
+    display: flex;
+    margin-left: auto;
+    margin-right: 25px;
+}
+
+
+.mrsdb-ooo {
+    display: flex;
+    flex-direction: column;
+    width: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    /* padding: 0 0px 10px 30px; */
+    margin-bottom: 6px;
+    margin-right: -30px;
+}
+
+.mrsdb-ooo span {
+    font-size: 18px;
+    line-height: 9px;
+}

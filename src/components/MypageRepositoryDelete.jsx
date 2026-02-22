@@ -103,8 +103,8 @@ function MypageRepositoryDelete() {
                                 <div className="mypagerepositorydelete-file-suggestion">
                                     <input type="checkbox" />
                                     <div className="mypagerepositorydelete-file-gather">
-                                        <button><img src="/images/icon/img.png" alt="" /></button>
-                                        <p>자료구조 노트필기</p>
+                                        <button><img src="/images/icon/folder.png" alt="" /></button>
+                                        <p>사회</p>
                                     </div>
                                     <p>12월 1일 12:10</p>
                                     <p>.jpg</p  >

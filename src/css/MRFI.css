@@ -145,7 +145,7 @@
     width: 40px;
     height: 40px;
 }
-.mr-add {
+/* .mr-add {
     width: 20px;
     height: 20px;
     border: 1px solid #2c2c2c;
@@ -155,7 +155,7 @@
 .mr-add img {
     width: 18px;
     height: 18px;
-}
+} */
 
 /* ================================================== */
 
@@ -210,11 +210,11 @@
 }
 
 .mrfi-file-suggestion p:nth-child(2) {
-    width: 400px;
+    width: 335px;
 }
 
 .mrfi-file-suggestion p:nth-child(3) {
-    width: 328px;
+    width: 195px;
 }
 
 .mrfi-file-suggestion p:nth-child(4) {
@@ -226,13 +226,13 @@
     height: 44px;
 }
 
-.mrfi-file-suggestion input {
+/* .mrfi-file-suggestion input {
     width: 25px;
     height: 26px;
     margin-top: -6px;
     margin-right: 14px;
     margin-left: 6px;
-}
+} */
 
 /* ===================================================== */
 
@@ -241,16 +241,17 @@
     display: block;
     padding: 0 20px;
 }
+
 .mrfi-file-gather {
-    width: 375px;
+    width: 415px;
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
 .mrfi-file-gather img {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 35px;
 }
 
 .mrfi-file-gather p {
