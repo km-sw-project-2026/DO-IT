@@ -42,7 +42,7 @@ function Header() {
 
         <nav>
           <ul>
-            <li>멘토/멘티</li>
+            <Link to="/mentypage"><li>멘토/멘티</li></Link>
 
             <Link to="/post">
               <li>커뮤니티</li>

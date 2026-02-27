@@ -11,12 +11,7 @@ import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
 import AdminPage from "./pages/AdminPage";
 import MypageMenty from './components/MypageMenty.jsx';
-import MypageRepository from './components/MypageRepository.jsx';
-import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
-import MRFI from './components/MRFI.jsx';
-import MRSDB from './components/MRSDB.jsx';
-import MypageMentor from './components/MypageMentor.jsx';
-import Calendar from './components/calendar.jsx';
+import ProfileSetting from './components/ProfileSetting.jsx';
 
 function App() {
   return (
@@ -29,12 +24,8 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path='/mypage' element={<MypageMenty/>} />
         <Route path='/mypagementy' element={<MypageMenty/>} />
-        <Route path='/mypageMentor' element={<MypageMentor/>} />
-        <Route path='/mypagerepository' element={<MypageRepository/>} />
-        <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete/>} />
-        <Route path='/mrfi' element={<MRFI/>} />
-        <Route path='/mrsdb' element={<MRSDB/>} />
-        <Route path='/calendar' element={<Calendar />} />
+        <Route path='/mypage' element={<Mypage/>} />
+        <Route path='/profilesetting' element={<ProfileSetting/>} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />
