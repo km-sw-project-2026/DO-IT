@@ -215,7 +215,7 @@
 }
 .Bookmark-file-list .Bookmark-file-name:nth-child(1) {
     border-bottom: 1px solid #C4C4C4;
-    padding: 0 20px 7px;
+    padding: 0 20px 7px 65px;
 }
 .Bookmark-file-name {
     margin-left: 20px;
@@ -223,7 +223,7 @@
     /* justify-content: space-between; */
 }
 .Bookmark-file-name p:nth-child(1) {
-    width: 400px;
+    width: 340px;
 }
 .Bookmark-file-name p:nth-child(2) {
     width: 300px;
@@ -234,17 +234,15 @@
 .Bookmark-file-name p:nth-child(4) {
     width: 190px;
 }
-.Bookmark-file-name p {}
 .Bookmark-file-suggestion {
-    margin-top: 10px;
-    margin-left: 20px;
-    padding: 0 15px 5px;
+    margin-top: 15px;
+    padding: 0 40px;
     display: flex;
     /* justify-content: space-between; */
     align-items: center;
 }
 .Bookmark-file-suggestion p:nth-child(2) {
-    width: 330px;
+    width: 300px;
 }
 .Bookmark-file-suggestion p:nth-child(3) {
     width: 200px;
@@ -254,10 +252,14 @@
 }
 
 .Bookmark-file-gather {
-    width: 375px;
+    width: 385px;
     display: flex;
     align-items: center;
     gap: 10px;
+}
+.Bookmark-file-gather p {
+    width: 340px;
+
 }
 .Bookmark-file-suggestion img {
     width: 38px;
@@ -267,37 +269,32 @@
 /* ===================================================== */
 
 .Bookmark-file-img-gather {
-    position: relative;
     display: flex;
+    align-items: center;
 }
-.Bookmark-file-img-gather button {}
 .Bookmark-file-img-gather button:nth-child(2) {
     margin-left: 16px;
     margin-right: 16px;
 }
-.Bookmark-file-img-gather img {}
 .Bookmark-download img {
-    width: 42px;
-    height: 42px;
+    width: 30px;
+    height: 30px;
 }
 .Bookmark-pan img {
-    width: 33px;
-    height: 33px;
+    width: 24px;
+    height: 24px;
 }
 .Bookmark-star img {
-    width: 34px;
-    height: 34px;
+    width: 25px;
+    height: 25px;
+}
+.Bookmark-ooo-button {
+    margin-left: 30px;
 }
 .Bookmark-ooo {
     display: flex;
     flex-direction: column;
     width: 10px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    /* padding: 0 0px 10px 30px; */
-    margin-bottom: 10px;
-    margin-right: -30px;
 }
 .Bookmark-ooo span {
     font-size: 18px;

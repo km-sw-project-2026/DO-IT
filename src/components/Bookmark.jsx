@@ -75,15 +75,15 @@ function Bookmark() {
                                             <div className="Bookmark-file-img-gather">
                                                 <button className="Bookmark-download"><img src="/images/icon/download.png" alt="" /></button>
                                                 <button className="Bookmark-pan"><img src="/images/icon/pan.png" alt="" /></button>
-                                                <button className="Bookmark-star"><img src="/images/icon/star.png" alt="" /></button>
-                                                <button>
+                                                <button className="Bookmark-star"><img src="/images/icon/star2.png" alt="" /></button>
+                                            </div>
+                                                <button className="Bookmark-ooo-button">
                                                     <div className="Bookmark-ooo">
                                                         <span>•</span>
                                                         <span>•</span>
                                                         <span>•</span>
                                                     </div>
                                                 </button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

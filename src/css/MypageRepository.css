@@ -215,7 +215,7 @@
 }
 .mypagerepository-file-list .mypagerepository-file-name:nth-child(1) {
     border-bottom: 1px solid #C4C4C4;
-    padding: 0 20px 7px;
+    padding: 0 20px 7px 65px;
 }
 .mypagerepository-file-name {
     margin-left: 20px;
@@ -223,7 +223,7 @@
     /* justify-content: space-between; */
 }
 .mypagerepository-file-name p:nth-child(1) {
-    width: 400px;
+    width: 340px;
 }
 .mypagerepository-file-name p:nth-child(2) {
     width: 300px;
@@ -234,17 +234,15 @@
 .mypagerepository-file-name p:nth-child(4) {
     width: 190px;
 }
-.mypagerepository-file-name p {}
 .mypagerepository-file-suggestion {
-    margin-top: 10px;
-    margin-left: 20px;
-    padding: 0 15px 5px;
+    margin-top: 15px;
+    padding: 0 40px;
     display: flex;
     /* justify-content: space-between; */
     align-items: center;
 }
 .mypagerepository-file-suggestion p:nth-child(2) {
-    width: 330px;
+    width: 300px;
 }
 .mypagerepository-file-suggestion p:nth-child(3) {
     width: 200px;
@@ -254,10 +252,13 @@
 }
 
 .mypagerepository-file-gather {
-    width: 375px;
+    width: 385px;
     display: flex;
     align-items: center;
     gap: 10px;
+}
+.mypagerepository-file-gather p{
+    width: 340px;
 }
 .mypagerepository-file-suggestion img {
     width: 38px;
@@ -267,37 +268,32 @@
 /* ===================================================== */
 
 .mypagerepository-file-img-gather {
-    position: relative;
     display: flex;
+    align-items: center;
 }
-.mypagerepository-file-img-gather button {}
 .mypagerepository-file-img-gather button:nth-child(2) {
     margin-left: 16px;
     margin-right: 16px;
 }
-.mypagerepository-file-img-gather img {}
 .mypagerepository-download img {
-    width: 42px;
-    height: 42px;
+    width: 30px;
+    height: 30px;
 }
 .mypagerepository-pan img {
-    width: 33px;
-    height: 33px;
+    width: 24px;
+    height: 24px;
 }
 .mypagerepository-star img {
-    width: 34px;
-    height: 34px;
+    width: 25px;
+    height: 25px;
+}
+.mypagerepository-ooo-button {
+    margin-left: 30px;
 }
 .mypagerepository-ooo {
     display: flex;
     flex-direction: column;
     width: 10px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    /* padding: 0 0px 10px 30px; */
-    margin-bottom: 10px;
-    margin-right: -30px;
 }
 .mypagerepository-ooo span {
     font-size: 18px;

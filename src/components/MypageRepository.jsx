@@ -89,14 +89,14 @@ function MypageRepository() {
                                             <button className="mypagerepository-download"><img src="/images/icon/download.png" alt="" /></button>
                                             <button className="mypagerepository-pan"><img src="/images/icon/pan.png" alt="" /></button>
                                             <button className="mypagerepository-star"><img src="/images/icon/star.png" alt="" /></button>
-                                            <button>
+                                        </div>
+                                            <button className="mypagerepository-ooo-button">
                                                 <div className="mypagerepository-ooo">
                                                     <span>•</span>
                                                     <span>•</span>
                                                     <span>•</span>
                                                 </div>
                                             </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
