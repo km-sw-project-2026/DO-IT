@@ -34,18 +34,26 @@ export default function RecentCommunity() {
   if (err) return <div style={{ padding: 8 }}>에러: {err}</div>;
   if (items.length === 0) return <div style={{ padding: 8 }}>최근 글이 없어</div>;
 
+  const getPostId = (post) => post?.post_id ?? post?.id;
+
   return (
     <ul className="recent-list">
       {items.map((p) => {
+        const postId = getPostId(p);
+        if (!postId) return null;
+
         const date = new Date((p.created_at ?? "").replace(" ", "T") + "Z")
           .toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
 
         return (
-          <li key={p.post_id}>
-            <Link to={`/post/${p.post_id}`}>
+          <li key={postId}>
+            <Link
+              to={`/post/${postId}`}
+              style={{ display: "flex", justifyContent: "space-between", gap: 12, textDecoration: "none", color: "inherit" }}
+            >
               <span>{p.title}</span>
+              <span className="recent-date">{date}</span>
             </Link>
-            <span className="recent-date">{date}</span>
           </li>
         );
       })}
