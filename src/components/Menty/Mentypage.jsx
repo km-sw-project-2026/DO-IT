@@ -1,8 +1,19 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/Menty/Mentypage.css";
 import MentypageMento from "./MentypageMento.jsx";
+import MentoreviewModal from "./MentoreviewModal.jsx";
 
 
 function Mentypage() {
+    const [showModal, setShowModal] = useState(false);
+    const navigate = useNavigate();
+
+    const handleSelectMentor = (mentor) => {
+        setShowModal(false);
+        navigate("/mentoreview", { state: { mentor } });
+    };
+
     return (
         <section className="Mentypage">
     <div className="Mentypage-header">
@@ -16,7 +27,7 @@ function Mentypage() {
                 </div>
                 <div className="Menty-button">
                     <img src="#" alt="2" />
-                    <button>후기 남기기</button>
+                    <button onClick={() => setShowModal(true)}>후기 남기기</button>
                 </div>
                 <div className="Menty-button">
                     <img src="#" alt="3" />
@@ -62,7 +73,7 @@ function Mentypage() {
 {/* 없을때화면 */}
 
             <div className="Mento-backup">
-                <img src="#" alt="backup" />
+                <img src="/images/mentoring/1.png" alt="img"/>
                 <p>아직 멘토가 없어요</p>
                 <span>지원하고 첫번째 멘토되기</span>
             </div>
@@ -70,6 +81,13 @@ function Mentypage() {
             <div className="Mento-backup-button">
                 <button>멘토 지원하기</button>
             </div>
+
+            {showModal && (
+                <MentoreviewModal
+                    onClose={() => setShowModal(false)}
+                    onSelect={handleSelectMentor}
+                />
+            )}
         </section>
     );
 }

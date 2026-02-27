@@ -39,8 +39,6 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
   min-width: 100px;
 }
 
@@ -53,7 +51,9 @@ body {
     font-size: 1.4rem;
 }
 .hero-btn span {
-    font-size: 0.8rem; font-weight: 600; color: #333;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .main-layout {
@@ -126,12 +126,9 @@ body {
   padding: 7px 18px;
   background: #333;
   color: #fff;
-  border: none;
   border-radius: 6px;
   font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
+  font-weight: 600;
 }
 
 .btn-accept:hover { background: #555; }
@@ -140,12 +137,9 @@ body {
   padding: 7px 18px;
   background: #ececec;
   color: #555;
-  border: none;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
 }
 
 .btn-reject:hover { background: #ddd; }
@@ -154,7 +148,6 @@ body {
   width: 1px;
   background: #ddd;
   align-self: stretch;
-  flex-shrink: 0;
 }
 
 .my-info-box {
@@ -163,7 +156,6 @@ body {
 
 .my-info-box h3 {
   font-size: 1rem;
-  font-weight: 700;
   color: #222;
   margin-bottom: 16px;
 }
@@ -183,19 +175,10 @@ body {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  border: none;
   border-radius: 8px;
   padding: 10px 12px;
-  font-size: 0.82rem;
   color: #222;
-  font-family: inherit;
   background: #e0e0e0;
-  outline: none;
-}
-
-.form-group textarea {
-  height: 72px;
-  resize: none;
 }
 
 .btn-save {
@@ -203,14 +186,11 @@ body {
   padding: 13px;
   background: #009DFF;
   color: #fff;
-  border: none;
   border-radius: 10px;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  font-family: inherit;
   margin-top: 6px;
-  transition: background 0.2s;
 }
 
 

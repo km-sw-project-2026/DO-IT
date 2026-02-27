@@ -50,7 +50,6 @@
     font-size: 0.95rem;
     font-weight: 700;
     color: #222;
-    border-bottom: 3px solid #222;
     cursor: pointer;
 }
 
@@ -174,7 +173,7 @@
 }
 
 .Mentoring-box button:hover {
-    background: #1a9fd0;
+    background: #127fa7;
 }
 
 .Mento-star {
@@ -209,7 +208,6 @@
     font-size: 0.9rem;
     color: #444;
     font-weight: 700;
-    margin: 0;
 }
 
 .Mento-review {
@@ -227,9 +225,6 @@
 .Mento-review p {
     font-size: 0.8rem;
     color: #bbb;
-    cursor: pointer;
-    margin: 0;
-    white-space: nowrap;
 }
 .modal-overlay {
     position: fixed;
@@ -256,13 +251,10 @@
     font-size: 1.3rem;
     font-weight: 700;
     color: #222;
-    margin: 0;
 }
 
 .modal-box hr {
-    border: none;
     border-top: 1px solid #eee;
-    margin: 0;
 }
 
 .modal-box p {
@@ -280,10 +272,7 @@
     padding: 16px;
     font-size: 0.85rem;
     color: #222;
-    resize: none;
     font-family: inherit;
-    box-sizing: border-box;
-    outline: none;
 }
 
 .modal-box button {
@@ -292,14 +281,11 @@
     padding: 14px;
     background: #009DFF;
     color: #fff;
-    border: none;
     border-radius: 10px;
     font-size: 1rem;
     font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
 }
 
 .modal-box button:hover {
-    background: #1a9fd0;
+    background: #127fa7;
 }
