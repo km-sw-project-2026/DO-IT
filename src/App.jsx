@@ -16,7 +16,7 @@ import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
-import MRFavorites from './components/MRFavorites.jsx';
+import Bookmark from './components/Bookmark.jsx'; 
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
         <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete/>} />
         <Route path='/mrfi' element={<MRFI/>} />
         <Route path='/mrsdb' element={<MRSDB/>} />
-        <Route path='/mrfavorites' element={<MRFavorites/>} />
+        <Route path='/Bookmark' element={<Bookmark/>} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

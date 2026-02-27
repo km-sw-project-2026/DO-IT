@@ -1,12 +1,12 @@
-.mypagerepository {
+.Bookmark {
     width: 100%;
 }
 
-.mypagerepository-inner {
+.Bookmark-inner {
     width: 100%;
     padding: 0 40px;
 }
-.mypagerepository-header {
+.Bookmark-header {
     width: 100%;
     text-align: center;
     padding: 20px;
@@ -16,27 +16,27 @@
     margin-bottom: 10px;
 }
 
-.mypagerepository-title {
+.Bookmark-title {
     margin-left: 220px;
     display: flex;
     gap: 30px;
 }
 
-.mypagerepository-title h2 {
+.Bookmark-title h2 {
     font-size: 36px;
     font-weight: bold;
     align-content: center;
 }
 
-.mypagerepository-title img {
+.Bookmark-title img {
     width: 30%;
 }
 
-.mypagerepository-header .search input:focus {
+.Bookmark-header .search input:focus {
     outline: none;
 }
 
-.mypagerepository-header .search input {
+.Bookmark-header .search input {
     width: 722px;
     height: 62px;
     border: 3px solid #3FB5FF;
@@ -47,7 +47,7 @@
     font-size: 16px;
 }
 
-.mypagerepository-header .search button {
+.Bookmark-header .search button {
     background: #3FB5FF;
     width: 62px;
     height: 62px;
@@ -55,22 +55,22 @@
     border-radius: 0px 4px 4px 0px;
 }
 
-.mypagerepository-header .search button img {
+.Bookmark-header .search button img {
     width: 31px;
     filter: invert(100%);
 }
 
 /* ================================================================ */
 
-.mypagerepository-contents {
+.Bookmark-contents {
     display: flex;
     padding: 0 20px;
     /* border: 1px solid #000; */
 }
-.mypagerepository-inventory {
+.Bookmark-inventory {
     margin-right: 15px;
 }
-.mypagerepository-inventory button {
+.Bookmark-inventory button {
     width: 200px;
     height: 50px;
     display: flex;
@@ -82,25 +82,25 @@
     gap: 10px;
 }
 
-.mypagerepository-inventory button:hover {
+.Bookmark-inventory button:hover {
     background: #f3f3f3;
     border-radius: 9px;
 }
 
-.mypagerepository-inventory button img {
+.Bookmark-inventory button img {
     width: 20px;
     height: 20px;
 }
 
-.mypagerepository-button {}
+.Bookmark-button {}
 
-.mypagerepository-button p {
+.Bookmark-button p {
     font-weight: 400;
     font-size: 14px;
     color: #9D9D9D;
 }
 
-.mypagerepository-button button {
+.Bookmark-button button {
     padding: 5px 20px;
     color: #0093EF;
     border-radius: 9px;
@@ -128,53 +128,53 @@
 
 /* ==================================================================== */
 
-.mypagerepository-main {
+.Bookmark-main {
     width: auto;
     height: 300px;
     /* border: 1px solid #000; */
 }
-.mypagerepository-main-header {
+.Bookmark-main-header {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-bottom: 25px;
 }
-.mypagerepository-main-header p {
+.Bookmark-main-header p {
     color: #2C2C2C;
     font-weight: bold;
     font-size: 16px;
 }
-.mypagerepository-main-header > img {
+.Bookmark-main-header > img {
     width: 40px;
     height: 40px;
 }
-.mypagerepository-main-body {
+.Bookmark-main-body {
     display: flex;
     gap: 20px;
 }
-.mypagerepository-main-body-inner {
+.Bookmark-main-body-inner {
     position: relative;
 }
-.mypagerepository-bg {
+.Bookmark-bg {
     width: 180px;
     height: 140px;
 }
-.mypagerepository-bg:hover {
+.Bookmark-bg:hover {
     background: #E6E6E6;
     border-radius: 10px;
     width: 180px;
     height: 140px;
 }
-.mypagerepository-bg img {
+.Bookmark-bg img {
     width: 140px;
     height: 100px;
 }
-.mypagerepository-bg p {
+.Bookmark-bg p {
     font-weight: bold;
     font-size: 16px;
     color: #2C2C2C;
 }
-.mypagerepository-span {
+.Bookmark-span {
     display: flex;
     flex-direction: column;
     width: 10px;
@@ -183,59 +183,59 @@
     right: 0;
     padding: 0 30px 5px 0;
 }
-.mypagerepository-span span {
+.Bookmark-span span {
     font-size: 15px;
     line-height: 8px;
 }
 
 /* ================================================ */
 
-.mypagerepository-file-bottom {
+.Bookmark-file-bottom {
     width: 100%;
     height: 300px;
     /* border: 1px solid #000; */
 }
-.mypagerepository-bottom {
+.Bookmark-bottom {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-bottom: 25px;
 }
-.mypagerepository-bottom p {
+.Bookmark-bottom p {
     color: #2C2C2C;
     font-weight: bold;
     font-size: 16px;
 }
-.mypagerepository-bottom > img {
+.Bookmark-bottom > img {
     width: 40px;
     height: 40px;
 }
-.mypagerepository-file-list {
+.Bookmark-file-list {
     width: 1300px;
 }
-.mypagerepository-file-list .mypagerepository-file-name:nth-child(1) {
+.Bookmark-file-list .Bookmark-file-name:nth-child(1) {
     border-bottom: 1px solid #C4C4C4;
     padding: 0 20px 7px;
 }
-.mypagerepository-file-name {
+.Bookmark-file-name {
     margin-left: 20px;
     display: flex;
     /* justify-content: space-between; */
 }
-.mypagerepository-file-name p:nth-child(1) {
+.Bookmark-file-name p:nth-child(1) {
     width: 400px;
 }
-.mypagerepository-file-name p:nth-child(2) {
+.Bookmark-file-name p:nth-child(2) {
     width: 300px;
 }
-.mypagerepository-file-name p:nth-child(3) {
+.Bookmark-file-name p:nth-child(3) {
     width: 200px;
 }
-.mypagerepository-file-name p:nth-child(4) {
+.Bookmark-file-name p:nth-child(4) {
     width: 190px;
 }
-.mypagerepository-file-name p {}
-.mypagerepository-file-suggestion {
+.Bookmark-file-name p {}
+.Bookmark-file-suggestion {
     margin-top: 10px;
     margin-left: 20px;
     padding: 0 15px 5px;
@@ -243,52 +243,52 @@
     /* justify-content: space-between; */
     align-items: center;
 }
-.mypagerepository-file-suggestion p:nth-child(2) {
+.Bookmark-file-suggestion p:nth-child(2) {
     width: 330px;
 }
-.mypagerepository-file-suggestion p:nth-child(3) {
+.Bookmark-file-suggestion p:nth-child(3) {
     width: 200px;
 }
-.mypagerepository-file-suggestion p:nth-child(4) {
+.Bookmark-file-suggestion p:nth-child(4) {
     width: 190px;
 }
 
-.mypagerepository-file-gather {
+.Bookmark-file-gather {
     width: 375px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
-.mypagerepository-file-suggestion img {
+.Bookmark-file-suggestion img {
     width: 38px;
     height: 38px;
 }
 
 /* ===================================================== */
 
-.mypagerepository-file-img-gather {
+.Bookmark-file-img-gather {
     position: relative;
     display: flex;
 }
-.mypagerepository-file-img-gather button {}
-.mypagerepository-file-img-gather button:nth-child(2) {
+.Bookmark-file-img-gather button {}
+.Bookmark-file-img-gather button:nth-child(2) {
     margin-left: 16px;
     margin-right: 16px;
 }
-.mypagerepository-file-img-gather img {}
-.mypagerepository-download img {
+.Bookmark-file-img-gather img {}
+.Bookmark-download img {
     width: 42px;
     height: 42px;
 }
-.mypagerepository-pan img {
+.Bookmark-pan img {
     width: 33px;
     height: 33px;
 }
-.mypagerepository-star img {
+.Bookmark-star img {
     width: 34px;
     height: 34px;
 }
-.mypagerepository-ooo {
+.Bookmark-ooo {
     display: flex;
     flex-direction: column;
     width: 10px;
@@ -299,7 +299,7 @@
     margin-bottom: 10px;
     margin-right: -30px;
 }
-.mypagerepository-ooo span {
+.Bookmark-ooo span {
     font-size: 18px;
     line-height: 9px;
 }

@@ -1,13 +1,16 @@
 import "../css/MypageRepository.css";
 import { data } from "../js/MypageRepository.js"
 import MypageRepositoryfile from "./MypageRepositoryfile.jsx";
+import { Link } from "react-router-dom";
 
 function MypageRepositoryBtn({ btn }) {
     return (
+        <Link to={btn.to}>
         <button className={`mypagerepository-${btn.class}`}>
             <img src={btn.src} alt="" />
             <p>{btn.text}</p>
         </button>
+        </Link>
     )
 }
 
