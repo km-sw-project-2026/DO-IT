@@ -4,6 +4,7 @@ import MypageCommunity from "./MypageCommunity";
 import { ProfileSetting } from "./ProfileSetting.jsx";
 import { Link } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
+import { getCurrentUser } from "../utils/auth";
 
 function MypageCommunityList() {
     const PAGE_LIMIT_DISPLAY = 4;
