@@ -46,3 +46,5 @@ export const ProfileSetting = ({ openModal, setOpenModal}) => {
         </div>
     );
 };
+
+export default ProfileSetting;
