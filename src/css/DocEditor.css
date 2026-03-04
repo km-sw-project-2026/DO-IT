@@ -1,0 +1,120 @@
+.doc-editor {
+  width: min(1100px, 92%);
+  margin: 24px auto;
+}
+
+.doc-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.doc-title {
+  flex: 1;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  outline: none;
+  background: #fff;
+}
+
+.doc-title:focus {
+  border-color: #999;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.doc-actions button {
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+}
+
+.doc-actions button.ghost {
+  background: #fff;
+  color: #111;
+}
+
+.doc-actions button:hover {
+  filter: brightness(0.95);
+}
+
+.doc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.doc-toolbar button {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+.doc-toolbar button:hover {
+  background: #ededed;
+}
+
+.doc-toolbar .sep {
+  width: 1px;
+  height: 24px;
+  background: #e6e6e6;
+  align-self: center;
+  margin: 0 4px;
+}
+
+.doc-paper {
+  min-height: 560px;
+  padding: 28px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  background: #fff;
+  outline: none;
+  line-height: 1.7;
+}
+
+.doc-paper h1 {
+  font-size: 30px;
+  margin: 0 0 12px;
+}
+
+.doc-paper h2 {
+  font-size: 22px;
+  margin: 0 0 10px;
+}
+
+.doc-paper p {
+  margin: 0 0 10px;
+}
+
+.doc-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: #666;
+  font-size: 13px;
+}
+
+.doc-status {
+  font-weight: 700;
+  color: #111;
+}

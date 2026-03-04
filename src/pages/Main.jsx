@@ -1,6 +1,18 @@
 import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 function Main() {
+  const [latestNote, setLatestNote] = useState(null);
+
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem("doit_latest_note") || "null");
+      if (v) setLatestNote(v);
+    } catch {
+      setLatestNote(null);
+    }
+  }, []);
+
   return (
     <main>
       <section className='main-page'>
@@ -45,6 +57,15 @@ function Main() {
             </button>
           </div>
         </div>
+        {latestNote && (
+          <div style={{ marginTop: 18 }}>
+            <h4>최근 작성한 노트</h4>
+            <div style={{ padding: 12, border: "1px solid #eee", borderRadius: 6 }}>
+              <strong>{latestNote.title || "(제목없음)"}</strong>
+              <div style={{ color: "#999", fontSize: 13 }}>{new Date(latestNote.created_at).toLocaleString()}</div>
+            </div>
+          </div>
+        )}
       </section>
       <section className="main-page-community">
         <div className="recent-wrap">

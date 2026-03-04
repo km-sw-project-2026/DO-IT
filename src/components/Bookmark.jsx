@@ -1,5 +1,5 @@
 import "../css/Bookmark.css";
-import { data } from "../js/MypageRepository.js"
+import { data } from "../js/mypageRepositoryData.js"
 import MypageRepositoryfile from "./MypageRepositoryfile.jsx";
 import { Link } from "react-router-dom";
 

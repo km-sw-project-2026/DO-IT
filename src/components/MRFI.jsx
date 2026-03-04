@@ -1,5 +1,5 @@
 import "../css/MRFI.css";
-import { data } from "../js/MypageRepository.js"
+import { data } from "../js/mypageRepositoryData.js"
 import { Link } from "react-router-dom";
 
 function MypageRepositoryBtn({ btn }) {
