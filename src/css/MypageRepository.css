@@ -311,3 +311,87 @@
     width: 18px;
     height: 18px;
 }
+/* 화살표 토글 버튼 */
+.mr-toggle {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 90도 회전 애니메이션 */
+.mr-arrow {
+  width: 18px;   /* 원하는 크기로 조절 */
+  height: 18px;
+  transition: transform 0.2s ease;
+  transform: rotate(-90deg);
+  object-fit: contain;
+}
+
+.mr-arrow.open {
+  transform: rotate(0deg);
+}
+
+/* 폴더 추가 줄 */
+.mr-add-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  align-items: center;
+}
+
+.mr-add-input {
+  flex: 1;
+  height: 36px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 10px;
+  outline: none;
+}
+
+.mr-add-save,
+.mr-add-cancel {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background: #fff;
+}
+/* 헤더 버튼 (아이콘 + 글자 전체 클릭 가능) */
+.mr-header-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* 화살표 */
+.mr-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  transform: rotate(-90deg);
+}
+
+.mr-arrow.open {
+  transform: rotate(0deg);
+}
+
+/* 슬라이드 영역 */
+.mr-slide {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s ease;
+}
+
+/* 열렸을 때 */
+.mr-slide.open {
+  max-height: 1000px; /* 충분히 큰 값 */
+}
