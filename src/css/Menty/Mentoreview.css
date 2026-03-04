@@ -1,0 +1,213 @@
+.Mentoreview {
+    min-height: 100vh;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.Mentoreview-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    padding: 24px 32px;
+    border-bottom: 1px solid #eee;
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.Mentoreview-profile-img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ccc;
+    flex-shrink: 0;
+}
+
+.Mentoreview-profile-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Mentoreview-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.Mentoreview-profile-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+}
+
+.Mentoreview-stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.star {
+    font-size: 26px;
+    color: #d0d0d0;
+    cursor: pointer;
+    transition: color 0.15s, transform 0.1s;
+    user-select: none;
+}
+
+.star.filled {
+    color: #f5b300;
+}
+
+
+
+.Mentoreview-stars p {
+    font-size: 13px;
+    color: #888;
+    margin-left: 6px;
+}
+
+.Mentoreview-anonymous {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.Mentoreview-anonymous input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #009DFF;
+    cursor: pointer;
+}
+
+.Mentoreview-anonymous label {
+    font-size: 12px;
+    color: #555;
+    cursor: pointer;
+}
+
+/* 후기 */
+.Mentoreview-content {
+    background: #fff;
+    padding: 20px 32px;
+    border-bottom: 1px solid #eee;
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.Mentoreview-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.Mentoreview-textarea {
+    width: 100%;
+    height: 160px;
+    border: 1.5px dashed #009DFF;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    color: #222;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    background: #fff;
+}
+
+.Mentoreview-textarea::placeholder {
+    color: #aaa;
+}
+
+/* 사진 */
+.Mentoreview-photos {
+    background: #fff;
+    padding: 16px 32px 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #eee;
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.Mentoreview-photo-add {
+    width: 110px;
+    height: 110px;
+    border: 1.5px dashed #009DFF;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #888;
+    font-size: 13px;
+    transition: background 0.15s;
+}
+
+.Mentoreview-photo-add:hover {
+    background: #f0f7ff;
+}
+
+.Mentoreview-photo-preview {
+    width: 110px;
+    height: 110px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.Mentoreview-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Mentoreview-photo-delete {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Mentoreview-submit-wrap {
+    background: #fff;
+    padding: 16px 32px 28px;
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.Mentoreview-submit {
+    width: 100%;
+    height: 44px;
+    background: #fff;
+    color: #333;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.Mentoreview-submit:hover {
+    background: #f0f0f0;
+}
