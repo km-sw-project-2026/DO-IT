@@ -4,8 +4,6 @@ import MypageRepositoryfile from "./MypageRepositoryfile.jsx";
 import { Link } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { apiCreateFolder, apiGetFiles, apiGetFolders, apiGetNotes, apiCreateNote, apiUpdateNote, apiDeleteNote } from "../api/repository";
-import NoteEditor from "./NoteEditor";
-import NoteItem from "./NoteItem";
 import DocEditor from "./DocEditor";
 
 // 왼쪽 버튼 UI (그대로)
