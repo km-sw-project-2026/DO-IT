@@ -10,15 +10,8 @@ import Posts from './components/Posts';
 import Post from './components/Post';
 import PostCreate from "./components/PostCreate";
 import AdminPage from "./pages/AdminPage";
-import Mypage from './components/Mypage.jsx';
 import MypageMenty from './components/MypageMenty.jsx';
 import ProfileSetting from './components/ProfileSetting.jsx';
-import Mentypage from './components/Menty/Mentypage.jsx';
-import Mentopage from './components/Menty/Mentopage.jsx';
-import Mentoring from './components/Menty/Mentoring.jsx';
-import Myreview from './components/Menty/Myreview.jsx';
-import Mentologin from './components/Menty/Mentologin.jsx';
-import Mentoreview from './components/Menty/Mentoreview.jsx';
 
 function App() {
   return (
@@ -32,12 +25,6 @@ function App() {
         <Route path='/mypagementy' element={<MypageMenty/>} />
         <Route path='/mypage' element={<Mypage/>} />
         <Route path='/profilesetting' element={<ProfileSetting/>} />
-        <Route path='/mentypage' element={<Mentypage/>}/>
-        <Route path='/mentopage' element={<Mentopage/>}/>
-        <Route path='/mentoring' element={<Mentoring/>}/> 
-        <Route path="/myreview" element={<Myreview />} /> 
-        <Route path="/Mentologin" element={<Mentologin />} /> 
-        <Route path="/Mentoreview" element={<Mentoreview />} /> 
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

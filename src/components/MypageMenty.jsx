@@ -1,10 +1,15 @@
 import "../css/MypageMenty.css";
 import Mypagedata from "./Mypagedata";
 import MypageCommunity from "./MypageCommunity";
+import {ProfileSetting} from "./ProfileSetting.jsx";
+import { Link } from "react-router-dom";
+import { useState } from "react"; 
 
 
 
 function MypageMenty() {
+    const [openModal, setOpenModal] = useState(false);
+
     return (
         <section className="mypagementy">
             <div className="mypagementy-header">
@@ -17,16 +22,17 @@ function MypageMenty() {
                                 <p><span>어드민</span>님</p>
                             </div>
                             <div className="menty-setting">
-                                <button className="setting">
-                                    <img src='/images/icon/setting.png' alt="" />
-                                    <button>프로필 설정</button>
+                                    <button className="setting" type="button" onClick={() => { setOpenModal(true); }}>
+                                        <img src='/images/icon/setting.png' alt="" />
+                                        <p>프로필 설정</p>  
                                 </button>
+                                    {openModal ? <ProfileSetting openModal={openModal} setOpenModal={setOpenModal} /> : null}
                             </div>
                         </div>
                         <div className="change-button-mentee">
-                            <button>
+                            <Link to="/MypageMentor"><button>
                                 멘티
-                            </button>
+                            </button></Link>
                         </div>
                     </div>
                     <div className="menty-explanation">

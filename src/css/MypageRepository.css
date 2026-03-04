@@ -1,0 +1,397 @@
+.mypagerepository {
+    width: 100%;
+}
+
+.mypagerepository-inner {
+    width: 100%;
+    padding: 0 40px;
+}
+.mypagerepository-header {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #C4C4C4;
+    margin-bottom: 10px;
+}
+
+.mypagerepository-title {
+    margin-left: 220px;
+    display: flex;
+    gap: 30px;
+}
+
+.mypagerepository-title h2 {
+    font-size: 36px;
+    font-weight: bold;
+    align-content: center;
+}
+
+.mypagerepository-title img {
+    width: 30%;
+}
+
+.mypagerepository-header .search input:focus {
+    outline: none;
+}
+
+.mypagerepository-header .search input {
+    width: 722px;
+    height: 62px;
+    border: 3px solid #3FB5FF;
+    border-radius: 4px 0px 0px 4px;
+    padding: 10px;
+    margin-left: 40px;
+    color: #2c2c2c;
+    font-size: 16px;
+}
+
+.mypagerepository-header .search button {
+    background: #3FB5FF;
+    width: 62px;
+    height: 62px;
+    position: absolute;
+    border-radius: 0px 4px 4px 0px;
+}
+
+.mypagerepository-header .search button img {
+    width: 31px;
+    filter: invert(100%);
+}
+
+/* ================================================================ */
+
+.mypagerepository-contents {
+    display: flex;
+    padding: 0 20px;
+    /* border: 1px solid #000; */
+}
+.mypagerepository-inventory {
+    margin-right: 15px;
+}
+.mypagerepository-inventory button {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    line-height: 25px;
+    align-items: center;
+    padding-left: 15px;
+    font-size: 16px;
+    /* border: 1px solid #000; */
+    gap: 10px;
+}
+
+.mypagerepository-inventory button:hover {
+    background: #f3f3f3;
+    border-radius: 9px;
+}
+
+.mypagerepository-inventory button img {
+    width: 20px;
+    height: 20px;
+}
+
+.mypagerepository-button {}
+
+.mypagerepository-button p {
+    font-weight: 400;
+    font-size: 14px;
+    color: #9D9D9D;
+}
+
+.mypagerepository-button button {
+    padding: 5px 20px;
+    color: #0093EF;
+    border-radius: 9px;
+    border: 1px solid #0093EF;
+}
+
+.Storage-bar {
+    margin-top: 30px;
+    width: 160px;
+    height: 3px;
+    background: #CFCFCF;
+}
+
+.Storage-ber-used {
+    width: 70px;
+    height: 3px;
+    background: #8FFF6D;
+}
+.Storage-capacity {
+    width: 170px;
+    text-align: right;
+    font-size: 14px;
+    padding-bottom: 10px;
+}
+
+/* ==================================================================== */
+
+.mypagerepository-main {
+    width: auto;
+    height: 300px;
+    /* border: 1px solid #000; */
+}
+.mypagerepository-main-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.mypagerepository-main-header p {
+    color: #2C2C2C;
+    font-weight: bold;
+    font-size: 16px;
+}
+.mypagerepository-main-header > img {
+    width: 40px;
+    height: 40px;
+}
+.mypagerepository-main-body {
+    display: flex;
+    gap: 20px;
+}
+.mypagerepository-main-body-inner {
+    position: relative;
+}
+.mypagerepository-bg {
+    width: 180px;
+    height: 140px;
+}
+.mypagerepository-bg:hover {
+    background: #E6E6E6;
+    border-radius: 10px;
+    width: 180px;
+    height: 140px;
+}
+.mypagerepository-bg img {
+    width: 140px;
+    height: 100px;
+}
+.mypagerepository-bg p {
+    font-weight: bold;
+    font-size: 16px;
+    color: #2C2C2C;
+}
+.mypagerepository-span {
+    display: flex;
+    flex-direction: column;
+    width: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 30px 5px 0;
+}
+.mypagerepository-span span {
+    font-size: 15px;
+    line-height: 8px;
+}
+
+/* ================================================ */
+
+.mypagerepository-file-bottom {
+    width: 100%;
+    height: 300px;
+    /* border: 1px solid #000; */
+}
+.mypagerepository-bottom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.mypagerepository-bottom p {
+    color: #2C2C2C;
+    font-weight: bold;
+    font-size: 16px;
+}
+.mypagerepository-bottom > img {
+    width: 40px;
+    height: 40px;
+}
+.mypagerepository-file-list {
+    width: 1300px;
+}
+.mypagerepository-file-list .mypagerepository-file-name:nth-child(1) {
+    border-bottom: 1px solid #C4C4C4;
+    padding: 0 20px 7px 65px;
+}
+.mypagerepository-file-name {
+    margin-left: 20px;
+    display: flex;
+    /* justify-content: space-between; */
+}
+.mypagerepository-file-name p:nth-child(1) {
+    width: 340px;
+}
+.mypagerepository-file-name p:nth-child(2) {
+    width: 300px;
+}
+.mypagerepository-file-name p:nth-child(3) {
+    width: 200px;
+}
+.mypagerepository-file-name p:nth-child(4) {
+    width: 190px;
+}
+.mypagerepository-file-suggestion {
+    margin-top: 15px;
+    padding: 0 40px;
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+.mypagerepository-file-suggestion p:nth-child(2) {
+    width: 300px;
+}
+.mypagerepository-file-suggestion p:nth-child(3) {
+    width: 200px;
+}
+.mypagerepository-file-suggestion p:nth-child(4) {
+    width: 190px;
+}
+
+.mypagerepository-file-gather {
+    width: 385px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mypagerepository-file-gather p{
+    width: 340px;
+}
+.mypagerepository-file-suggestion img {
+    width: 38px;
+    height: 38px;
+}
+
+/* ===================================================== */
+
+.mypagerepository-file-img-gather {
+    display: flex;
+    align-items: center;
+}
+.mypagerepository-file-img-gather button:nth-child(2) {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+.mypagerepository-download img {
+    width: 30px;
+    height: 30px;
+}
+.mypagerepository-pan img {
+    width: 24px;
+    height: 24px;
+}
+.mypagerepository-star img {
+    width: 25px;
+    height: 25px;
+}
+.mypagerepository-ooo-button {
+    margin-left: 30px;
+}
+.mypagerepository-ooo {
+    display: flex;
+    flex-direction: column;
+    width: 10px;
+}
+.mypagerepository-ooo span {
+    font-size: 18px;
+    line-height: 9px;
+}
+
+.mr-add {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #2c2c2c;
+    border-radius: 50%;
+    margin-top: 2px;
+}
+.mr-add img {
+    width: 18px;
+    height: 18px;
+}
+/* 화살표 토글 버튼 */
+.mr-toggle {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 90도 회전 애니메이션 */
+.mr-arrow {
+  width: 18px;   /* 원하는 크기로 조절 */
+  height: 18px;
+  transition: transform 0.2s ease;
+  transform: rotate(-90deg);
+  object-fit: contain;
+}
+
+.mr-arrow.open {
+  transform: rotate(0deg);
+}
+
+/* 폴더 추가 줄 */
+.mr-add-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  align-items: center;
+}
+
+.mr-add-input {
+  flex: 1;
+  height: 36px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 10px;
+  outline: none;
+}
+
+.mr-add-save,
+.mr-add-cancel {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background: #fff;
+}
+/* 헤더 버튼 (아이콘 + 글자 전체 클릭 가능) */
+.mr-header-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* 화살표 */
+.mr-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  transform: rotate(-90deg);
+}
+
+.mr-arrow.open {
+  transform: rotate(0deg);
+}
+
+/* 슬라이드 영역 */
+.mr-slide {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s ease;
+}
+
+/* 열렸을 때 */
+.mr-slide.open {
+  max-height: 1000px; /* 충분히 큰 값 */
+}

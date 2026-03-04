@@ -105,7 +105,7 @@ function Community() {
         <div className="search">
           <input
             type="text"
-            placeholder="검색어를 입력해세요"
+            placeholder="검색어를 입력해주세요"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />

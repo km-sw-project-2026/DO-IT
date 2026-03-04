@@ -1,6 +1,8 @@
 .profile-setting-header {
     height: 50px;
     display: flex;
+    padding-left: 10px;
+    justify-content: space-between;
     border-bottom: 2px solid #C4C4C4;
 }
 .profile-setting-header img {
@@ -36,24 +38,42 @@
 }
 .profile-setting-contents .profile {
     display: flex;
+    align-items: center;
+    margin-top: -10px;
     gap: 30px;
+}
+.profile-setting-contents .profile img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50px;
 }
 .profile-setting-contents .nickname {
     display: flex;
     gap: 30px;
-    padding: 40px 0;
+    padding: 30px 0;
 }
 .profile-setting-contents .nickname > input {
     width: 230px;
     height: 42px;
+    outline: none;
+    padding: 0 10px;
+    font-size: 16px;
+    border: 1px solid #B4B4B4;
+    font-weight: bold;
 }
 .profile-setting-contents .information {
     display: flex;
     gap: 30px;
 }
-.profile-setting-contents .information > input {
-    width: 280px;
+.profile-setting-contents .information > textarea {
+    width: 300px;
     height: 120px;
+    resize: none;
+    border: 1px solid #B4B4B4;
+    border-radius: 4px;
+    outline: none;
+    padding: 10px;
+    font-size: 16px;
 }
 /* 확인 버튼 */
 .profile-setting-check {
