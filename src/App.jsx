@@ -32,8 +32,8 @@ function App() {
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path='/mypagementy' element={<MypageMenty/>} />
         <Route path='/mypage' element={<Mypagedata/>} />
+        <Route path='/mypagementy' element={<MypageMenty/>} />
         <Route path='/mypageMentor' element={<MypageMentor/>} />
         <Route path='/mentypage' element={<Mentypage/>} />
         <Route path='/profilesetting' element={<ProfileSetting/>} />

@@ -1,7 +1,7 @@
 import "../css/MypageMentor.css";
 import Mypagedata from "./Mypagedata.jsx";
 import MypageCommunity from "./MypageCommunity.jsx";
-import {ProfileSetting} from "./ProfileSetting.jsx";
+import { ProfileSetting } from "./ProfileSetting.jsx";
 import { Link } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -115,6 +115,49 @@ function MypageCommunityList() {
 
 export default function MypageMentor() {
     const [openModal, setOpenModal] = useState(false);
+    const [bio, setBio] = useState("");
+    const [nickname, setNickname] = useState("");
+
+    const [canToggle, setCanToggle] = useState(false);
+    const [isMentor, setIsMentor] = useState(false);
+
+    useEffect(() => {
+        const me = getCurrentUser();
+        if (!me) return;
+        setNickname(me.nickname || "");
+        (async () => {
+            try {
+                const res = await fetch(`/api/profile?user_id=${me.user_id}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                setBio(data.user?.bio || "");
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
+        const handler = (ev) => {
+            const d = ev.detail || {};
+            if (d.bio !== undefined) setBio(d.bio);
+            if (d.nickname !== undefined) setNickname(d.nickname);
+        };
+        window.addEventListener("profile:updated", handler);
+
+        // mentor-status 조회: 멘토 권한이 있으면 토글 허용
+        (async () => {
+            try {
+                const resp = await fetch(`/me/mentor-status?user_id=${me.user_id}`);
+                if (!resp.ok) return;
+                const st = await resp.json();
+                setCanToggle(Boolean(st?.canToggle));
+                setIsMentor(Boolean(st?.isMentor));
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
+        return () => window.removeEventListener("profile:updated", handler);
+    }, []);
 
     return (
         <section className="mypage">
@@ -125,7 +168,7 @@ export default function MypageMentor() {
                             <img src='/images/profile.jpg' alt='' />
                             <div className="mypage-user-name">
                                 <h2>환영합니다</h2>
-                                <p><span>어드민</span>님</p>
+                                <p><span>{nickname || "익명"}</span>님</p>
                             </div>
                             <div className="user-setting">
                                 <button className="setting" type="button" onClick={() => {setOpenModal(true);}}>
@@ -136,14 +179,16 @@ export default function MypageMentor() {
                             </div>
                         </div>
                         <div className="change-button-mentor">
-                            <Link to="/MypageMenty"><button>
-                                멘토
-                            </button></Link>
+                            {canToggle ? (
+                                <Link to="/mypage"><button>멘티</button></Link>
+                            ) : (
+                                <button className="toggle-disabled" type="button" disabled title="멘토 권한이 있어야 전환 가능합니다">✕</button>
+                            )}
                         </div>
                     </div>
                     <div className="user-explanation">
                         <h3>멘토 설명</h3>
-                        <p>수학만 알려드립니다</p>
+                        <p>{bio || "소개가 없습니다."}</p>
                     </div>
                 </div>
             </div>

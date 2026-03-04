@@ -1,7 +1,7 @@
 import "../css/MypageMenty.css";
 import Mypagedata from "./Mypagedata";
 import MypageCommunity from "./MypageCommunity";
-import {ProfileSetting} from "./ProfileSetting.jsx";
+import { ProfileSetting } from "./ProfileSetting.jsx";
 import { Link } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -111,9 +111,50 @@ function MypageCommunityList() {
 }
 
 
-
 function MypageMenty() {
     const [openModal, setOpenModal] = useState(false);
+    const [bio, setBio] = useState("");
+    const [nickname, setNickname] = useState("");
+    const [canToggle, setCanToggle] = useState(false);
+    const [isMentor, setIsMentor] = useState(false);
+
+    useEffect(() => {
+        const me = getCurrentUser();
+        if (!me) return;
+        setNickname(me.nickname || "");
+        (async () => {
+            try {
+                const res = await fetch(`/api/profile?user_id=${me.user_id}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                setBio(data.user?.bio || "");
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
+        const handler = (ev) => {
+            const d = ev.detail || {};
+            if (d.bio !== undefined) setBio(d.bio);
+            if (d.nickname !== undefined) setNickname(d.nickname);
+        };
+        window.addEventListener("profile:updated", handler);
+
+        // mentor-status 조회: 멘토 권한이 있으면 토글 허용
+        (async () => {
+            try {
+                const resp = await fetch(`/me/mentor-status?user_id=${me.user_id}`);
+                if (!resp.ok) return;
+                const st = await resp.json();
+                setCanToggle(Boolean(st?.canToggle));
+                setIsMentor(Boolean(st?.isMentor));
+            } catch (e) {
+                console.error(e);
+            }
+        })();
+
+        return () => window.removeEventListener("profile:updated", handler);
+    }, []);
 
     return (
         <section className="mypagementy">
@@ -124,7 +165,7 @@ function MypageMenty() {
                             <img src='/images/profile.jpg' alt='' />
                             <div className="mypagementy-user-name">
                                 <h2>환영합니다</h2>
-                                <p><span>어드민</span>님</p>
+                                <p><span>{nickname || "익명"}</span>님</p>
                             </div>
                             <div className="menty-setting">
                                     <button className="setting" type="button" onClick={() => { setOpenModal(true); }}>
@@ -134,15 +175,17 @@ function MypageMenty() {
                                     {openModal ? <ProfileSetting openModal={openModal} setOpenModal={setOpenModal} /> : null}
                             </div>
                         </div>
-                        <div className="change-button-mentee">
-                            <Link to="/MypageMentor"><button>
-                                멘티
-                            </button></Link>
+                            <div className="change-button-mentee">
+                                {canToggle ? (
+                                    <Link to="/mypageMentor"><button>멘토</button></Link>
+                                ) : (
+                                    <button className="toggle-disabled" type="button" disabled title="멘토 권한이 있어야 전환 가능합니다">✕</button>
+                                )}
                         </div>
                     </div>
                     <div className="menty-explanation">
                         <h3>멘티 설명</h3>
-                        <p>영어만 배웁니다</p>
+                        <p>{bio || "소개가 없습니다."}</p>
                     </div>
                 </div>
             </div>

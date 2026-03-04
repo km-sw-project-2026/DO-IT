@@ -6,6 +6,7 @@ import CommunityPost from "../components/CommunityPost";
 function Community() {
   const [posts, setPosts] = useState([]); // ✅ 일반글만
   const [noticePosts, setNoticePosts] = useState([]); // ✅ 공지글만
+  const [refreshKey, setRefreshKey] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -46,7 +47,16 @@ function Community() {
     };
 
     getPosts();
-  }, [page]);
+  }, [page, refreshKey]);
+
+  // listen for post creation events to refresh list
+  useEffect(() => {
+    const handler = (e) => {
+      setRefreshKey((k) => k + 1);
+    };
+    window.addEventListener("post:created", handler);
+    return () => window.removeEventListener("post:created", handler);
+  }, []);
 
   // ✅ 검색 필터
   // (주의: 서버 페이징이라 검색은 "현재 페이지에 불러온 목록"에서만 필터링됨)
