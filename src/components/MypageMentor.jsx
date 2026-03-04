@@ -2,7 +2,7 @@ import "../css/MypageMentor.css";
 import Mypagedata from "./Mypagedata.jsx";
 import MypageCommunity from "./MypageCommunity.jsx";
 import { ProfileSetting } from "./ProfileSetting.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
 
@@ -115,6 +115,7 @@ function MypageCommunityList() {
 // 이름은 바꾸기 무서워서 안바꾼 거니 오해 노노
 
 export default function MypageMentor() {
+    const navigate = useNavigate();
     const [openModal, setOpenModal] = useState(false);
     const [bio, setBio] = useState("");
     const [nickname, setNickname] = useState("");
@@ -125,6 +126,13 @@ export default function MypageMentor() {
     useEffect(() => {
         const me = getCurrentUser();
         if (!me) return;
+        // USER(멘티)면 멘티 마이페이지로 redirect
+        if (me.role === 'USER') {
+            navigate('/mypage', { replace: true });
+            return;
+        }
+        // 멘토 페이지에 있으면 viewMode = mentor
+        setCanToggle(me.role === 'MENTOR' || me.role === 'ADMIN');
         setNickname(me.nickname || "");
         (async () => {
             try {
@@ -143,19 +151,6 @@ export default function MypageMentor() {
             if (d.nickname !== undefined) setNickname(d.nickname);
         };
         window.addEventListener("profile:updated", handler);
-
-        // mentor-status 조회: 멘토 권한이 있으면 토글 허용
-        (async () => {
-            try {
-                const resp = await fetch(`/me/mentor-status?user_id=${me.user_id}`);
-                if (!resp.ok) return;
-                const st = await resp.json();
-                setCanToggle(Boolean(st?.canToggle));
-                setIsMentor(Boolean(st?.isMentor));
-            } catch (e) {
-                console.error(e);
-            }
-        })();
 
         return () => window.removeEventListener("profile:updated", handler);
     }, []);
@@ -181,9 +176,9 @@ export default function MypageMentor() {
                         </div>
                         <div className="change-button-mentor">
                             {canToggle ? (
-                                <Link to="/mypage"><button>멘티</button></Link>
+                                <button onClick={() => { sessionStorage.setItem('viewMode', 'mentee'); navigate('/mypage'); }}>멘토</button>
                             ) : (
-                                <button className="toggle-disabled" type="button" disabled title="멘토 권한이 있어야 전환 가능합니다">✕</button>
+                                <button className="toggle-disabled" type="button" disabled title="멘토 전용 페이지입니다">✓</button>
                             )}
                         </div>
                     </div>

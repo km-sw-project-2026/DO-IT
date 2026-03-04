@@ -8,11 +8,9 @@ function Mentopage() {
                 <h2>함께 성장하는 <strong>멘토링</strong>의 시작, <strong>경험</strong>을 나누고 <strong>성장</strong>을 연결합니다</h2>
                 <div className="hero-btns">
                     <button className="hero-btn">
-                        <img src="" alt="" />
                         <span>나의 후기 보기</span>
                     </button>
                     <button className="hero-btn">
-                        <img src="" alt="" />
                         <span>나의 채팅 기록</span>
                     </button>
                 </div>

@@ -2,7 +2,7 @@ import "../css/MypageMenty.css";
 import Mypagedata from "./Mypagedata";
 import MypageCommunity from "./MypageCommunity";
 import { ProfileSetting } from "./ProfileSetting.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
 
@@ -113,6 +113,8 @@ function MypageCommunityList() {
 
 
 function MypageMenty() {
+    const me = getCurrentUser();
+    const navigate = useNavigate();
     const [openModal, setOpenModal] = useState(false);
     const [bio, setBio] = useState("");
     const [nickname, setNickname] = useState("");
@@ -123,6 +125,7 @@ function MypageMenty() {
         const me = getCurrentUser();
         if (!me) return;
         setNickname(me.nickname || "");
+        setCanToggle(me.role === 'MENTOR' || me.role === 'ADMIN');
         (async () => {
             try {
                 const res = await fetch(`/api/profile?user_id=${me.user_id}`);
@@ -141,21 +144,15 @@ function MypageMenty() {
         };
         window.addEventListener("profile:updated", handler);
 
-        // mentor-status 조회: 멘토 권한이 있으면 토글 허용
-        (async () => {
-            try {
-                const resp = await fetch(`/me/mentor-status?user_id=${me.user_id}`);
-                if (!resp.ok) return;
-                const st = await resp.json();
-                setCanToggle(Boolean(st?.canToggle));
-                setIsMentor(Boolean(st?.isMentor));
-            } catch (e) {
-                console.error(e);
-            }
-        })();
-
         return () => window.removeEventListener("profile:updated", handler);
     }, []);
+
+    // viewMode가 mentor이고 권한이 있으면 멘토 마이페이지로 리다이렉트
+    const viewMode = sessionStorage.getItem('viewMode')
+        || (me?.role === 'MENTOR' || me?.role === 'ADMIN' ? 'mentor' : 'mentee');
+    if (viewMode === 'mentor' && (me?.role === 'MENTOR' || me?.role === 'ADMIN')) {
+        return <Navigate to="/mypageMentor" replace />;
+    }
 
     return (
         <section className="mypagementy">
@@ -178,7 +175,7 @@ function MypageMenty() {
                         </div>
                             <div className="change-button-mentee">
                                 {canToggle ? (
-                                    <Link to="/mypageMentor"><button>멘토</button></Link>
+                                    <button onClick={() => { sessionStorage.setItem('viewMode', 'mentor'); navigate('/mypageMentor'); }}>멘티</button>
                                 ) : (
                                     <button className="toggle-disabled" type="button" disabled title="멘토 권한이 있어야 전환 가능합니다">✕</button>
                                 )}

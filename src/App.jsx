@@ -14,6 +14,8 @@ import MypageMenty from './components/MypageMenty.jsx';
 import Mypagedata from './components/Mypagedata.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
 import Mentypage from './components/Menty/Mentypage.jsx';
+import Mentoreview from './components/Menty/Mentoreview.jsx';
+import Mentologin from './components/Menty/Mentologin.jsx';
 import ProfileSetting from './components/ProfileSetting.jsx';
 import Calendar from './components/calendar.jsx';
 import Mypageposts from './components/mypageposts.jsx';
@@ -32,10 +34,12 @@ function App() {
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path='/mypage' element={<Mypagedata/>} />
+        <Route path='/mypage' element={<MypageMenty/>} />
         <Route path='/mypagementy' element={<MypageMenty/>} />
         <Route path='/mypageMentor' element={<MypageMentor/>} />
         <Route path='/mentypage' element={<Mentypage/>} />
+        <Route path='/mentoreview' element={<Mentoreview/>} />
+        <Route path='/mentologin' element={<Mentologin/>} />
         <Route path='/profilesetting' element={<ProfileSetting/>} />
         <Route path='/mypagerepository' element={<MypageRepository/>} />
         <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete/>} />

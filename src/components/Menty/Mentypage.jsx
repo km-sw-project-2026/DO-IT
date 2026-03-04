@@ -3,16 +3,27 @@ import { useNavigate } from "react-router-dom";
 import "../../css/Menty/Mentypage.css";
 import MentypageMento from "./MentypageMento.jsx";
 import MentoreviewModal from "./MentoreviewModal.jsx";
+import Mentopage from "./Mentopage.jsx";
+import { getCurrentUser } from "../../utils/auth";
 
 
 function Mentypage() {
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
+    const me = getCurrentUser();
 
     const handleSelectMentor = (mentor) => {
         setShowModal(false);
         navigate("/mentoreview", { state: { mentor } });
     };
+
+    // viewMode: 마이페이지 전환버튼으로 설정된 모드 (없으면 role 기반 기본값)
+    const viewMode = sessionStorage.getItem('viewMode') 
+        || (me?.role === 'MENTOR' || me?.role === 'ADMIN' ? 'mentor' : 'mentee');
+
+    if (viewMode === 'mentor' && (me?.role === 'MENTOR' || me?.role === 'ADMIN')) {
+        return <Mentopage />;
+    }
 
     return (
         <section className="Mentypage">
@@ -23,7 +34,7 @@ function Mentypage() {
             <div className="Menty-buttons-group">
                 <div className="Menty-button">
                     <img src="#" alt="1" />
-                    <button>멘토 지원하기</button>
+                    <button onClick={() => navigate("/mentologin")}>멘토 지원하기</button>
                 </div>
                 <div className="Menty-button">
                     <img src="#" alt="2" />
@@ -79,7 +90,7 @@ function Mentypage() {
             </div>
 
             <div className="Mento-backup-button">
-                <button>멘토 지원하기</button>
+                <button onClick={() => navigate("/mentologin")}>멘토 지원하기</button>
             </div>
 
             {showModal && (
