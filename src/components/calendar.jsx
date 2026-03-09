@@ -1,14 +1,19 @@
+import {
+  fetchCalendarCategories,
+  createCalendarCategory,
+  updateCalendarCategory,
+  deleteCalendarCategory,
+  fetchCalendarEventsByMonth,
+  createCalendarEvent,
+  deleteCalendarEvent,
+} from "../api/calendar";
 import { useEffect, useMemo, useState } from "react";
 import "../css/calendar.css";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
 // ✅ 기본 카테고리 + 색상 고정 (plan 삭제)
-const DEFAULT_CATEGORIES = [
-  { id: "exam", name: "시험", color: "#FFD047", locked: true },
-  { id: "perf", name: "수행", color: "#72CAB5", locked: true },
-  { id: "home", name: "숙제", color: "#C799FF", locked: true },
-];
+const DEFAULT_CATEGORY_NAMES = ["시험", "수행", "숙제"];
 
 const LS_CAT = "doit_calendar_categories_v1";
 const LS_EVT = "doit_calendar_events_v1";
@@ -45,6 +50,52 @@ function safeParse(json, fallback) {
   }
 }
 
+function toMonthKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function buildEventsByDateFromRows(rows = []) {
+  const map = {};
+
+  for (const row of rows) {
+    const key = row.event_date;
+    if (!map[key]) map[key] = [];
+
+    map[key].push({
+      id: row.event_id,
+      title: row.title,
+      desc: row.description || "",
+      categoryId: row.category_id,
+      categoryName: row.category_name,
+      color: row.color_code,
+    });
+  }
+
+  return map;
+}
+
+async function loadCategories() {
+  const data = await fetchCalendarCategories();
+  const cats = (data.categories || []).map((c) => ({
+    id: c.category_id,
+    name: c.name,
+    color: c.color_code,
+    locked: Boolean(c.locked),
+  }));
+
+  setCategories(cats);
+
+  if (!selectedCategoryId && cats.length > 0) {
+    setSelectedCategoryId(cats[0].id);
+  }
+}
+
+async function loadMonthEvents(date) {
+  const month = toMonthKey(date);
+  const data = await fetchCalendarEventsByMonth(month);
+  setEventsByDate(buildEventsByDateFromRows(data.events || []));
+}
+
 export default function Calendar() {
   const [viewDate, setViewDate] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(null);
@@ -54,7 +105,7 @@ export default function Calendar() {
 
   // ✅ 카테고리(커스텀 가능)
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
-  const [selectedCategoryId, setSelectedCategoryId] = useState("exam");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   // ✅ 팝업 분리
   const [isViewOpen, setIsViewOpen] = useState(false); // 일정 확인(목록)
@@ -78,40 +129,12 @@ export default function Calendar() {
 
   // ✅ 로컬 저장 불러오기 (+ plan이 저장되어 있어도 자동으로 제거)
   useEffect(() => {
-    const savedCats = safeParse(localStorage.getItem(LS_CAT), null);
-    if (Array.isArray(savedCats) && savedCats.length) {
-      const filtered = savedCats.filter((c) => c.id !== "plan"); // ✅ plan 제거
-
-      const map = new Map(filtered.map((c) => [c.id, c]));
-      DEFAULT_CATEGORIES.forEach((dc) => {
-        if (!map.has(dc.id)) map.set(dc.id, dc);
-      });
-
-      setCategories(Array.from(map.values()));
-    } else {
-      setCategories(DEFAULT_CATEGORIES);
-    }
-
-    const savedEvts = safeParse(localStorage.getItem(LS_EVT), {});
-    if (savedEvts && typeof savedEvts === "object") {
-      // ✅ 예전 일정 중 categoryId가 plan이면 exam으로 바꿔서 살려줌
-      const fixed = {};
-      for (const k of Object.keys(savedEvts)) {
-        fixed[k] = (savedEvts[k] || []).map((e) =>
-          e.categoryId === "plan" ? { ...e, categoryId: "exam" } : e
-        );
-      }
-      setEventsByDate(fixed);
-    }
+    loadCategories();
   }, []);
 
-  // ✅ 로컬 저장
   useEffect(() => {
-    localStorage.setItem(LS_CAT, JSON.stringify(categories));
-  }, [categories]);
-  useEffect(() => {
-    localStorage.setItem(LS_EVT, JSON.stringify(eventsByDate));
-  }, [eventsByDate]);
+    loadMonthEvents(viewDate);
+  }, [viewDate]);
 
   const gridStart = useMemo(() => {
     const d = new Date(monthStart);
@@ -179,75 +202,73 @@ export default function Calendar() {
   };
 
   // ✅ 일정 추가
-  const addEvent = () => {
+  const addEvent = async () => {
     if (!selectedDate) return;
+
     const title = draftTitle.trim();
-    const desc = draftDesc.trim();
     if (!title) return;
+    if (!selectedCategoryId) return;
 
-    const key = keyOfDate(selectedDate);
-    const item = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    await createCalendarEvent({
+      event_date: keyOfDate(selectedDate),
       title,
-      desc,
-      categoryId: selectedCategoryId,
-    };
-
-    setEventsByDate((prev) => {
-      const arr = prev[key] ? [...prev[key]] : [];
-      return { ...prev, [key]: [item, ...arr] }; // 최신이 앞
+      description: draftDesc,
+      category_id: selectedCategoryId,
     });
 
+    await loadMonthEvents(viewDate);
+
+    setDraftTitle("");
+    setDraftDesc("");
     setIsAddOpen(false);
     setIsCatAddOpen(false);
     setIsCatEditOpen(false);
   };
 
-  const removeEvent = (dateKey, id) => {
-    setEventsByDate((prev) => {
-      const next = { ...prev };
-      next[dateKey] = (next[dateKey] || []).filter((e) => e.id !== id);
-      if (next[dateKey].length === 0) delete next[dateKey];
-      return next;
-    });
+  const removeEvent = async (dateKey, id) => {
+    await deleteCalendarEvent(id);
+    await loadMonthEvents(viewDate);
   };
 
   // ✅ 커스텀 카테고리 추가
-  const addCategory = () => {
+  const addCategory = async () => {
     const name = newCatName.trim();
     if (!name) return;
 
-    const id = `c_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-    const newCat = { id, name, color: newCatColor, locked: false };
-    setCategories((prev) => [...prev, newCat]);
+    await createCalendarCategory({
+      name,
+      color_code: newCatColor,
+    });
+
     setNewCatName("");
     setNewCatColor("#9CA3AF");
+
+    await loadCategories();
   };
 
   // ✅ 카테고리 업데이트
-  const updateCategory = (id, patch) => {
-    setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...patch } : c))
-    );
+  const updateCategory = async (id, patch) => {
+    const target = categories.find((c) => c.id === id);
+    if (!target) return;
+
+    await updateCalendarCategory(id, {
+      name: patch.name ?? target.name,
+      color_code: patch.color ?? target.color,
+    });
+
+    await loadCategories();
   };
 
   // ✅ 카테고리 삭제(해당 일정은 exam으로 이동)
-  const deleteCategory = (id) => {
-    const target = categories.find((c) => c.id === id);
-    if (!target || target.locked) return;
+  const deleteCategoryHandler = async (id) => {
+    await deleteCalendarCategory(id);
+    await loadCategories();
+    await loadMonthEvents(viewDate);
 
-    setEventsByDate((prev) => {
-      const next = {};
-      for (const k of Object.keys(prev)) {
-        next[k] = (prev[k] || []).map((e) =>
-          e.categoryId === id ? { ...e, categoryId: "exam" } : e
-        );
-      }
-      return next;
-    });
-
-    setCategories((prev) => prev.filter((c) => c.id !== id));
-    if (selectedCategoryId === id) setSelectedCategoryId("exam");
+    if (selectedCategoryId === id) {
+      const exam = categories.find((c) => c.name === "시험");
+      if (exam) setSelectedCategoryId(exam.id);
+    }
   };
 
   return (
@@ -493,7 +514,7 @@ export default function Calendar() {
                         className="cat-del-btn"
                         type="button"
                         disabled={c.locked}
-                        onClick={() => deleteCategory(c.id)}
+                        onClick={() => deleteCategoryHandler(c.id)}
                       >
                         삭제
                       </button>
