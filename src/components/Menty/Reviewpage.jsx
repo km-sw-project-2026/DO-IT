@@ -1,4 +1,5 @@
 import "../../css/Menty/Myreview.css";
+import StarRating from "../StarRating.jsx";
 
 function Reviewpage({ date, author, score, text, onReport }) {
     return (
@@ -9,12 +10,7 @@ function Reviewpage({ date, author, score, text, onReport }) {
                     <span className="review-author">{author}</span>
                 </div>
                 <div className="review-stars">
-                    <span className="star full">★</span>
-                    <span className="star full">★</span>
-                    <span className="star full">★</span>
-                    <span className="star full">★</span>
-                    <span className="star half">★</span>
-                    <span className="score">{score}</span>
+                    <StarRating rating={parseFloat(score) || 0} layout="row" size="sm" />
                 </div>
                 <div className="review-body">
                     <p className="review-text">{text}</p>

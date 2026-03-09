@@ -76,6 +76,7 @@
   height: 150px;
   display: flex;
   margin-top: 14px;
+  align-items: center;
 }
 
 .Community-footer-content {
@@ -83,12 +84,17 @@
   margin: 0 auto;
   display: flex;
   position: relative;
+  align-items: center;
+  justify-content: center;
 
 }
 
 .Community-footer .page-number {
   width: 60%;
-  text-align: center;
+  /* 중앙 정렬을 위한 flex 컨테이너 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 60px;
   margin: 0 auto;
 }

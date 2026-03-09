@@ -1,5 +1,6 @@
 import "../../css/Menty/Myreview.css";
 import Reviewpage from "./Reviewpage.jsx";
+import StarRating from "../StarRating.jsx";
 import { useState } from "react";
 
 function Myreview() {
@@ -20,11 +21,7 @@ function Myreview() {
                 <div className="avg-score">
                     <p className="avg-number">4.5</p>
                     <div className="avg-stars">
-                        <span className="star full">★</span>
-                        <span className="star full">★</span>
-                        <span className="star full">★</span>
-                        <span className="star full">★</span>
-                        <span className="star half">★</span>
+                        <StarRating rating={4.5} layout="col" size="lg" />
                     </div>
                 </div>
 

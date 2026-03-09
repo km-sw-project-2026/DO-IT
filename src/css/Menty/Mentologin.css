@@ -114,3 +114,19 @@
 .Mentologin-submit:hover {
     background: #2785cc;
 }
+
+.Mentologin-submit:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.required {
+    color: #e53935;
+    margin-left: 2px;
+}
+
+.Mentologin-error {
+    color: #e53935;
+    font-size: 12px;
+    margin: 4px 0 0 2px;
+}

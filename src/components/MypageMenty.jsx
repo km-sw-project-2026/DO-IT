@@ -125,13 +125,23 @@ function MypageMenty() {
         const me = getCurrentUser();
         if (!me) return;
         setNickname(me.nickname || "");
-        setCanToggle(me.role === 'MENTOR' || me.role === 'ADMIN');
+
+        // ✅ mentor-status API로 실시간 멘토 권한 확인 (세션 캐시 무관)
         (async () => {
             try {
-                const res = await fetch(`/api/profile?user_id=${me.user_id}`);
-                if (!res.ok) return;
-                const data = await res.json();
-                setBio(data.user?.bio || "");
+                const [profileRes, statusRes] = await Promise.all([
+                    fetch(`/api/profile?user_id=${me.user_id}`),
+                    fetch(`/me/mentor-status?user_id=${me.user_id}`),
+                ]);
+                if (profileRes.ok) {
+                    const data = await profileRes.json();
+                    setBio(data.user?.bio || "");
+                }
+                if (statusRes.ok) {
+                    const status = await statusRes.json();
+                    setCanToggle(status.isMentor || me.role === 'ADMIN');
+                    setIsMentor(status.isMentor);
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -148,9 +158,10 @@ function MypageMenty() {
     }, []);
 
     // viewMode가 mentor이고 권한이 있으면 멘토 마이페이지로 리다이렉트
+    // isMentor는 API에서 받은 실시간 값 사용 (세션 캐시 무관)
     const viewMode = sessionStorage.getItem('viewMode')
-        || (me?.role === 'MENTOR' || me?.role === 'ADMIN' ? 'mentor' : 'mentee');
-    if (viewMode === 'mentor' && (me?.role === 'MENTOR' || me?.role === 'ADMIN')) {
+        || (isMentor || me?.role === 'ADMIN' ? 'mentor' : 'mentee');
+    if (viewMode === 'mentor' && (isMentor || me?.role === 'ADMIN')) {
         return <Navigate to="/mypageMentor" replace />;
     }
 

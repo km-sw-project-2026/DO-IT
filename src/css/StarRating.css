@@ -1,0 +1,70 @@
+/* ========================================
+   StarRating 공통 컴포넌트 스타일
+   ======================================== */
+
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 세로 정렬 (기본) */
+.star-rating--col {
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 가로 정렬 */
+.star-rating--row {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 별 묶음 */
+.star-rating__stars {
+  display: flex;
+  gap: 2px;
+  line-height: 1;
+}
+
+/* 별 하나 */
+.star-rating__star {
+  color: #d8d8d8;
+  transition: color 0.1s;
+}
+
+.star-rating__star.filled {
+  color: #FFB400;
+}
+
+/* 라벨 (숫자 + 카운트) */
+.star-rating__label {
+  font-weight: 600;
+  color: #222;
+  white-space: nowrap;
+}
+
+/* ---- Size 변형 ---- */
+.star-rating--sm .star-rating__star {
+  font-size: 0.95rem;
+}
+.star-rating--sm .star-rating__label {
+  font-size: 0.78rem;
+}
+
+.star-rating--md .star-rating__star {
+  font-size: 1.4rem;
+}
+.star-rating--md .star-rating__label {
+  font-size: 0.88rem;
+}
+
+.star-rating--lg .star-rating__star {
+  font-size: 2.4rem;
+}
+.star-rating--lg .star-rating__label {
+  font-size: 1.1rem;
+  font-weight: 700;
+}

@@ -14,6 +14,7 @@ import MypageMenty from './components/MypageMenty.jsx';
 import Mypagedata from './components/Mypagedata.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
 import Mentypage from './components/Menty/Mentypage.jsx';
+import Mentoring from './components/Menty/Mentoring.jsx';
 import Mentoreview from './components/Menty/Mentoreview.jsx';
 import Mentologin from './components/Menty/Mentologin.jsx';
 import ProfileSetting from './components/ProfileSetting.jsx';
@@ -38,6 +39,7 @@ function App() {
         <Route path='/mypagementy' element={<MypageMenty/>} />
         <Route path='/mypageMentor' element={<MypageMentor/>} />
         <Route path='/mentypage' element={<Mentypage/>} />
+        <Route path='/mentoring/:id' element={<Mentoring/>} />
         <Route path='/mentoreview' element={<Mentoreview/>} />
         <Route path='/mentologin' element={<Mentologin/>} />
         <Route path='/profilesetting' element={<ProfileSetting/>} />

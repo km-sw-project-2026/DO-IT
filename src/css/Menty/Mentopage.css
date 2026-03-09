@@ -191,7 +191,66 @@ body {
   font-weight: 700;
   cursor: pointer;
   margin-top: 6px;
+  font-family: inherit;
+  border: none;
+  transition: background 0.2s;
 }
 
-
 .btn-save:hover { background: #007acc; }
+.btn-save:disabled { background: #aaa; cursor: not-allowed; }
+
+.save-msg {
+  font-size: 0.85rem;
+  color: #009DFF;
+  text-align: center;
+  margin: 4px 0 0;
+}
+
+/* 카드 배치 6개 */
+.Mento-box {
+  width: 90%;
+  max-width: 1200px;
+  margin: 50px auto 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.Mentypage-footer {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 60px;
+}
+
+.page-number {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.page-number button {
+  min-width: 34px;
+  height: 34px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.page-number button.active {
+  background: #42a5f5;
+  color: white;
+  border: none;
+}
+
+@media (max-width: 1024px) {
+  .Mento-box {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .Mento-box {
+    grid-template-columns: 1fr;
+  }
+}

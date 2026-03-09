@@ -123,23 +123,40 @@ export default function MypageMentor() {
     const [canToggle, setCanToggle] = useState(false);
     const [isMentor, setIsMentor] = useState(false);
 
+    const [currentUserId, setCurrentUserId] = useState(null);
+
     useEffect(() => {
         const me = getCurrentUser();
         if (!me) return;
-        // USER(멘티)면 멘티 마이페이지로 redirect
-        if (me.role === 'USER') {
-            navigate('/mypage', { replace: true });
-            return;
-        }
-        // 멘토 페이지에 있으면 viewMode = mentor
-        setCanToggle(me.role === 'MENTOR' || me.role === 'ADMIN');
-        setNickname(me.nickname || "");
+
+        // 로그인 응답 구조가 중첩될 수 있으므로 안전하게 파싱
+        const userId = me?.user_id ?? me?.id ?? me?.user?.user_id ?? me?.user?.id ?? me?.result?.user_id ?? null;
+        if (!userId) return;
+
+        setNickname(me.nickname || me?.user?.nickname || "");
+        setCurrentUserId(userId);
+
         (async () => {
             try {
-                const res = await fetch(`/api/profile?user_id=${me.user_id}`);
-                if (!res.ok) return;
-                const data = await res.json();
-                setBio(data.user?.bio || "");
+                const [profileRes, statusRes] = await Promise.all([
+                    fetch(`/api/profile?user_id=${userId}`),
+                    fetch(`/me/mentor-status?user_id=${userId}`),
+                ]);
+                if (profileRes.ok) {
+                    const data = await profileRes.json();
+                    setBio(data.user?.bio || "");
+                }
+                if (statusRes.ok) {
+                    const status = await statusRes.json();
+                    const role = me?.role ?? me?.user?.role ?? me?.result?.role ?? '';
+                    const isMentorOrAdmin = status.isMentor || role === 'ADMIN';
+                    setCanToggle(isMentorOrAdmin);
+                    setIsMentor(status.isMentor);
+                    if (!isMentorOrAdmin) {
+                        navigate('/mypage', { replace: true });
+                    }
+                }
+
             } catch (e) {
                 console.error(e);
             }
@@ -225,6 +242,7 @@ export default function MypageMentor() {
                             </div>
                         </Link>
                     </div>
+
                 </div>
             </div>
         </section>

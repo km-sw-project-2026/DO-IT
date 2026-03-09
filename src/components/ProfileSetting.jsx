@@ -85,7 +85,7 @@ export const ProfileSetting = ({ openModal, setOpenModal }) => {
                         <div className="profile-setting-contents">
                             <div className="profile">
                                 <h3>프로필</h3>
-                                <img src="/images/icon/profile.jpg" alt="이미지 넣을 예정" />
+                                <img src="/images/profile.jpg" alt="프로필" />
                             </div>
                             <div className="nickname">
                                 <h3>이름</h3>

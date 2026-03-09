@@ -21,6 +21,13 @@ import * as adminNotice from "../functions/api/admin/notice.js";
 import * as adminBan from "../functions/api/admin/ban.js";
 import * as profile from "../functions/api/profile/index.js";
 import * as mentorStatus from "../functions/me/mentor-status.js";
+import * as mentorById from "../functions/api/mentor/[id].js";
+import * as mentoringApply from "../functions/api/mentoring/apply.js";
+import * as mentors from "../functions/api/mentors/index.js";
+import * as mentorApplication from "../functions/api/mentor-application/index.js";
+import * as adminMentorApplications from "../functions/api/admin/mentor-applications.js";
+import * as adminMentorRole from "../functions/api/admin/mentor-role.js";
+import * as mentorProfile from "../functions/api/mentor-profile/index.js";
 
 
 
@@ -210,6 +217,95 @@ export default {
       if (request.method === "GET") {
         return mentorStatus.onRequestGet({ env, request });
       }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/mentor/:id (멘토 프로필 상세 조회)
+    // ---------------------------
+    const mMentor = path.match(/^\/api\/mentor\/(\d+)\/?$/);
+    if (mMentor) {
+      const params = { id: mMentor[1] };
+      if (request.method === "OPTIONS") return mentorById.onRequestOptions({ request });
+      if (request.method === "GET") return mentorById.onRequestGet({ env, params, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/mentoring/apply (멘토링 신청)
+    // ---------------------------
+    if (path === "/api/mentoring/apply") {
+      if (request.method === "OPTIONS") return mentoringApply.onRequestOptions({ request });
+      if (request.method === "POST") return mentoringApply.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/mentors (멘토 목록)
+    // ---------------------------
+    if (path === "/api/mentors") {
+      if (request.method === "OPTIONS") return mentors.onRequestOptions({ request });
+      if (request.method === "GET") return mentors.onRequestGet({ env, url, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // ---------------------------
+    // /api/mentor-profile (멘토 프로필 조회/수정)
+    // ---------------------------
+    if (path === "/api/mentor-profile") {
+      if (request.method === "OPTIONS") return mentorProfile.onRequestOptions({ request });
+      if (request.method === "GET") return mentorProfile.onRequestGet({ env, url, request });
+      if (request.method === "PUT") return mentorProfile.onRequestPut({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/mentor-application (멘토 지원)
+    // ---------------------------
+    if (path === "/api/mentor-application") {
+      if (request.method === "OPTIONS") return mentorApplication.onRequestOptions({ request });
+      if (request.method === "POST") return mentorApplication.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/admin/mentor-applications (멘토 지원 목록/승인거절)
+    // ---------------------------
+    if (path === "/api/admin/mentor-applications") {
+      if (request.method === "OPTIONS") return adminMentorApplications.onRequestOptions({ request });
+      if (request.method === "GET") return adminMentorApplications.onRequestGet({ env, request });
+      if (request.method === "POST") return adminMentorApplications.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/admin/mentor-role (멘토 권한 부여/박탈)
+    // ---------------------------
+    if (path === "/api/admin/mentor-role") {
+      if (request.method === "OPTIONS") return adminMentorRole.onRequestOptions({ request });
+      if (request.method === "POST") return adminMentorRole.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

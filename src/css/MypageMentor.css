@@ -132,6 +132,7 @@
 
 .mypage-contents-inner {
     display: flex;
+    flex-wrap: wrap;
     padding: 35px 45px;
     gap: 30px;
 }
@@ -139,6 +140,7 @@
 /* ======================================================== */
 .mypage-community {
     width: 55%;
+    flex-shrink: 0;
 }
 
 .mypage-contents-inner .mypage-contents-title {
@@ -189,7 +191,7 @@
 
 /* ============================================= */
 .mypage-data {
-    width: 45%;
+    width: 40%;
 }
 .mypage-data-contents {
     background: #FFFFFF;
@@ -254,4 +256,81 @@
     padding-left: 30px; 
     padding-right: 30px;
     padding-top: 20px;
+}
+
+/* ---- 멘토 내 정보 폼 ---- */
+.mentor-info-section {
+    flex: 1;
+    min-width: 280px;
+}
+
+.mentor-info-form {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mentor-info-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.mentor-info-form textarea,
+.mentor-info-form input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #f8f8f8;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.mentor-info-form textarea:focus,
+.mentor-info-form input[type="text"]:focus {
+    border-color: #009DFF;
+    background: #fff;
+}
+
+.mentor-info-save-btn {
+    align-self: stretch;
+    padding: 14px;
+    background: #009DFF;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+    margin-top: 4px;
+}
+
+.mentor-info-save-btn:hover {
+    background: #127fa7;
+}
+
+.mentor-info-save-btn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.mentor-info-msg {
+    font-size: 0.85rem;
+    color: #009DFF;
+    margin: 0;
+    text-align: center;
 }
