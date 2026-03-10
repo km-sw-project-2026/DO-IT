@@ -62,6 +62,15 @@ function Mentypage() {
     return <Mentopage />;
   }
 
+  const requireLogin = (action) => {
+    if (!me) {
+      alert("로그인 후 이용할 수 있습니다.");
+      navigate("/login"); // 네 로그인 페이지 경로에 맞게 수정
+      return;
+    }
+    action();
+  };
+
   return (
     <section className="Mentypage">
       <div className="Mentypage-header">
@@ -74,15 +83,17 @@ function Mentypage() {
           <div className="Menty-buttons-group">
             <div className="Menty-button">
               <img src="#" alt="1" />
-              <button onClick={() => navigate("/mentologin")}>멘토 지원하기</button>
+              <button onClick={() => requireLogin(() => navigate("/mentologin"))}>멘토 지원하기</button>
             </div>
             <div className="Menty-button">
               <img src="#" alt="2" />
-              <button onClick={() => setShowModal(true)}>후기 남기기</button>
+              <button onClick={() => requireLogin(() => setShowModal(true))}>후기 남기기</button>
             </div>
             <div className="Menty-button">
               <img src="#" alt="3" />
-              <button>나의 채팅 기록</button>
+              <button onClick={() => requireLogin(() => navigate("아직 없음"))}>
+                나의 채팅 기록
+              </button>
             </div>
           </div>
         </div>
