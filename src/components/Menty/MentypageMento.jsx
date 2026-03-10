@@ -8,7 +8,11 @@ function MentypageMento({ mentor }) {
     <Link to={id ? `/mentoring/${id}` : "/mentypage"} className="MentypageMento-card-link">
       <div className="MentypageMento-card">
         <div className="MentypageMento-profile">
-          <img src="/images/profile.jpg" alt="프로필" />
+          <img
+            src={mentor?.profile_image || "/images/profile.jpg"}
+            alt="프로필"
+            onError={(e) => { e.target.src = "/images/profile.jpg"; }}
+          />
         </div>
 
         <div className="MentypageMento-info">

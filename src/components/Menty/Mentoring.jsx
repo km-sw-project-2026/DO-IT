@@ -1,5 +1,4 @@
 import "../../css/Menty/Mentoring.css";
-import Mentoringreview from "./Mentoringreview.jsx";
 import StarRating from "../StarRating.jsx";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -12,6 +11,16 @@ function Mentoring() {
     const [mentor, setMentor] = useState(null);
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
+
+    // 리뷰 관련 상태
+    const [reviews, setReviews] = useState([]);
+    const [reviewTotal, setReviewTotal] = useState(0);
+    const [reviewPage, setReviewPage] = useState(1);
+    const [reviewLoading, setReviewLoading] = useState(false);
+    const [reportModal, setReportModal] = useState(false);
+    const [reportReason, setReportReason] = useState("1");
+    const [reportText, setReportText] = useState("");
+    const REVIEW_SIZE = 5;
 
     // 현재 로그인 유저
     const currentUser = (() => {
@@ -27,6 +36,31 @@ function Mentoring() {
             .then((data) => { setMentor(data); setLoading(false); })
             .catch(() => setLoading(false));
     }, [id]);
+
+    // 리뷰 로딩
+    useEffect(() => {
+        if (!id) return;
+        setReviewLoading(true);
+        fetch(`/api/reviews?mentor_id=${id}&page=${reviewPage}&size=${REVIEW_SIZE}`)
+            .then((r) => r.json())
+            .then((data) => {
+                if (reviewPage === 1) {
+                    setReviews(data.reviews || []);
+                } else {
+                    setReviews((prev) => [...prev, ...(data.reviews || [])]);
+                }
+                setReviewTotal(data.total || 0);
+            })
+            .catch(() => {})
+            .finally(() => setReviewLoading(false));
+    }, [id, reviewPage]);
+
+    const formatReviewDate = (iso) => {
+        if (!iso) return "";
+        const d = new Date(iso.includes("T") || iso.endsWith("Z") ? iso : iso.replace(" ", "T") + "Z");
+        return d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })
+            .replace(/\. /g, ".").replace(/\.$/, "");
+    };
 
     // 멘토링 신청 제출
     const handleApply = async () => {
@@ -113,14 +147,45 @@ function Mentoring() {
                             />
                         </div>
                         <div className="star-review-box">
-                            <Mentoringreview />
-                            <Mentoringreview />
-                            <Mentoringreview />
+                            {reviews.length === 0 && !reviewLoading && (
+                                <p className="Mentoring-no-review">아직 리뷰가 없어요.</p>
+                            )}
+                            {reviews.map((rv) => (
+                                <div key={rv.review_id} className="Mento-star">
+                                    <p>{formatReviewDate(rv.created_at)} {rv.author}</p>
+                                    <div className="star">
+                                        <StarRating rating={rv.rating} layout="row" size="sm" />
+                                    </div>
+                                    {rv.photo && (() => {
+                                        try {
+                                            const imgs = JSON.parse(rv.photo);
+                                            return (
+                                                <div className="Mentoring-review-photos">
+                                                    {imgs.map((src, i) => (
+                                                        <img key={i} src={src} alt={`리뷰사진${i+1}`} className="Mentoring-review-img" />
+                                                    ))}
+                                                </div>
+                                            );
+                                        } catch { return null; }
+                                    })()}
+                                    <div className="Mento-review">
+                                        <span>{rv.review_content}</span>
+                                        <button onClick={() => setReportModal(true)}>신고</button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <div className="review-the">
-                        <button>더보기</button>
-                    </div>
+                    {reviews.length < reviewTotal && (
+                        <div className="review-the">
+                            <button
+                                onClick={() => setReviewPage((p) => p + 1)}
+                                disabled={reviewLoading}
+                            >
+                                {reviewLoading ? "로딩 중..." : "더보기"}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="Mentoring-backup-box">
@@ -182,6 +247,69 @@ function Mentoring() {
                                 </button>
                             </>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {/* 신고 모달 */}
+            {reportModal && (
+                <div className="modal-overlay" onClick={() => setReportModal(false)}>
+                    <div className="report-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="report-header">
+                            <h3 className="report-title">신고하기</h3>
+                            <hr />
+                        </div>
+                        <div className="report-body">
+                            <p className="report-sub">신고사유를 선택해주세요</p>
+                            <div className="radio-group">
+                                {[
+                                    ["1", "해당 수업과 관련없는 내용"],
+                                    ["2", "저작권 불법 도용"],
+                                    ["3", "음란 / 욕설 등 부적절한 내용"],
+                                    ["4", "같은내용 도배"],
+                                    ["5", "기타 (직접입력)"],
+                                ].map(([val, label]) => (
+                                    <label className="radio-item" key={val}>
+                                        <input
+                                            type="radio"
+                                            name="report"
+                                            value={val}
+                                            checked={reportReason === val}
+                                            onChange={() => setReportReason(val)}
+                                        />
+                                        <span>{label}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            <textarea
+                                className="report-textarea"
+                                placeholder="신고사유를 구체적으로 작성해주세요"
+                                value={reportText}
+                                onChange={(e) => setReportText(e.target.value)}
+                            />
+                            <div className="report-actions">
+                                <button
+                                    className="btn-report-submit"
+                                    onClick={async () => {
+                                        await fetch("/api/report", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({
+                                                reporter_id: currentUser?.user_id,
+                                                reason: reportReason,
+                                                detail: reportText,
+                                                target_type: "review",
+                                            }),
+                                        }).catch(() => {});
+                                        alert("신고가 접수되었습니다.");
+                                        setReportModal(false);
+                                        setReportText("");
+                                        setReportReason("1");
+                                    }}
+                                >신고하기</button>
+                                <button className="btn-report-close" onClick={() => setReportModal(false)}>닫기</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

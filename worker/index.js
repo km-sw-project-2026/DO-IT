@@ -28,6 +28,12 @@ import * as mentorApplication from "../functions/api/mentor-application/index.js
 import * as adminMentorApplications from "../functions/api/admin/mentor-applications.js";
 import * as adminMentorRole from "../functions/api/admin/mentor-role.js";
 import * as mentorProfile from "../functions/api/mentor-profile/index.js";
+import * as myMentors from "../functions/api/my-mentors/index.js";
+import * as mentorRequests from "../functions/api/mentor-requests/index.js";
+import * as notifications from "../functions/api/notifications/index.js";
+import * as chatRooms from "../functions/api/chat/rooms.js";
+import * as chatMessages from "../functions/api/chat/messages.js";
+import * as reviews from "../functions/api/reviews/index.js";
 
 
 
@@ -262,6 +268,70 @@ export default {
     }
 
     // ---------------------------
+    // /api/mentor-requests (멘토에게 온 신청 목록/수락거절)
+    // ---------------------------
+    if (path === "/api/mentor-requests") {
+      if (request.method === "OPTIONS") return mentorRequests.onRequestOptions({ request });
+      if (request.method === "GET") return mentorRequests.onRequestGet({ env, url, request });
+      if (request.method === "POST") return mentorRequests.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/notifications (알림 목록/읽음 처리)
+    // ---------------------------
+    if (path === "/api/notifications") {
+      if (request.method === "OPTIONS") return notifications.onRequestOptions({ request });
+      if (request.method === "GET") return notifications.onRequestGet({ env, url, request });
+      if (request.method === "POST") return notifications.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/chat/rooms (채팅방 목록/생성)
+    // ---------------------------
+    if (path === "/api/chat/rooms") {
+      if (request.method === "OPTIONS") return chatRooms.onRequestOptions({ request });
+      if (request.method === "GET") return chatRooms.onRequestGet({ env, url, request });
+      if (request.method === "POST") return chatRooms.onRequestPost({ env, request });
+      if (request.method === "DELETE") return chatRooms.onRequestDelete({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/chat/messages (메시지 조회/전송)
+    // ---------------------------
+    if (path === "/api/chat/messages") {
+      if (request.method === "OPTIONS") return chatMessages.onRequestOptions({ request });
+      if (request.method === "GET") return chatMessages.onRequestGet({ env, url, request });
+      if (request.method === "POST") return chatMessages.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/my-mentors (내가 받은 멘토 목록)
+    // ---------------------------
+    if (path === "/api/my-mentors") {
+      if (request.method === "OPTIONS") return myMentors.onRequestOptions({ request });
+      if (request.method === "GET") return myMentors.onRequestGet({ env, url, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
     // ---------------------------
     // /api/mentor-profile (멘토 프로필 조회/수정)
     // ---------------------------
@@ -312,6 +382,19 @@ export default {
       });
     }
 
+
+    // ---------------------------
+    // /api/reviews (리뷰 등록/조회)
+    // ---------------------------
+    if (path === "/api/reviews") {
+      if (request.method === "OPTIONS") return reviews.onRequestOptions({ request });
+      if (request.method === "GET") return reviews.onRequestGet({ env, url, request });
+      if (request.method === "POST") return reviews.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
 
     return new Response(null, { status: 404 });
   },

@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import "../../css/Menty/Mentypage.css";
 import MentypageMento from "./MentypageMento.jsx";
 import MentoreviewModal from "./MentoreviewModal.jsx";
+import ChatHistoryModal from "./ChatHistoryModal.jsx";
 import Mentopage from "./Mentopage.jsx";
 import { getCurrentUser } from "../../utils/auth";
 
 function Mentypage() {
   const [showModal, setShowModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
   const navigate = useNavigate();
   const me = getCurrentUser();
   const [page, setPage] = useState(1);
@@ -91,7 +93,7 @@ function Mentypage() {
             </div>
             <div className="Menty-button">
               <img src="#" alt="3" />
-              <button onClick={() => requireLogin(() => navigate("아직 없음"))}>
+              <button onClick={() => requireLogin(() => setShowChatModal(true))}>
                 나의 채팅 기록
               </button>
             </div>
@@ -168,6 +170,10 @@ function Mentypage() {
           onClose={() => setShowModal(false)}
           onSelect={handleSelectMentor}
         />
+      )}
+
+      {showChatModal && (
+        <ChatHistoryModal onClose={() => setShowChatModal(false)} />
       )}
     </section>
   );

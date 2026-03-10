@@ -52,7 +52,7 @@
 
 .star {
     font-size: 26px;
-    color: #d0d0d0;
+    color: #555;
     cursor: pointer;
     transition: color 0.15s, transform 0.1s;
     user-select: none;
@@ -60,10 +60,6 @@
 
 .star.filled {
     color: #FFB400;
-}
-
-.star.filled {
-    color: #f5b300;
 }
 
 
@@ -215,3 +211,30 @@
 .Mentoreview-submit:hover {
     background: #f0f0f0;
 }
+
+.Mentoreview-char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.Mentoreview-result {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 8px 32px;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.Mentoreview-result.ok {
+    background: #e6f7ee;
+    color: #2d7a4f;
+}
+
+.Mentoreview-result.err {
+    background: #fff0f0;
+    color: #c0392b;
+}
+

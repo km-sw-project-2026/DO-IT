@@ -25,6 +25,7 @@ import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
 import Bookmark from './components/Bookmark.jsx';
+import Chat from './pages/Chat.jsx';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path='/calendar' element={<Calendar />} />
         <Route path='/mypageposts' element={<Mypageposts/>} />
         <Route path='/Bookmark' element={<Bookmark/>} />
+        <Route path='/chat' element={<Chat/>} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />
