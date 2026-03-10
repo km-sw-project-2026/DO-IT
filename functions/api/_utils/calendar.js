@@ -44,6 +44,22 @@ async function ensureDefaultCategories(db, userId) {
   }
 }
 
+async function ensureCalendarSchema(db) {
+  try {
+    await db
+      .prepare(`
+        ALTER TABLE calendar_event
+        ADD COLUMN description TEXT DEFAULT ''
+      `)
+      .run();
+  } catch (error) {
+    const message = String(error?.message || error);
+    if (!message.includes("duplicate column name")) {
+      throw error;
+    }
+  }
+}
+
 async function getDefaultExamCategoryId(db, userId) {
   const row = await db
     .prepare(`
@@ -68,6 +84,7 @@ export {
   json,
   readJson,
   getUserId,
+  ensureCalendarSchema,
   ensureDefaultCategories,
   getDefaultExamCategoryId,
   isLockedCategory,

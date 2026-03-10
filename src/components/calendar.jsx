@@ -12,15 +12,8 @@ import "../css/calendar.css";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
-// ✅ 기본 카테고리 + 색상 고정 (plan 삭제)
-const DEFAULT_CATEGORY_NAMES = ["시험", "수행", "숙제"];
+const DEFAULT_CATEGORIES = [];
 
-const LS_CAT = "doit_calendar_categories_v1";
-const LS_EVT = "doit_calendar_events_v1";
-
-function startOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
 function addMonths(date, diff) {
   return new Date(date.getFullYear(), date.getMonth() + diff, 1);
 }
@@ -41,15 +34,6 @@ function formatHeader(d) {
   const week = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
   return `${d.getMonth() + 1}월 ${d.getDate()}일 ${week}요일`;
 }
-function safeParse(json, fallback) {
-  try {
-    const v = JSON.parse(json);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
 function toMonthKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
@@ -73,29 +57,6 @@ function buildEventsByDateFromRows(rows = []) {
 
   return map;
 }
-
-async function loadCategories() {
-  const data = await fetchCalendarCategories();
-  const cats = (data.categories || []).map((c) => ({
-    id: c.category_id,
-    name: c.name,
-    color: c.color_code,
-    locked: Boolean(c.locked),
-  }));
-
-  setCategories(cats);
-
-  if (!selectedCategoryId && cats.length > 0) {
-    setSelectedCategoryId(cats[0].id);
-  }
-}
-
-async function loadMonthEvents(date) {
-  const month = toMonthKey(date);
-  const data = await fetchCalendarEventsByMonth(month);
-  setEventsByDate(buildEventsByDateFromRows(data.events || []));
-}
-
 export default function Calendar() {
   const [viewDate, setViewDate] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(null);
@@ -120,6 +81,28 @@ export default function Calendar() {
   // ✅ 커스텀 카테고리 입력
   const [newCatName, setNewCatName] = useState("");
   const [newCatColor, setNewCatColor] = useState("#9CA3AF");
+
+  async function loadCategories() {
+    const data = await fetchCalendarCategories();
+    const cats = (data.categories || []).map((c) => ({
+      id: c.category_id,
+      name: c.name,
+      color: c.color_code,
+      locked: Boolean(c.locked),
+    }));
+
+    setCategories(cats);
+
+    if (!selectedCategoryId && cats.length > 0) {
+      setSelectedCategoryId(cats[0].id);
+    }
+  }
+
+  async function loadMonthEvents(date) {
+    const month = toMonthKey(date);
+    const data = await fetchCalendarEventsByMonth(month);
+    setEventsByDate(buildEventsByDateFromRows(data.events || []));
+  }
 
   const today = useMemo(() => new Date(), []);
   const monthStart = useMemo(
@@ -189,7 +172,7 @@ export default function Calendar() {
     setIsAddOpen(true);
     setDraftTitle("");
     setDraftDesc("");
-    setSelectedCategoryId("exam");
+    setSelectedCategoryId((prev) => prev ?? categories[0]?.id ?? null);
     setIsCatAddOpen(false);
     setIsCatEditOpen(false);
   };
@@ -321,7 +304,7 @@ export default function Calendar() {
               .slice()
               .reverse()
               .map((ev) => {
-                const cat = catById.get(ev.categoryId) || catById.get("exam"); // ✅ plan 제거
+                const cat = catById.get(ev.categoryId);
                 return cat?.color || "#E5E7EB";
               });
 
@@ -386,7 +369,7 @@ export default function Calendar() {
 
             <div className="view-list">
               {list.map((ev) => {
-                const cat = catById.get(ev.categoryId) || catById.get("exam"); // ✅ plan 제거
+                const cat = catById.get(ev.categoryId);
                 return (
                   <div key={ev.id} className="event-card">
                     <div className="event-bar" style={{ background: cat?.color }} />

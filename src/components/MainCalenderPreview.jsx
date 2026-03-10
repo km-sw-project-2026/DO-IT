@@ -5,6 +5,7 @@ import {
   fetchCalendarCategories,
   fetchCalendarEventsByMonth,
 } from "../api/calendar";
+import { getCurrentUser } from "../utils/auth";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -66,6 +67,13 @@ export default function MainCalenderPreview() {
 
   useEffect(() => {
     const load = async () => {
+      const me = getCurrentUser();
+      if (!me?.user_id) {
+        setCategories([]);
+        setEventsByDate({});
+        return;
+      }
+
       try {
         const [catData, evtData] = await Promise.all([
           fetchCalendarCategories(),

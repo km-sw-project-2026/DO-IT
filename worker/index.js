@@ -19,6 +19,10 @@ import * as report from "../functions/api/report/index.js";
 import * as adminReports from "../functions/api/admin/reports.js";
 import * as adminNotice from "../functions/api/admin/notice.js";
 import * as adminBan from "../functions/api/admin/ban.js";
+import * as calendarCategories from "../functions/api/calendar/categories.js";
+import * as calendarCategoryById from "../functions/api/calendar/categories/[id].js";
+import * as calendarEvents from "../functions/api/calendar/events.js";
+import * as calendarEventById from "../functions/api/calendar/events/[id].js";
 
 
 
@@ -182,6 +186,73 @@ export default {
     if (path === "/api/admin/ban") {
       if (request.method === "OPTIONS") return adminBan.onRequestOptions({ request });
       if (request.method === "POST") return adminBan.onRequestPost({ request, env });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/calendar/categories
+    // ---------------------------
+    if (path === "/api/calendar/categories") {
+      if (request.method === "GET") {
+        return calendarCategories.onRequestGet({ request, env });
+      }
+      if (request.method === "POST") {
+        return calendarCategories.onRequestPost({ request, env });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/calendar/categories/:id
+    // ---------------------------
+    const mCalendarCategory = path.match(/^\/api\/calendar\/categories\/(\d+)\/?$/);
+    if (mCalendarCategory) {
+      const params = { id: mCalendarCategory[1] };
+
+      if (request.method === "PUT") {
+        return calendarCategoryById.onRequestPut({ request, env, params });
+      }
+      if (request.method === "DELETE") {
+        return calendarCategoryById.onRequestDelete({ request, env, params });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/calendar/events
+    // ---------------------------
+    if (path === "/api/calendar/events") {
+      if (request.method === "GET") {
+        return calendarEvents.onRequestGet({ request, env });
+      }
+      if (request.method === "POST") {
+        return calendarEvents.onRequestPost({ request, env });
+      }
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/calendar/events/:id
+    // ---------------------------
+    const mCalendarEvent = path.match(/^\/api\/calendar\/events\/(\d+)\/?$/);
+    if (mCalendarEvent) {
+      const params = { id: mCalendarEvent[1] };
+
+      if (request.method === "DELETE") {
+        return calendarEventById.onRequestDelete({ request, env, params });
+      }
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
