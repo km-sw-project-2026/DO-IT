@@ -13,6 +13,7 @@ import AdminPage from "./pages/AdminPage";
 import MypageMenty from './components/MypageMenty.jsx';
 import MypageRepository from './components/MypageRepository.jsx';
 import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
+import RepositoryTrashFolder from './components/RepositoryTrashFolder.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
@@ -44,6 +45,11 @@ function App() {
         <Route path="/doc-view/:id" element={<DocViewer />} />
         <Route path="/doc-edit" element={<DocEditor />} />
         <Route path="/doc-edit/:id" element={<DocEditor />} />
+        <Route path="/mypage/repository" element={<MypageRepository />} />
+        <Route path="/repository/folder/:folderId" element={<MRFI />} />
+        <Route path="/repository" element={<MypageRepository />} />
+        <Route path="/repository/trash" element={<MypageRepositoryDelete />} />
+        <Route path="/repository/trash/folder/:folderId" element={<RepositoryTrashFolder />} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

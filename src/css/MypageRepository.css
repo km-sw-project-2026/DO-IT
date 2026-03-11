@@ -39,7 +39,6 @@
   width: 30%;
 }
 
-/* 검색 */
 .mypagerepository-header .search input {
   width: 722px;
   height: 62px;
@@ -109,50 +108,27 @@
   height: 20px;
 }
 
-/* 용량 */
-.mypagerepository-button p {
-  font-weight: 400;
-  font-size: 14px;
-  color: #9d9d9d;
+/* =========================
+   오른쪽 영역
+========================= */
+.mypagerepository-collection {
+  width: 100%;
 }
 
-.mypagerepository-button button {
-  padding: 5px 20px;
-  color: #0093ef;
-  border-radius: 9px;
-  border: 1px solid #0093ef;
-  background: #fff;
-  cursor: pointer;
+.mypagerepository-main {
+  width: 100%;
+  margin-bottom: 0;
+  overflow: visible;
 }
 
-.Storage-bar {
-  margin-top: 30px;
-  width: 160px;
-  height: 3px;
-  background: #cfcfcf;
-}
-
-.Storage-ber-used {
-  width: 70px;
-  height: 3px;
-  background: #8fff6d;
-}
-
-.Storage-capacity {
-  width: 170px;
-  text-align: right;
-  font-size: 14px;
-  padding-bottom: 10px;
+.mypagerepository-file-bottom {
+  width: 100%;
+  margin-top: 16px;
 }
 
 /* =========================
    내 폴더
 ========================= */
-.mypagerepository-main {
-  width: auto;
-  height: 300px;
-}
-
 .mypagerepository-main-header {
   display: flex;
   gap: 10px;
@@ -166,30 +142,41 @@
   font-size: 16px;
 }
 
-.mypagerepository-main-header > img {
-  width: 40px;
-  height: 40px;
-}
-
 .mypagerepository-main-body {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
 }
 
 .mypagerepository-main-body-inner {
   position: relative;
+  list-style: none;
+  overflow: visible;
+}
+
+.mr-folder-card-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
 }
 
 .mypagerepository-bg {
   width: 180px;
   height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .mypagerepository-bg:hover {
   background: #e6e6e6;
   border-radius: 10px;
-  width: 180px;
-  height: 140px;
 }
 
 .mypagerepository-bg img {
@@ -198,24 +185,33 @@
 }
 
 .mypagerepository-bg p {
+  margin-top: 4px;
+  text-align: center;
+  width: 100%;
   font-weight: bold;
   font-size: 16px;
-  color: #2c2c2c;
 }
 
-.mypagerepository-span {
+.mypagerepository-folder-more {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  width: 10px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  padding: 0 30px 5px 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
-.mypagerepository-span span {
-  font-size: 15px;
-  line-height: 8px;
+.mypagerepository-folder-more span {
+  font-size: 14px;
+  line-height: 6px;
+  color: #2c2c2c;
 }
 
 /* =========================
@@ -232,7 +228,6 @@
   font-weight: 600;
 }
 
-/* 화살표(중복 정의 제거하고 이걸로 통일) */
 .mr-arrow {
   width: 16px;
   height: 16px;
@@ -263,16 +258,16 @@
 .mr-add-row {
   display: flex;
   gap: 8px;
-  padding: 10px 12px;
   align-items: center;
+  margin-bottom: 12px;
 }
 
 .mr-add-input {
   flex: 1;
   height: 36px;
+  padding: 0 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 0 10px;
   outline: none;
 }
 
@@ -280,10 +275,10 @@
 .mr-add-cancel {
   height: 36px;
   padding: 0 12px;
-  border-radius: 8px;
   border: 1px solid #ddd;
-  cursor: pointer;
   background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 /* 슬라이드 영역 */
@@ -295,16 +290,34 @@
 
 .mr-slide.open {
   max-height: 1000px;
+  overflow: visible;
 }
 
 /* =========================
-   추천 파일 (구글드라이브 느낌)
+   폴더/파일 비어있음
 ========================= */
-.mypagerepository-file-bottom {
+.mypagerepository-empty-folder,
+.mypagerepository-file-empty {
   width: 100%;
-  height: 300px;
+  text-align: left;
+  padding: 16px 0;
+  color: #999;
+  font-size: 16px;
 }
 
+.mypagerepository-empty-folder p,
+.mypagerepository-file-empty p {
+  margin: 0;
+  padding-left: 10px;
+}
+
+.mypagerepository-file-empty {
+  border-top: 1px solid #e5e5e5;
+}
+
+/* =========================
+   파일 영역
+========================= */
 .mypagerepository-bottom {
   display: flex;
   gap: 10px;
@@ -322,25 +335,19 @@
   width: 1300px;
 }
 
-/* 헤더 라인 */
-.mypagerepository-file-list .mypagerepository-file-name {
-  border-bottom: 1px solid #c4c4c4;
-  padding: 0 40px 10px 40px;
-}
-
-/* ✅ 헤더: 이름 | 날짜 | (액션자리) */
 .mypagerepository-file-name {
   display: grid;
   grid-template-columns: 1fr 220px 220px;
   align-items: center;
   column-gap: 16px;
+  border-bottom: 1px solid #c4c4c4;
+  padding: 0 40px 10px 40px;
 }
 
 .mypagerepository-file-name .mr-col-date {
-  text-align: left; /* 구글드라이브처럼 가운데쪽 */
+  text-align: left;
 }
 
-/* ✅ row: 이름 | 날짜 | 액션 */
 .mypagerepository-file-suggestion {
   display: grid;
   grid-template-columns: 1fr 220px 220px;
@@ -348,9 +355,13 @@
   column-gap: 16px;
   padding: 12px 40px;
   border-bottom: 1px solid #eee;
+  cursor: grab;
 }
 
-/* 이름(아이콘+텍스트) */
+.mypagerepository-file-suggestion:active {
+  cursor: grabbing;
+}
+
 .mypagerepository-file-gather {
   display: flex;
   align-items: center;
@@ -364,13 +375,16 @@
   text-overflow: ellipsis;
 }
 
-/* 날짜 */
+.mypagerepository-file-gather img {
+  width: 40px;
+  height: 40px;
+}
+
 .mr-date {
   text-align: left;
   color: #2c2c2c;
 }
 
-/* ✅ 오른쪽 액션들(다운/연필/별/점점점) */
 .mypagerepository-file-actions {
   display: flex;
   align-items: center;
@@ -385,26 +399,25 @@
   padding: 4px;
 }
 
-/* 아이콘 크기 */
 .mypagerepository-file-actions img {
   display: block;
 }
 
-/* 기존 아이콘 사이즈 유지 */
 .mypagerepository-download img {
   width: 30px;
   height: 30px;
 }
+
 .mypagerepository-pan img {
   width: 24px;
   height: 24px;
 }
+
 .mypagerepository-star img {
   width: 25px;
   height: 25px;
 }
 
-/* 점점점 */
 .mypagerepository-ooo {
   display: flex;
   flex-direction: column;
@@ -415,7 +428,93 @@
   font-size: 18px;
   line-height: 9px;
 }
-.mypagerepository-file-gather img {
-  width: 40px;
-  height: 40px;
+
+/* =========================
+   폴더/파일 메뉴
+========================= */
+.folder-menu {
+  position: absolute;
+  top: 40px;
+  left: 100%;
+  margin-left: 10px;
+  width: 120px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-5px);
+  animation: folderMenuOpen 0.15s ease forwards;
+}
+
+.folder-menu button {
+  width: 100%;
+  border: none;
+  background: #fff;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.folder-menu button:hover {
+  background: #f3f3f3;
+}
+
+@keyframes folderMenuOpen {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mypagerepository-file-more-wrap {
+  position: relative;
+  display: inline-flex;
+  overflow: visible;
+}
+
+.file-menu-like-folder {
+  position: absolute;
+  top: 8px;
+  left: 100%;
+  right: auto;
+  margin-left: 10px;
+  width: 120px;
+}
+
+/* =========================
+   이동 박스
+========================= */
+.mr-move-box {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: #fff;
+}
+
+.mr-move-box select {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* =========================
+   드래그 상태
+========================= */
+.dragging-doc {
+  opacity: 0.5;
+}
+
+.drag-over-folder .mypagerepository-bg {
+  background: #e9f5ff;
+  border-radius: 10px;
+  outline: 2px dashed #3fb5ff;
 }

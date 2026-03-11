@@ -4,9 +4,17 @@
   background: #f4f6f8;
   padding: 24px;
   box-sizing: border-box;
+
+  /* ⭐ 전체 가운데 정렬 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* 상단 영역도 종이와 동일한 너비로 */
 .doc-viewer-top {
+  width: 900px;
+
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -46,9 +54,11 @@
   background: #f9fafb;
 }
 
+/* ⭐ 종이 영역 가운데 유지 */
 .doc-viewer-page {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .doc-viewer-paper {
@@ -64,6 +74,7 @@
   font-size: 16px;
 }
 
+/* 문서 스타일 */
 .doc-viewer-paper h1,
 .doc-viewer-paper h2,
 .doc-viewer-paper h3 {
@@ -93,6 +104,7 @@
   list-style: inherit;
 }
 
+/* 빈 문서 */
 .doc-viewer-empty {
   max-width: 480px;
   margin: 80px auto 0;
