@@ -487,3 +487,183 @@ main {
   font-size: 14px;
   color: #fff;
 }
+
+/* ============================================================
+   메인 페이지 반응형
+============================================================ */
+
+/* 태블릿 (768px) */
+@media (max-width: 768px) {
+  /* 히어로 섹션 */
+  .main-page {
+    height: auto;
+    min-height: 400px;
+    background-size: cover;
+    background-position: center top;
+    padding-bottom: 40px;
+  }
+
+  .main-page-contents {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 92%;
+    margin: 0 auto;
+    padding-top: 60px;
+  }
+
+  .main-page-contents img {
+    width: 80%;
+    max-width: 320px;
+  }
+
+  .main-page-contents h1 {
+    font-size: 22px;
+    line-height: 1.5;
+  }
+
+  .main-page-contents p {
+    font-size: 13px;
+    margin-top: 20px;
+  }
+
+  /* 자료함 헤더 */
+  .main-page-mypage-header {
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    gap: 12px;
+  }
+
+  .main-page-mypage-header h2 {
+    font-size: 20px;
+  }
+
+  .main-page-mypage-header button {
+    width: 160px;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .mypage-emoji {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* 폴더 카드 */
+  .folder-card {
+    width: 100%;
+    height: 200px;
+  }
+
+  .folder-card img {
+    width: 140px;
+  }
+
+  .folder-card p {
+    font-size: 22px;
+  }
+
+  /* 커뮤니티 섹션 */
+  .main-page-community {
+    height: auto;
+    padding-bottom: 30px;
+  }
+
+  /* 멘토멘티 */
+  .mm-title {
+    font-size: 22px;
+  }
+
+  .mm-btn {
+    height: 50px;
+    min-width: 160px;
+    font-size: 14px;
+  }
+}
+
+/* 모바일 (480px) */
+@media (max-width: 480px) {
+  .main-page-contents {
+    padding-top: 40px;
+    width: 95%;
+  }
+
+  .main-page-contents img {
+    width: 70%;
+    max-width: 260px;
+  }
+
+  .main-page-contents h1 {
+    font-size: 18px;
+  }
+
+  .main-page-contents p {
+    font-size: 12px;
+    margin-top: 14px;
+  }
+
+  .main-page-mypage-header {
+    padding: 14px 16px;
+  }
+
+  .main-page-mypage-header h2 {
+    font-size: 18px;
+  }
+
+  .main-page-mypage-header button {
+    width: 130px;
+    height: 42px;
+    font-size: 15px;
+  }
+
+  .mypage-emoji {
+    display: none;
+  }
+
+  .folder-area {
+    padding: 24px 0 40px;
+  }
+
+  .folder-card {
+    height: 160px;
+  }
+
+  .folder-card img {
+    width: 100px;
+  }
+
+  .folder-card p {
+    font-size: 18px;
+  }
+
+  .recent-wrap h3 {
+    font-size: 16px;
+  }
+
+  .mm-hero {
+    margin-top: 40px;
+    padding-top: 30px;
+  }
+
+  .mm-title {
+    font-size: 20px;
+  }
+
+  .mm-btn {
+    height: 46px;
+    font-size: 14px;
+  }
+
+  /* 멘토 모달 */
+  .mentor-modal {
+    padding: 40px 20px;
+  }
+
+  .mentor-modal p {
+    font-size: 16px;
+  }
+
+  .mentor-modal h2 {
+    font-size: 20px;
+  }
+}
