@@ -445,3 +445,66 @@
     font-size: 16px;
     color: #888;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+  .chat-sidebar {
+    width: 80px;
+    min-width: 80px;
+  }
+
+  .chat-room-name {
+    font-size: 11px;
+  }
+
+  .chat-room-item {
+    padding: 8px 6px;
+    gap: 5px;
+  }
+
+  .chat-room-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .chat-messages {
+    padding: 12px 8px;
+    gap: 8px;
+  }
+
+  .chat-bubble {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .chat-footer {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .chat-leave-btn {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .chat-msg-col {
+    max-width: 78%;
+  }
+}
+
+@media (max-width: 400px) {
+  .chat-sidebar {
+    width: 64px;
+    min-width: 64px;
+  }
+
+  .chat-room-name {
+    display: none;
+  }
+
+  .chat-msg-avatar {
+    width: 26px;
+    height: 26px;
+  }
+}
+

@@ -516,3 +516,76 @@
     background: #ccc;
     cursor: not-allowed;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .Mentoring-layout {
+    flex-direction: column;
+    padding: 0 12px;
+  }
+
+  .Mentoring-backup-box {
+    position: static;
+    width: 100%;
+  }
+
+  .Mentoring-header {
+    padding: 24px 16px;
+  }
+
+  .Mentoring-header-inner h2 {
+    font-size: 1rem;
+  }
+
+  .Mentoring-box {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .Mentoring-box button {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+
+  .Mento-star-review .star span {
+    font-size: 2rem;
+  }
+
+  .modal-box {
+    width: 92vw;
+    padding: 24px 16px;
+  }
+
+  .report-modal {
+    width: 92vw;
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .Mentoring {
+    padding-top: 20px;
+  }
+
+  .Mento-intro-page span,
+  .Mento-time span,
+  .Mento-class span,
+  .Mento-job span {
+    font-size: 0.9rem;
+  }
+
+  .Mento-intro-page p,
+  .Mento-time p,
+  .Mento-class p,
+  .Mento-job p {
+    font-size: 0.85rem;
+  }
+
+  .review-the button {
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+}

@@ -238,3 +238,17 @@
     color: #c0392b;
 }
 
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+  .Mentoreview-profile {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .Mentoreview-profile-img {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+

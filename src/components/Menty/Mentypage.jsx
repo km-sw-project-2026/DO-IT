@@ -22,6 +22,8 @@ function Mentypage() {
   const [mentors, setMentors] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [mentorsLoaded, setMentorsLoaded] = useState(false);
+  const [sort, setSort] = useState("recent"); // "rating" | "review" | "recent"
+  const [filterOpen, setFilterOpen] = useState(false);
   const PAGE_SIZE = 6;
 
   // ✅ 모든 hook을 조건부 return 전에 선언
@@ -40,7 +42,8 @@ function Mentypage() {
   }, [me]);
 
   useEffect(() => {
-    fetch(`/api/mentors?page=${page}&size=${PAGE_SIZE}`)
+    setMentorsLoaded(false);
+    fetch(`/api/mentors?page=${page}&size=${PAGE_SIZE}&sort=${sort}`)
       .then((r) => r.json())
       .then((data) => {
         setMentors(data.mentors || []);
@@ -48,7 +51,7 @@ function Mentypage() {
         setMentorsLoaded(true);
       })
       .catch(() => setMentorsLoaded(true));
-  }, [page]);
+  }, [page, sort]);
 
   const handleSelectMentor = (mentor) => {
     setShowModal(false);
@@ -84,15 +87,15 @@ function Mentypage() {
 
           <div className="Menty-buttons-group">
             <div className="Menty-button">
-              <img src="#" alt="1" />
+              <img src="/images/mentee/men_apply.png" alt="1" />
               <button onClick={() => requireLogin(() => navigate("/mentologin"))}>멘토 지원하기</button>
             </div>
             <div className="Menty-button">
-              <img src="#" alt="2" />
+              <img src="/images/mentee/men_review.png" alt="2" />
               <button onClick={() => requireLogin(() => setShowModal(true))}>후기 남기기</button>
             </div>
             <div className="Menty-button">
-              <img src="#" alt="3" />
+              <img src="/images/mentee/men_chat.png" alt="3" className="chat-img" />
               <button onClick={() => requireLogin(() => setShowChatModal(true))}>
                 나의 채팅 기록
               </button>
@@ -101,13 +104,21 @@ function Mentypage() {
         </div>
       </div>
 
-      <button className="filter-button">
+      <button className="filter-button" onClick={() => setFilterOpen((o) => !o)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFilterOpen(false); }}>
         <p>필터</p>
-        <div className="filter-button-inner">
+        <div className={`filter-button-inner${filterOpen ? " open" : ""}`}>
           <ul>
-            <li>별점 높은 순</li>
-            <li>리뷰 순</li>
-            <li>최근 순</li>
+            {[
+              { key: "rating", label: "별점 높은 순" },
+              { key: "review", label: "리뷰 순" },
+              { key: "recent", label: "최근 순" },
+            ].map(({ key, label }) => (
+              <li
+                key={key}
+                className={sort === key ? "active" : ""}
+                onMouseDown={(e) => { e.preventDefault(); setSort(key); setPage(1); setFilterOpen(false); }}
+              >{label}</li>
+            ))}
           </ul>
         </div>
       </button>

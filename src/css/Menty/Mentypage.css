@@ -36,6 +36,11 @@
     object-fit: contain;
 }
 
+.Menty-button img.chat-img {
+    width: 28px;
+    height: 28px;
+    margin: 6px 0; /* 위아래 여백으로 40px 높이 맞춤 */
+}
 .Menty-button button {
     background: none;
     border: none;
@@ -102,6 +107,15 @@
 .filter-button-inner ul li:hover {
     background-color: #f0f8ff;
     color: #0099cc;
+}
+
+.filter-button-inner.open {
+    display: block;
+}
+
+.filter-button-inner ul li.active {
+    color: #0099cc;
+    font-weight: 700;
 }
 
 .Mento-box {
@@ -211,4 +225,70 @@
 
 .Mento-backup-btn:hover {
     background: #127fa7;
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+    .Mento-box {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        padding: 0 14px;
+    }
+
+    .filter-button {
+        margin: 16px 0 16px 16px;
+    }
+
+    .Menty-buttons-group {
+        gap: 12px;
+    }
+
+    .Menty-button {
+        padding: 16px 20px;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .Mento-box {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 0 12px;
+    }
+
+    .filter-button {
+        margin: 12px 0 12px 12px;
+        font-size: 0.82rem;
+        padding: 6px 12px;
+    }
+
+    .Menty-buttons-group {
+        gap: 8px;
+    }
+
+    .Menty-button {
+        padding: 12px 14px;
+        min-width: 80px;
+    }
+
+    .Menty-button img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .Menty-button img.chat-img {
+        width: 22px;
+        height: 22px;
+        margin: 4px 0;
+    }
+
+    .Menty-button button {
+        font-size: 0.78rem;
+    }
+
+    .page-number button {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
 }

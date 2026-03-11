@@ -19,9 +19,20 @@ export async function onRequestOptions({ request }) {
  */
 export async function onRequestGet({ env, url, request }) {
   try {
-    const mentor_id = Number(url.searchParams.get("mentor_id"));
+    let mentor_id = Number(url.searchParams.get("mentor_id"));
+    const user_id = Number(url.searchParams.get("user_id"));
     const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
     const size = Math.min(20, Math.max(1, Number(url.searchParams.get("size")) || 5));
+
+    // user_id로 mentor_id 조회 (멘토 본인이 자기 후기를 볼 때)
+    if (!mentor_id && user_id) {
+      const mentorRow = await env.D1_DB
+        .prepare("SELECT mentor_id FROM mentor WHERE user_id = ? LIMIT 1")
+        .bind(user_id)
+        .first();
+      if (mentorRow) mentor_id = mentorRow.mentor_id;
+    }
+
     if (!mentor_id) return json({ message: "mentor_id 필요" }, 400, request);
 
     const offset = (page - 1) * size;
@@ -34,7 +45,7 @@ export async function onRequestGet({ env, url, request }) {
     const { results } = await env.D1_DB
       .prepare(`
         SELECT mr.review_id, mr.rating, mr.review_content, mr.anonymous_yn,
-               mr.created_at, mr.photo,
+               mr.created_at, mr.photo, mr.user_id,
                u.nickname
         FROM mentor_review mr
         JOIN "user" u ON u.user_id = mr.user_id
@@ -52,6 +63,7 @@ export async function onRequestGet({ env, url, request }) {
       anonymous_yn: r.anonymous_yn,
       created_at: r.created_at,
       photo: r.photo || null,
+      user_id: r.user_id,
       author: r.anonymous_yn === "Y" ? "익명" : (r.nickname || "사용자"),
     }));
 

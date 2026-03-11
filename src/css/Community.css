@@ -222,3 +222,68 @@
 .normal-section {
   margin-top: 10px;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 960px) {
+  .Community-main {
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  .Community-footer-content {
+    width: 100%;
+  }
+
+  .Community-header .search input {
+    width: min(522px, calc(100vw - 120px));
+  }
+}
+
+@media (max-width: 600px) {
+  .Community-header {
+    padding: 12px;
+  }
+
+  .Community-header .search input {
+    width: calc(100vw - 100px);
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .Community-header .search button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .Community-main-title h2 {
+    font-size: 14px;
+    width: auto;
+    flex: 1;
+  }
+
+  .Community-main-title .Community-title-content span {
+    font-size: 13px;
+  }
+
+  .Community-main-title-content {
+    padding: 8px 12px;
+  }
+
+  .Community-footer .page-number button {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+    margin: 0 2px;
+  }
+
+  .Community-footer .page-number span {
+    font-size: 20px;
+  }
+
+  .Community-footer .write-button {
+    width: 48px;
+    height: 48px;
+    right: 12px;
+  }
+}

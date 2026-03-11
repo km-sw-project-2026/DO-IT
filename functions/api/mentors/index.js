@@ -21,7 +21,14 @@ export async function onRequestGet({ env, url, request }) {
   try {
     const page = Math.max(1, Number(url.searchParams.get("page") || "1"));
     const size = Math.min(50, Math.max(1, Number(url.searchParams.get("size") || "6")));
+    const sort = url.searchParams.get("sort") || "recent"; // "rating" | "review" | "recent"
     const offset = (page - 1) * size;
+
+    const orderBy = sort === "rating"
+      ? "avg_rating DESC NULLS LAST, m.created_at DESC"
+      : sort === "review"
+      ? "review_count DESC, m.created_at DESC"
+      : "m.created_at DESC";
 
     // 전체 멘토 수
     const countRow = await env.D1_DB
@@ -47,7 +54,7 @@ export async function onRequestGet({ env, url, request }) {
         LEFT JOIN mentor_profile mp ON mp.user_id = m.user_id
         LEFT JOIN mentor_review mr  ON mr.mentor_id = m.mentor_id
         GROUP BY m.mentor_id
-        ORDER BY m.created_at DESC
+        ORDER BY ${orderBy}
         LIMIT ? OFFSET ?
       `)
       .bind(size, offset)

@@ -129,7 +129,7 @@ function Header() {
               {/* 🔔 알림 벨 */}
               <div className="notif-wrap" ref={notifRef}>
                 <button className="notif-bell" type="button" onClick={handleBellClick} aria-label="알림">
-                  🔔
+                  <img src="/images/mentee/notice.png" alt="알림" />
                   {unread > 0 && <span className="notif-badge">{unread}</span>}
                 </button>
 

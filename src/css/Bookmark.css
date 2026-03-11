@@ -312,3 +312,51 @@
     width: 18px;
     height: 18px;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .Bookmark-inner {
+    padding: 0 12px;
+  }
+
+  .Bookmark-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .Bookmark-title {
+    margin-left: 0;
+    gap: 12px;
+  }
+
+  .Bookmark-title h2 {
+    font-size: 24px;
+  }
+
+  .Bookmark-header .search input {
+    width: calc(100vw - 120px);
+    height: 48px;
+    margin-left: 0;
+    font-size: 14px;
+  }
+
+  .Bookmark-header .search button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .Bookmark-contents {
+    flex-direction: column;
+    padding: 0 8px;
+  }
+
+  .Bookmark-file-list {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .Bookmark-main-body {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

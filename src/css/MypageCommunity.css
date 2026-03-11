@@ -16,3 +16,19 @@
     font-weight: 400;
     color: #000;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 480px) {
+  .community-text {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .community-text p,
+  .community-text span {
+    font-size: 13px;
+  }
+}
+
+}

@@ -16,6 +16,11 @@ function Mentopage() {
     const [requests, setRequests] = useState([]);
     const [reqLoading, setReqLoading] = useState(true);
 
+    const [showReviews, setShowReviews] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [reviewStats, setReviewStats] = useState({ total: 0, avg_rating: 0 });
+    const [reviewLoading, setReviewLoading] = useState(false);
+
     const getUid = () => {
         try {
             const raw = sessionStorage.getItem("user") || localStorage.getItem("user");
@@ -111,6 +116,23 @@ function Mentopage() {
         }
     };
 
+    const handleShowReviews = async () => {
+        const uid = getUid();
+        if (!uid) return;
+        setReviewLoading(true);
+        setShowReviews(true);
+        try {
+            const res = await fetch(`/api/reviews?user_id=${uid}&size=20`);
+            if (res.ok) {
+                const data = await res.json();
+                setReviews(data.reviews || []);
+                setReviewStats({ total: data.total || 0, avg_rating: data.avg_rating || 0 });
+            }
+        } catch { /* ignore */ } finally {
+            setReviewLoading(false);
+        }
+    };
+
     const handleSave = async () => {
         setSaveMsg("");
         const uid = getUid();
@@ -136,7 +158,7 @@ function Mentopage() {
             <div className="hero">
                 <h2>함께 성장하는 <strong>멘토링</strong>의 시작, <strong>경험</strong>을 나누고 <strong>성장</strong>을 연결합니다</h2>
                 <div className="hero-btns">
-                    <button className="hero-btn">
+                    <button className="hero-btn" onClick={handleShowReviews}>
                         <span>나의 후기 보기</span>
                     </button>
                     <button className="hero-btn" onClick={() => navigate("/chat")}>
@@ -232,6 +254,41 @@ function Mentopage() {
                 </div>
 
             </div>
+            {showReviews && (
+                <div className="review-modal-overlay" onClick={() => setShowReviews(false)}>
+                    <div className="review-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="review-modal-header">
+                            <h3>나의 후기</h3>
+                            <button className="review-modal-close" onClick={() => setShowReviews(false)}>✕</button>
+                        </div>
+                        {reviewLoading ? (
+                            <p className="review-empty">불러오는 중...</p>
+                        ) : reviews.length === 0 ? (
+                            <p className="review-empty">아직 후기가 없어요.</p>
+                        ) : (
+                            <>
+                                <div className="review-stats">
+                                    <span className="review-avg-star">{"★".repeat(Math.round(reviewStats.avg_rating))}{"☆".repeat(5 - Math.round(reviewStats.avg_rating))}</span>
+                                    <span className="review-avg-num">{reviewStats.avg_rating.toFixed(1)}</span>
+                                    <span className="review-total">({reviewStats.total}개)</span>
+                                </div>
+                                <ul className="review-list">
+                                    {reviews.map((rv) => (
+                                        <li key={rv.review_id} className="review-item">
+                                            <div className="review-item-top">
+                                                <span className="review-author">{rv.author}</span>
+                                                <span className="review-stars">{"★".repeat(Math.round(rv.rating))}{"☆".repeat(5 - Math.round(rv.rating))}</span>
+                                                <span className="review-date">{rv.created_at?.slice(0, 10)}</span>
+                                            </div>
+                                            <p className="review-content">{rv.review_content}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </>
     );
 }

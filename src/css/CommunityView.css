@@ -423,3 +423,50 @@
   line-height: 1.2;
   vertical-align: middle;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 920px) {
+  .Community-view-header,
+  .Community-view-main {
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .Community-view-header .Community-view-title {
+    font-size: 18px;
+  }
+
+  .Community-view-header .Community-view-info th,
+  .Community-view-header .Community-view-info td {
+    font-size: 13px;
+    padding-left: 8px;
+  }
+
+  .Community-view-main .post-content {
+    font-size: 14px;
+    margin: 0 4px;
+  }
+
+  .Community-view-main .comments-section h3 {
+    font-size: 16px;
+  }
+
+  .Community-view-footer .back {
+    width: 140px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .community-view-main .comments-section .add-comment .file-upload-form .file-name {
+    width: calc(100% - 130px);
+  }
+
+  .post-action-buttons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}

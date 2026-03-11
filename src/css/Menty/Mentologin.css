@@ -130,3 +130,17 @@
     font-size: 12px;
     margin: 4px 0 0 2px;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 480px) {
+  .Mentologin-card {
+    padding: 24px 16px 28px;
+    border-radius: 8px;
+  }
+
+  .Mentologin-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+}
+

@@ -88,3 +88,40 @@
     bottom: 15px;
     right: 22px;   
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 480px) {
+  .profile-setting-set {
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 12px;
+  }
+
+  .profile-setting-contents .profile {
+    gap: 16px;
+  }
+
+  .profile-setting-contents .profile img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .profile-setting-contents .nickname {
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 0;
+  }
+
+  .profile-setting-contents .nickname > input {
+    width: 100%;
+  }
+
+  .profile-setting-contents .information {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .profile-setting-contents .information > textarea {
+    width: 100%;
+  }
+}

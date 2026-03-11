@@ -52,3 +52,24 @@
   color: white;
   flex-shrink: 0;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+  .Community-post-content {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .Community-post-content h4 {
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .Community-post-content .Community-content {
+    width: 100%;
+    font-size: 12px;
+  }
+}
+

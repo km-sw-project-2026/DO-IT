@@ -598,3 +598,29 @@
 .add-confirm:hover {
   filter: brightness(0.95);
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+  .cal-card {
+    padding: 12px 8px 10px;
+    border-radius: 12px;
+  }
+
+  .cal-title-big {
+    font-size: 18px;
+  }
+
+  .cal-cell {
+    min-height: 60px;
+  }
+
+  .cal-btn {
+    padding: 7px 9px;
+    font-size: 13px;
+  }
+
+  .cal-btn.icon {
+    width: 34px;
+    height: 34px;
+  }
+}

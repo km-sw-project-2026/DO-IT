@@ -395,3 +395,41 @@
 .mr-slide.open {
   max-height: 1000px; /* 충분히 큰 값 */
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .mypagerepository-inner {
+    padding: 0 12px;
+  }
+
+  .mypagerepository-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .mypagerepository-title {
+    margin-left: 0;
+    gap: 12px;
+  }
+
+  .mypagerepository-title h2 {
+    font-size: 24px;
+  }
+
+  .mypagerepository-header .search input {
+    width: calc(100vw - 120px);
+    height: 48px;
+    margin-left: 0;
+    font-size: 14px;
+  }
+
+  .mypagerepository-header .search button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .mypagerepository-contents {
+    flex-direction: column;
+    padding: 0 8px;
+  }
+}

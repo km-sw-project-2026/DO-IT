@@ -228,3 +228,43 @@
   color: rgba(153,27,27,0.95);
   border-color: rgba(239,68,68,0.25);
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 920px) {
+  .Community-input-header,
+  .Community-input-main,
+  .Community-input-footer {
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .Community-input-header h2 {
+    font-size: 18px;
+  }
+
+  .Community-input-main input {
+    font-size: 15px;
+    height: 44px;
+  }
+
+  .Community-input-main textarea {
+    height: 200px;
+    font-size: 14px;
+  }
+
+  .Community-input-footer {
+    height: auto;
+    padding: 16px;
+  }
+
+  .Community-input-footer .Community-input-button {
+    font-size: 16px;
+    width: 70px;
+    height: 44px;
+  }
+}
+

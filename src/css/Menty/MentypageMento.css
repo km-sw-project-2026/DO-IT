@@ -290,3 +290,66 @@
   font-size: 15px;
   color: #444;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+    .Mentypage-header {
+        padding: 70px 16px 40px;
+        margin-bottom: 30px;
+    }
+
+    .Mentypage-header-inner h1 {
+        font-size: 1.2rem;
+        margin-bottom: 28px;
+    }
+
+    .Mento {
+        padding: 16px;
+    }
+
+    .Mento-profile img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .stars {
+        font-size: 18px;
+    }
+
+    .score {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .Mentypage-header {
+        padding: 56px 12px 30px;
+        margin-bottom: 20px;
+    }
+
+    .Mentypage-header-inner h1 {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .Mento {
+        padding: 14px;
+    }
+
+    .Mento-profile img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .Mento-profile h2 {
+        font-size: 0.9rem;
+    }
+
+    .stars {
+        font-size: 16px;
+    }
+
+    .score {
+        font-size: 12px;
+    }
+}

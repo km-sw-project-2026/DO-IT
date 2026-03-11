@@ -87,3 +87,83 @@
   padding: 10px;
   margin-right: 450px;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 960px) {
+  .login-page-content {
+    width: min(895px, 96vw);
+    height: auto;
+    padding-bottom: 40px;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 40px auto;
+  }
+
+  .login-page-content h3 {
+    font-size: 28px;
+    padding: 30px;
+    margin-bottom: 20px;
+  }
+
+  .login-page-contents {
+    width: 100%;
+    padding: 0 24px;
+  }
+
+  .login-page-content input {
+    width: 100%;
+  }
+
+  .login-page-content .login_bt {
+    width: 100%;
+  }
+
+  .login-page-content .confirm {
+    position: relative;
+    bottom: auto;
+    width: 100%;
+    padding: 20px 24px 0;
+  }
+
+  .login-page-content button {
+    width: 100%;
+  }
+
+  .members {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    background: #92D5FF;
+    min-height: 100vh;
+  }
+
+  .login-page-content {
+    border-radius: 0;
+    margin: 0;
+    width: 100%;
+    box-shadow: none;
+    min-height: 100vh;
+  }
+
+  .login-page-content h3 {
+    font-size: 24px;
+    padding: 24px;
+    margin-bottom: 10px;
+  }
+
+  .login-page-content input {
+    height: 54px;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .login-page-content button {
+    height: 60px;
+    font-size: 18px;
+  }
+}

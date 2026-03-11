@@ -76,3 +76,12 @@
     font-size: 0.9rem;
     padding: 20px 0;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 520px) {
+  .MentoreviewModal-box {
+    width: 92vw;
+    padding: 24px 16px;
+  }
+}
+

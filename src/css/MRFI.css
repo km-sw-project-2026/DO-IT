@@ -287,3 +287,50 @@
     font-size: 18px;
     line-height: 9px;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .mrfi-inner {
+    padding: 0 12px;
+  }
+
+  .mrfi-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .mrfi-title {
+    margin-left: 0;
+    gap: 12px;
+  }
+
+  .mrfi-title h2 {
+    font-size: 24px;
+  }
+
+  .mrfi-header .search input {
+    width: calc(100vw - 120px);
+    height: 48px;
+    margin-left: 0;
+    font-size: 14px;
+  }
+
+  .mrfi-header .search button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .mrfi-contents {
+    flex-direction: column;
+    padding: 0 8px;
+  }
+
+  .mrfi-file-name p:nth-child(1) {
+    width: auto;
+    flex: 1;
+  }
+
+  .mrfi-file-name p {
+    font-size: 14px;
+  }
+}

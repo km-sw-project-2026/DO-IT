@@ -286,3 +286,18 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+  .review-page {
+    padding: 20px 16px 40px;
+  }
+
+  .avg-number {
+    font-size: 1.8rem;
+  }
+
+  .page-title {
+    font-size: 1.1rem;
+  }
+}

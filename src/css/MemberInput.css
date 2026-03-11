@@ -105,3 +105,85 @@
   border-radius: 6px;
   color: #fff;
 }
+
+/* ===== 반응형 ===== */
+@media (max-width: 960px) {
+  .member-input-bg {
+    width: min(895px, 96vw);
+    height: auto;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 40px auto;
+    padding-bottom: 40px;
+  }
+
+  .member-input-bg h3 {
+    font-size: 28px;
+    padding: 30px;
+  }
+
+  .member-input-content {
+    width: 100%;
+    padding: 0 24px;
+  }
+
+  .member-input-content input {
+    width: 100%;
+  }
+
+  .member-input-content .username {
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .member-input-content .username input {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .member-input-bg .confirm {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    padding: 20px 24px 0;
+  }
+
+  .member-input-bg button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .member-input-page {
+    min-height: 100vh;
+  }
+
+  .member-input-bg {
+    width: 100%;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
+    min-height: 100vh;
+  }
+
+  .member-input-bg h3 {
+    font-size: 24px;
+    padding: 24px;
+  }
+
+  .member-input-content input {
+    height: 48px;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .member-input-bg button {
+    height: 60px;
+    font-size: 18px;
+  }
+}

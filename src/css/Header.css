@@ -97,6 +97,13 @@ nav ul li a {
   line-height: 1;
 }
 
+.notif-bell img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  display: block;
+}
+
 .notif-badge {
   position: absolute;
   top: -2px;
@@ -185,5 +192,67 @@ nav ul li a {
 .notif-time {
   font-size: 11px;
   color: #aaa;
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 0 16px;
+  }
+
+  .logo {
+    width: 120px;
+  }
+
+  .logo img {
+    width: 100px;
+  }
+
+  nav {
+    width: auto;
+    height: auto;
+  }
+
+  nav ul li {
+    font-size: 14px;
+  }
+
+  .user-nickname {
+    display: none;
+  }
+
+  .notif-dropdown {
+    width: 260px;
+    right: -60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-inner {
+    padding: 0 10px;
+  }
+
+  nav ul {
+    gap: 8px;
+  }
+
+  nav ul li {
+    font-size: 12px;
+  }
+
+  .logout-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .notif-dropdown {
+    width: 220px;
+    right: -40px;
+  }
 }
 
