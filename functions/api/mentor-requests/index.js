@@ -1,7 +1,7 @@
 const CORS = (request) => ({
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": request?.headers?.get("Origin") || "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 });
 
@@ -144,6 +144,83 @@ export async function onRequestPost({ env, request }) {
     }
 
     return json({ message: action === "ACCEPT" ? "수락 완료" : "거절 완료" }, 200, request);
+  } catch (e) {
+    return json({ message: e?.message || "서버 오류" }, 500, request);
+  }
+}
+/**
+ * DELETE /api/mentor-requests
+ * body: { user_id (mentor), mentoring_id }
+ * 멘토링 종료: status = ENDED, 멘튰에게 알림, 채팅에 시스템 메시지
+ */
+export async function onRequestDelete({ env, request }) {
+  try {
+    const body = await request.json().catch(() => ({}));
+    const { user_id, mentoring_id } = body;
+    if (!user_id || !mentoring_id) return json({ message: "user_id, mentoring_id 필요" }, 400, request);
+
+    // 멘토 확인
+    const mentorRow = await env.D1_DB
+      .prepare(`SELECT mentor_id FROM mentor WHERE user_id = ? LIMIT 1`)
+      .bind(Number(user_id))
+      .first();
+    if (!mentorRow) return json({ message: "멘토 권한이 없습니다." }, 403, request);
+
+    const row = await env.D1_DB
+      .prepare(`SELECT mentoring_id, status FROM mentoring WHERE mentoring_id = ? AND mentor_id = ?`)
+      .bind(Number(mentoring_id), mentorRow.mentor_id)
+      .first();
+    if (!row) return json({ message: "멘토링을 일을 수 없습니다." }, 404, request);
+
+    // 1. status ENDED
+    await env.D1_DB
+      .prepare(`UPDATE mentoring SET status = 'ENDED' WHERE mentoring_id = ?`)
+      .bind(Number(mentoring_id))
+      .run();
+
+    // 2. 멘톰 닉네임 조회
+    const mentorUserRow = await env.D1_DB
+      .prepare(`SELECT u.nickname FROM mentor m JOIN "user" u ON u.user_id = m.user_id WHERE m.mentor_id = ? LIMIT 1`)
+      .bind(mentorRow.mentor_id)
+      .first();
+    const mentorNickname = mentorUserRow?.nickname || "멘토";
+
+    // 3. 멘티 user_id 조회
+    const menteeUserRow = await env.D1_DB
+      .prepare(`
+        SELECT me.user_id
+        FROM mentoring mt
+        JOIN mentee me ON me.mentee_id = mt.mentee_id
+        WHERE mt.mentoring_id = ? LIMIT 1
+      `)
+      .bind(Number(mentoring_id))
+      .first();
+
+    if (menteeUserRow?.user_id) {
+      // 4. 멘티에게 알림
+      await env.D1_DB
+        .prepare(`INSERT INTO notification (user_id, message, mentoring_id) VALUES (?, ?, ?)`)
+        .bind(
+          menteeUserRow.user_id,
+          `${mentorNickname} 멘토님이 멘토링을 종료했어요.`,
+          Number(mentoring_id)
+        )
+        .run();
+    }
+
+    // 5. 해당 채팅방에 시스템 메시지 삽입
+    const roomRow = await env.D1_DB
+      .prepare(`SELECT room_id FROM chat_room WHERE mentoring_id = ? LIMIT 1`)
+      .bind(Number(mentoring_id))
+      .first();
+    if (roomRow?.room_id) {
+      await env.D1_DB
+        .prepare(`INSERT INTO chat_message (room_id, sender_id, content) VALUES (?, 0, ?)`)
+        .bind(roomRow.room_id, `[system]채팅이 종료되었습니다.[/system]`)
+        .run();
+    }
+
+    return json({ ok: true }, 200, request);
   } catch (e) {
     return json({ message: e?.message || "서버 오류" }, 500, request);
   }

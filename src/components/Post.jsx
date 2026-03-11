@@ -33,9 +33,6 @@ function CommunityView() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
 
-  // (선택) 파일 업로드 UI용 state
-  const [commentFile, setCommentFile] = useState(null);
-
   // ✅ 댓글 불러오기
   const fetchCommentsApi = async (pid) => {
     const resp = await fetch(`/api/post/${pid}/comments`);
@@ -110,6 +107,10 @@ function CommunityView() {
 
     const resp = await fetch(`/api/post/${postId}`);
     const postJson = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      setPost({ message: postJson?.message || `게시글을 불러오지 못했어요. (${resp.status})` });
+      return;
+    }
     setPost(postJson);
 
     await loadComments();
@@ -137,7 +138,7 @@ function CommunityView() {
     }
   }, [post]);
 
-  // ✅ 댓글 신고 함수 (글 작성자만 가능)
+  // ✅ 댓글 신고 함수
   const reportComment = async (comment) => {
     if (!currentUserId) {
       alert("로그인 후 이용하세요.");
@@ -145,8 +146,8 @@ function CommunityView() {
       return;
     }
 
-    if (post?.user_id !== currentUserId) {
-      alert("글 작성자만 신고할 수 있어요.");
+    if (comment.user_id === currentUserId) {
+      alert("본인의 댓글은 신고할 수 없어요.");
       return;
     }
 
@@ -249,25 +250,29 @@ function CommunityView() {
       return;
     }
 
-    const resp = await fetch(`/api/post/${postId}`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        title: editTitle,
-        content: editContent,
-        user_id: currentUserId,
-      }),
-    });
+    try {
+      const resp = await fetch(`/api/post/${postId}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title: editTitle,
+          content: editContent,
+          user_id: currentUserId,
+        }),
+      });
 
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
-      alert(data?.message || "수정 실패");
-      return;
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        alert(data?.message || "수정 실패");
+        return;
+      }
+
+      alert("수정 완료!");
+      setIsEditing(false);
+      await load();
+    } catch {
+      alert("네트워크 오류로 수정에 실패했습니다.");
     }
-
-    alert("수정 완료!");
-    setIsEditing(false);
-    await load();
   };
 
   // ✅ 글 삭제
@@ -282,20 +287,24 @@ function CommunityView() {
 
     if (!window.confirm("정말 삭제할까?")) return;
 
-    const resp = await fetch(`/api/post/${postId}`, {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ user_id: currentUserId }),
-    });
+    try {
+      const resp = await fetch(`/api/post/${postId}`, {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user_id: currentUserId }),
+      });
 
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) {
-      alert(data?.message || "삭제 실패");
-      return;
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        alert(data?.message || "삭제 실패");
+        return;
+      }
+
+      alert("삭제 완료!");
+      window.location.href = "/post";
+    } catch {
+      alert("네트워크 오류로 삭제에 실패했습니다.");
     }
-
-    alert("삭제 완료!");
-    window.location.href = "/post";
   };
 
   // ✅ 댓글 트리 만들기 (parent_id 기준)
@@ -331,10 +340,12 @@ function CommunityView() {
   if (post?.message) return <div>Error: {post.message}</div>;
 
   // 게시글 시간 KST
-  const kstTime = new Date(post.created_at?.replace(" ", "T") + "Z").toLocaleString(
-    "ko-KR",
-    { timeZone: "Asia/Seoul" }
-  );
+  const kstTime = post.created_at
+    ? new Date(post.created_at.replace(" ", "T") + "Z").toLocaleString(
+        "ko-KR",
+        { timeZone: "Asia/Seoul" }
+      )
+    : "";
 
   // ✅ 댓글 한 줄바꿈 보이게
   const renderTextWithBreaks = (text) => {
@@ -508,7 +519,36 @@ function CommunityView() {
               <tr>
                 <th>첨부파일</th>
                 <td>
-                  <span className="file">없음</span>
+                  {post.files && post.files.length > 0 ? (
+                    <div className="post-files">
+                      {post.files.map((f) => {
+                        const isImage = f.mime_type?.startsWith("image/");
+                        const handleDownload = () => {
+                          const a = document.createElement("a");
+                          a.href = f.stored_key;
+                          a.download = f.original_name;
+                          a.click();
+                        };
+                        return (
+                          <div key={f.file_id} className="post-file-item">
+                            {isImage ? (
+                              <button type="button" className="post-file-link" onClick={handleDownload}>
+                                <img src={f.stored_key} alt={f.original_name} className="post-file-thumb" />
+                                <span>{f.original_name}</span>
+                              </button>
+                            ) : (
+                              <button type="button" className="post-file-link" onClick={handleDownload}>
+                                📎 {f.original_name}
+                                <span className="post-file-size">({(f.size / 1024 / 1024).toFixed(1)}MB)</span>
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span className="file">없음</span>
+                  )}
                 </td>
                 <th>작성일자</th>
                 <td>{kstTime}</td>
@@ -520,9 +560,18 @@ function CommunityView() {
 
       <div className="Community-view-main">
         {!isEditing ? (
-          <p className="post-content" style={{ whiteSpace: "pre-wrap" }}>
-            {post.content}
-          </p>
+          <>
+            <p className="post-content" style={{ whiteSpace: "pre-wrap" }}>
+              {post.content}
+            </p>
+            {post.files && post.files.some((f) => f.mime_type?.startsWith("image/")) && (
+              <div className="post-image-gallery">
+                {post.files.filter((f) => f.mime_type?.startsWith("image/")).map((f) => (
+                  <img key={f.file_id} src={f.stored_key} alt={f.original_name} className="post-gallery-img" />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <textarea
             value={editContent}
@@ -594,20 +643,6 @@ function CommunityView() {
             />
             <div style={{ fontSize: 12, color: "#666", textAlign: "right" }}>
               {newComment.length} / 200
-            </div>
-
-            <div className="file-upload-form">
-              <input
-                type="file"
-                id="file-upload"
-                onChange={(e) => setCommentFile(e.target.files?.[0] ?? null)}
-              />
-              <span className="file-name">
-                {commentFile ? commentFile.name : "선택된 파일이 없습니다"}
-              </span>
-              <label htmlFor="file-upload" className="custom-file-upload">
-                <i className="fa fa-cloud-upload"></i> 파일 선택
-              </label>
             </div>
 
             <button className="comment-btn" onClick={addComment} disabled={isCommentSubmitting}>

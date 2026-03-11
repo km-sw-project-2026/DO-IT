@@ -11,9 +11,7 @@ function Community() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const userData = useMemo(() => {
-    return localStorage.getItem("user") || sessionStorage.getItem("user");
-  }, []);
+  const userData = localStorage.getItem("user") || sessionStorage.getItem("user");
 
   // ✅ 페이지네이션 state
   const [page, setPage] = useState(1);
@@ -51,7 +49,7 @@ function Community() {
 
   // listen for post creation events to refresh list
   useEffect(() => {
-    const handler = (e) => {
+    const handler = () => {
       setRefreshKey((k) => k + 1);
     };
     window.addEventListener("post:created", handler);

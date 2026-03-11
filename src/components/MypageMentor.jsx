@@ -121,9 +121,6 @@ export default function MypageMentor() {
     const [nickname, setNickname] = useState("");
 
     const [canToggle, setCanToggle] = useState(false);
-    const [isMentor, setIsMentor] = useState(false);
-
-    const [currentUserId, setCurrentUserId] = useState(null);
 
     useEffect(() => {
         const me = getCurrentUser();
@@ -134,7 +131,6 @@ export default function MypageMentor() {
         if (!userId) return;
 
         setNickname(me.nickname || me?.user?.nickname || "");
-        setCurrentUserId(userId);
 
         (async () => {
             try {
@@ -151,7 +147,6 @@ export default function MypageMentor() {
                     const role = me?.role ?? me?.user?.role ?? me?.result?.role ?? '';
                     const isMentorOrAdmin = status.isMentor || role === 'ADMIN';
                     setCanToggle(isMentorOrAdmin);
-                    setIsMentor(status.isMentor);
                     if (!isMentorOrAdmin) {
                         navigate('/mypage', { replace: true });
                     }
@@ -170,7 +165,7 @@ export default function MypageMentor() {
         window.addEventListener("profile:updated", handler);
 
         return () => window.removeEventListener("profile:updated", handler);
-    }, []);
+    }, [navigate]);
 
     return (
         <section className="mypage">

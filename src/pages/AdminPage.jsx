@@ -36,93 +36,125 @@ export default function AdminPage() {
     }, []);
 
     const loadReports = async () => {
-        const resp = await fetch(`/api/admin/reports?status=OPEN&user_id=${adminId}`);
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) return alert(data?.message || "신고 목록 불러오기 실패");
-        setReports(data.reports || []);
+        try {
+            const resp = await fetch(`/api/admin/reports?status=OPEN&user_id=${adminId}`);
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) return alert(data?.message || "신고 목록 불러오기 실패");
+            setReports(data.reports || []);
+        } catch {
+            alert("네트워크 오류로 신고 목록을 불러올 수 없습니다.");
+        }
     };
 
     const resolveReport = async (report_id) => {
-        const resp = await fetch("/api/admin/reports", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, report_id }),
-        });
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) return alert(data?.message || "처리 실패");
-        await loadReports();
+        try {
+            const resp = await fetch("/api/admin/reports", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ user_id: adminId, report_id }),
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) return alert(data?.message || "처리 실패");
+            await loadReports();
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
+        }
     };
 
     const setNotice = async (is_notice) => {
         const post_id = Number(noticePostId);
         if (!post_id) return alert("공지로 설정할 post_id를 입력하세요.");
-        const resp = await fetch("/api/admin/notice", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, post_id, on: is_notice === 1 }),
-        });
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) return alert(data?.message || "공지 설정 실패");
-        alert(data?.message || "완료!");
+        try {
+            const resp = await fetch("/api/admin/notice", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ user_id: adminId, post_id, on: is_notice === 1 }),
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) return alert(data?.message || "공지 설정 실패");
+            alert(data?.message || "완료!");
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
+        }
     };
 
     const banUser = async () => {
         const target = String(banUserId).trim();
         if (!target) return alert("차단할 유저의 user_id(숫자) 또는 아이디를 입력하세요.");
-        const resp = await fetch("/api/admin/ban", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, target, days: banDays }),
-        });
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) return alert(data?.message || "차단 실패");
-        alert(data?.message || "차단 완료!");
+        try {
+            const resp = await fetch("/api/admin/ban", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ user_id: adminId, target, days: banDays }),
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) return alert(data?.message || "차단 실패");
+            alert(data?.message || "차단 완료!");
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
+        }
     };
 
     const unbanUser = async () => {
         const target = String(banUserId).trim();
         if (!target) return alert("해제할 유저의 user_id(숫자) 또는 아이디를 입력하세요.");
-        const resp = await fetch("/api/admin/ban", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, target, days: 0 }),
-        });
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) return alert(data?.message || "해제 실패");
-        alert(data?.message || "차단 해제 완료!");
+        try {
+            const resp = await fetch("/api/admin/ban", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ user_id: adminId, target, days: 0 }),
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) return alert(data?.message || "해제 실패");
+            alert(data?.message || "차단 해제 완료!");
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
+        }
     };
 
     // ---- 멘토 지원 ----
     const loadApplications = async (status) => {
         setAppStatus(status);
-        const resp = await fetch(`/api/admin/mentor-applications?user_id=${adminId}&status=${status}`);
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) return alert(data?.message || "목록 로드 실패");
-        setApplications(data.applications || []);
+        try {
+            const resp = await fetch(`/api/admin/mentor-applications?user_id=${adminId}&status=${status}`);
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) return alert(data?.message || "목록 로드 실패");
+            setApplications(data.applications || []);
+        } catch {
+            alert("네트워크 오류로 멘토 지원 목록을 불러올 수 없습니다.");
+        }
     };
 
     const handleApplication = async (mentor_apply_id, action) => {
-        const resp = await fetch("/api/admin/mentor-applications", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, mentor_apply_id, action }),
-        });
-        const data = await resp.json().catch(() => ({}));
-        alert(data?.message || (resp.ok ? "처리 완료!" : "처리 실패"));
-        if (resp.ok) loadApplications(appStatus);
+        try {
+            const resp = await fetch("/api/admin/mentor-applications", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ user_id: adminId, mentor_apply_id, action }),
+            });
+            const data = await resp.json().catch(() => ({}));
+            alert(data?.message || (resp.ok ? "처리 완료!" : "처리 실패"));
+            if (resp.ok) loadApplications(appStatus);
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
+        }
     };
 
     // ---- 멘토 권한 직접 부여/박탈 ----
     const handleMentorRole = async (action) => {
         const target = String(mentorTarget).trim();
         if (!target) return alert("user_id 또는 login_id를 입력하세요.");
-        const resp = await fetch("/api/admin/mentor-role", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ user_id: adminId, target, action }),
-        });
-        const data = await resp.json().catch(() => ({}));
-        alert(data?.message || (resp.ok ? "완료!" : "실패"));
+        try {
+            const resp = await fetch("/api/admin/mentor-role", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ user_id: adminId, target, action }),
+            });
+            const data = await resp.json().catch(() => ({}));
+            alert(data?.message || (resp.ok ? "완료!" : "실패"));
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
+        }
     };
 
     return (

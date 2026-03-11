@@ -30,7 +30,7 @@ export async function onRequestOptions({ request }) {
 export async function onRequestPost({ env, request }) {
   try {
     const body = await request.json();
-    const { mentor_id, user_id, message } = body;
+    const { mentor_id, user_id } = body;
 
     if (!mentor_id || !user_id) {
       return json({ message: "mentor_id, user_id는 필수입니다." }, 400, request);
@@ -108,9 +108,29 @@ export async function onRequestPost({ env, request }) {
       .bind(Number(mentor_id), menteeId)
       .run();
 
+    const newMentoringId = result.meta?.last_row_id ?? null;
+
+    // 6. 멘토에게 알림 발송
+    try {
+      const menteeUserRow = await env.D1_DB
+        .prepare(`SELECT nickname FROM "user" WHERE user_id = ? LIMIT 1`)
+        .bind(Number(user_id))
+        .first();
+      const menteeNickname = menteeUserRow?.nickname || '멘티';
+
+      await env.D1_DB
+        .prepare(`INSERT INTO notification (user_id, message, mentoring_id) VALUES (?, ?, ?)`)
+        .bind(
+          mentorUserRow.user_id,
+          `${menteeNickname} 님이 멘토링을 신청했어요! 확인해 주세요.`,
+          newMentoringId
+        )
+        .run();
+    } catch { /* 알림 오류는 신청 성공에 영향 없음 */ }
+
     return json({
       message: "멘토링 신청이 완료되었습니다.",
-      mentoring_id: result.meta?.last_row_id ?? null,
+      mentoring_id: newMentoringId,
       mentor_id: Number(mentor_id),
       mentee_id: menteeId,
       status: "PENDING",

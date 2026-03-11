@@ -153,9 +153,9 @@ function Header() {
                           >
                             <span className="notif-msg">{n.message}</span>
                             <span className="notif-time">
-                              {new Date(n.created_at.includes('T') || n.created_at.endsWith('Z') ? n.created_at : n.created_at.replace(' ', 'T') + 'Z').toLocaleString("ko-KR", {
+                              {n.created_at ? new Date(n.created_at.includes('T') || n.created_at.endsWith('Z') ? n.created_at : n.created_at.replace(' ', 'T') + 'Z').toLocaleString("ko-KR", {
                                 month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
-                              })}
+                              }) : ""}
                             </span>
                           </li>
                         ))}

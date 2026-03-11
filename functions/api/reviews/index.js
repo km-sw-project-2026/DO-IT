@@ -120,7 +120,11 @@ export async function onRequestPost({ env, request }) {
       `)
       .bind(mentor_id, menteeRow.mentee_id)
       .first();
-    const mentoring_id = mentoringRow?.mentoring_id ?? 0;
+    const mentoring_id = mentoringRow?.mentoring_id ?? null;
+
+    if (!mentoring_id) {
+      return json({ message: "해당 멘토와의 완료된 멘토링 세션이 없습니다. 멘토링을 먼저 진행해 주세요." }, 403, request);
+    }
 
     const result = await env.D1_DB
       .prepare(`

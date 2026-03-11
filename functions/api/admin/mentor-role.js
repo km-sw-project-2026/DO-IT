@@ -79,6 +79,17 @@ export async function onRequestPost({ env, request }) {
         .prepare("INSERT INTO mentor (user_id) VALUES (?)")
         .bind(targetUserId)
         .run();
+      // mentor_profile이 없으면 빈 프로필 생성
+      const existingProfile = await env.D1_DB
+        .prepare("SELECT user_id FROM mentor_profile WHERE user_id = ? LIMIT 1")
+        .bind(targetUserId)
+        .first();
+      if (!existingProfile) {
+        await env.D1_DB
+          .prepare("INSERT INTO mentor_profile (introduction, user_id) VALUES ('', ?)")
+          .bind(targetUserId)
+          .run();
+      }
       // ✅ user.role도 MENTOR로 업데이트
       await env.D1_DB
         .prepare("UPDATE \"user\" SET role = 'MENTOR' WHERE user_id = ?")

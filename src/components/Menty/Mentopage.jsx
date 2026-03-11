@@ -86,8 +86,28 @@ function Mentopage() {
             body: JSON.stringify({ mentoring_id }),
         }).catch(() => null);
         if (res?.ok) {
-            const data = await res.json();
             navigate(`/chat?mentoring_id=${mentoring_id}`);
+        }
+    };
+
+    const handleStop = async (mentoring_id) => {
+        if (!window.confirm("정말 멘토링을 그만할까요? 상대방에게 알림이 전송됩니다.")) return;
+        const uid = getUid();
+        if (!uid) return;
+        try {
+            const res = await fetch("/api/mentor-requests", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: uid, mentoring_id }),
+            });
+            if (res.ok) {
+                setRequests((prev) => prev.filter((r) => r.mentoring_id !== mentoring_id));
+            } else {
+                const data = await res.json().catch(() => ({}));
+                alert(data.message || "종료 실패");
+            }
+        } catch {
+            alert("네트워크 오류가 발생했습니다.");
         }
     };
 
@@ -137,7 +157,7 @@ function Mentopage() {
                             <div className="applicant-card" key={req.mentoring_id}>
                                 <div className="card-top">
                                     <div className="avatar">
-                                        <img src={req.profile_image} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
+                                        <img src={req.profile_image || "/images/profile.jpg"} alt="" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} onError={(e) => { e.target.src = "/images/profile.jpg"; }} />
                                     </div>
                                     <div className="applicant-info">
                                         <div className="name">{req.nickname}</div>
@@ -152,7 +172,7 @@ function Mentopage() {
                                     ) : (
                                         <>
                                             <button className="btn-accept" onClick={() => handleChat(req.mentoring_id)}>채팅하기</button>
-                                            <button className="btn-reject">멘토 그만하기</button>
+                                            <button className="btn-reject" onClick={() => handleStop(req.mentoring_id)}>멘토 그만하기</button>
                                         </>
                                     )}
                                 </div>

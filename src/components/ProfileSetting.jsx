@@ -38,14 +38,22 @@ export const ProfileSetting = ({ openModal, setOpenModal }) => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "저장 실패");
 
-            // 로컬 스토리지에 닉네임 반영
-            const raw = localStorage.getItem("user") || sessionStorage.getItem("user");
-            if (raw) {
+            // 스토리지에 닉네임 반영 (로그인한 스토리지 종류에 따라 업데이트)
+            const localRaw = localStorage.getItem("user");
+            const sessionRaw = sessionStorage.getItem("user");
+            if (sessionRaw) {
                 try {
-                    const obj = JSON.parse(raw);
+                    const obj = JSON.parse(sessionRaw);
+                    obj.nickname = nickname;
+                    sessionStorage.setItem("user", JSON.stringify(obj));
+                } catch { /* 파싱 실패 무시 */ }
+            }
+            if (localRaw) {
+                try {
+                    const obj = JSON.parse(localRaw);
                     obj.nickname = nickname;
                     localStorage.setItem("user", JSON.stringify(obj));
-                } catch {}
+                } catch { /* 파싱 실패 무시 */ }
             }
 
             // 이벤트로 다른 컴포넌트에 변경 알림

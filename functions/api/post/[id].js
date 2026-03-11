@@ -45,7 +45,14 @@ export async function onRequestGet({ env, params }) {
     .first();
 
   if (!post) return json({ message: "not found" }, 404);
-  return json(post, 200);
+
+  // 첨부파일 목록 조회
+  const filesRes = await env.D1_DB
+    .prepare(`SELECT file_id, original_name, mime_type, size, stored_key FROM post_files WHERE post_id = ? ORDER BY file_id ASC`)
+    .bind(id)
+    .all();
+
+  return json({ ...post, files: filesRes.results ?? [] }, 200);
 }
 
 /**

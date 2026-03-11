@@ -33,11 +33,20 @@ function Chat() {
     const [input, setInput] = useState("");
     const [sending, setSending] = useState(false);
     const [fileErr, setFileErr] = useState("");
+    // 수정 상태
+    const [editingId, setEditingId] = useState(null);   // 수정 중인 message_id
+    const [editText, setEditText] = useState("");
     const fileInputRef = useRef(null);
     const lastMsgId = useRef(0);
     const bottomRef = useRef(null);
     const pollRef = useRef(null);
     const sendingRef = useRef(false); // 전송 중 폴링 중복 방지
+    const mountedRef = useRef(true); // unmount 후 상태 업데이트 방지
+
+    useEffect(() => {
+        mountedRef.current = true;
+        return () => { mountedRef.current = false; };
+    }, []);
 
     // 채팅방 목록 불러오기
     const fetchRooms = useCallback(async () => {
@@ -52,9 +61,11 @@ function Chat() {
     // 초기 진입 시: URL에 mentoring_id가 있으면 방 생성/입장
     useEffect(() => {
         if (!myId) return;
+        let cancelled = false;
         const mId = searchParams.get("mentoring_id");
 
         fetchRooms().then(async (fetchedRooms) => {
+            if (cancelled) return;
             if (mId) {
                 // 방 생성 or 기존 방 가져오기
                 const res = await fetch("/api/chat/rooms", {
@@ -62,11 +73,13 @@ function Chat() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ mentoring_id: Number(mId) }),
                 }).catch(() => null);
+                if (cancelled) return;
                 if (res?.ok) {
                     const data = await res.json();
                     const roomId = data.room_id;
                     // 목록을 다시 가져와서 해당 방을 activeRoom으로 설정
                     const refreshed = await fetch(`/api/chat/rooms?user_id=${myId}`).then(r => r.json()).catch(() => ({ rooms: [] }));
+                    if (cancelled) return;
                     const updatedRooms = refreshed.rooms || [];
                     setRooms(updatedRooms);
                     const found = updatedRooms.find(r => r.room_id === roomId);
@@ -77,6 +90,7 @@ function Chat() {
                 setActiveRoom(fetchedRooms[0]);
             }
         });
+        return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [myId]);
 
@@ -170,6 +184,7 @@ function Chat() {
         // base64 코딩 인라인 전송
         const reader = new FileReader();
         reader.onload = async (ev) => {
+            if (!mountedRef.current) return;
             const dataUrl = ev.target.result;
             const isImage = file.type.startsWith("image/");
             const content = isImage
@@ -182,7 +197,7 @@ function Chat() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ room_id: activeRoom.room_id, sender_id: myId, content }),
                 });
-                if (res.ok) {
+                if (mountedRef.current && res.ok) {
                     const data = await res.json();
                     if (data.message_id) lastMsgId.current = data.message_id; // 폴링 기준점 먼저 업데이트
                     const now = new Date().toISOString();
@@ -196,8 +211,10 @@ function Chat() {
                     }]);
                 }
             } catch { /* ignore */ } finally {
-                sendingRef.current = false;
-                setSending(false);
+                if (mountedRef.current) {
+                    sendingRef.current = false;
+                    setSending(false);
+                }
             }
         };
         reader.readAsDataURL(file);
@@ -210,14 +227,54 @@ function Chat() {
         }
     };
 
+    // 메시지 삭제
+    const handleDeleteMsg = async (msg) => {
+        if (!window.confirm("메시지를 삭제할까요?")) return;
+        const res = await fetch("/api/chat/messages", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message_id: msg.message_id, sender_id: myId }),
+        }).catch(() => null);
+        if (res?.ok) {
+            setMessages((prev) => prev.filter((m) => m.message_id !== msg.message_id));
+        } else {
+            alert("삭제 실패");
+        }
+    };
+
+    // 메시지 수정 저장
+    const handleSaveEdit = async (msg) => {
+        const text = editText.trim();
+        if (!text || text === msg.content) { setEditingId(null); return; }
+        const res = await fetch("/api/chat/messages", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message_id: msg.message_id, sender_id: myId, content: text }),
+        }).catch(() => null);
+        if (res?.ok) {
+            setMessages((prev) =>
+                prev.map((m) => m.message_id === msg.message_id ? { ...m, content: text } : m)
+            );
+            setEditingId(null);
+        } else {
+            alert("수정 실패");
+        }
+    };
+
     const handleLeave = () => navigate(-1);
 
     const formatTime = (iso) => {
+        if (!iso) return "";
         const d = new Date(iso.includes('T') || iso.endsWith('Z') ? iso : iso.replace(' ', 'T') + 'Z');
         return d.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
     };
 
     const renderContent = (content) => {
+        // 시스템 메시지
+        const sysMatch = content.match(/^\[system\]([\s\S]+)\[\/system\]$/);
+        if (sysMatch) {
+            return <span className="chat-system-msg">{sysMatch[1]}</span>;
+        }
         const imgMatch = content.match(/^\[img\]([\s\S]+)\[\/img\]$/);
         if (imgMatch) {
             return <img src={imgMatch[1]} alt="첨부 이미지" className="chat-img-preview" />;
@@ -253,7 +310,7 @@ function Chat() {
                     {rooms.map((room) => (
                         <button
                             key={room.room_id}
-                            className={`chat-room-item${activeRoom?.room_id === room.room_id ? " active" : ""}`}
+                            className={`chat-room-item${activeRoom?.room_id === room.room_id ? " active" : ""}${room.is_ended ? " ended" : ""}`}
                             onClick={() => setActiveRoom(room)}
                         >
                             <img
@@ -262,7 +319,10 @@ function Chat() {
                                 className="chat-room-avatar"
                                 onError={(e) => { e.target.src = "/images/profile.jpg"; }}
                             />
-                            <span className="chat-room-name">{room.other_nickname}</span>
+                            <div className="chat-room-info">
+                                <span className="chat-room-name">{room.other_nickname}</span>
+                                {room.is_ended && <span className="chat-room-ended">종료</span>}
+                            </div>
                         </button>
                     ))}
                 </aside>
@@ -276,6 +336,16 @@ function Chat() {
                     ) : (
                         messages.map((msg) => {
                             const isMine = msg.sender_id === myId;
+                            const isEditing = editingId === msg.message_id;
+                            // 시스템 메시지
+                            const isSystem = msg.content?.startsWith("[system]");
+                            if (isSystem) {
+                                return (
+                                    <div key={msg.message_id} className="chat-system-row">
+                                        {renderContent(msg.content)}
+                                    </div>
+                                );
+                            }
                             return (
                                 <div
                                     key={msg.message_id}
@@ -293,8 +363,33 @@ function Chat() {
                                         {!isMine && <span className="chat-msg-name">{msg.nickname}</span>}
                                         <div className="chat-bubble-row">
                                             {isMine && <span className="chat-msg-time">{formatTime(msg.created_at)}</span>}
-                                            <div className={`chat-bubble${isMine ? " mine" : ""}`}>{renderContent(msg.content)}</div>
+                                            <div className={`chat-bubble${isMine ? " mine" : ""}`}>
+                                                {isEditing ? (
+                                                    <div className="chat-edit-wrap">
+                                                        <input
+                                                            className="chat-edit-input"
+                                                            value={editText}
+                                                            onChange={(e) => setEditText(e.target.value)}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === "Enter") handleSaveEdit(msg);
+                                                                if (e.key === "Escape") setEditingId(null);
+                                                            }}
+                                                            autoFocus
+                                                        />
+                                                        <div className="chat-edit-actions">
+                                                            <button type="button" className="chat-edit-save" onClick={() => handleSaveEdit(msg)}>저장</button>
+                                                            <button type="button" className="chat-edit-cancel" onClick={() => setEditingId(null)}>취소</button>
+                                                        </div>
+                                                    </div>
+                                                ) : renderContent(msg.content)}
+                                            </div>
                                             {!isMine && <span className="chat-msg-time">{formatTime(msg.created_at)}</span>}
+                                            {isMine && !isEditing && (
+                                                <div className="chat-msg-actions">
+                                                    <button type="button" className="chat-action-btn" onClick={() => { setEditingId(msg.message_id); setEditText(msg.content); }}>수정</button>
+                                                    <button type="button" className="chat-action-btn del" onClick={() => handleDeleteMsg(msg)}>삭제</button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -310,6 +405,9 @@ function Chat() {
                 <button className="chat-leave-btn" type="button" onClick={handleLeave}>
                     채팅 나가기
                 </button>
+                {activeRoom?.is_ended ? (
+                    <div className="chat-ended-notice">🔒 종료된 멘토링입니다. 메시지를 보낼 수 없어요.</div>
+                ) : (
                 <div className="chat-input-wrap">
                     <input
                         type="file"
@@ -335,6 +433,7 @@ function Chat() {
                         disabled={!activeRoom || sending}
                     />
                 </div>
+                )}
             </div>
             {fileErr && <div className="chat-file-err">{fileErr}</div>}
         </div>

@@ -34,6 +34,7 @@ import * as notifications from "../functions/api/notifications/index.js";
 import * as chatRooms from "../functions/api/chat/rooms.js";
 import * as chatMessages from "../functions/api/chat/messages.js";
 import * as reviews from "../functions/api/reviews/index.js";
+import * as upload from "../functions/api/upload.js";
 
 
 
@@ -268,12 +269,13 @@ export default {
     }
 
     // ---------------------------
-    // /api/mentor-requests (멘토에게 온 신청 목록/수락거절)
+    // /api/mentor-requests (멘토에게 온 신청 목록/수락거절/종료)
     // ---------------------------
     if (path === "/api/mentor-requests") {
       if (request.method === "OPTIONS") return mentorRequests.onRequestOptions({ request });
       if (request.method === "GET") return mentorRequests.onRequestGet({ env, url, request });
       if (request.method === "POST") return mentorRequests.onRequestPost({ env, request });
+      if (request.method === "DELETE") return mentorRequests.onRequestDelete({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -308,12 +310,14 @@ export default {
     }
 
     // ---------------------------
-    // /api/chat/messages (메시지 조회/전송)
+    // /api/chat/messages (메시지 조회/전송/수정/삭제)
     // ---------------------------
     if (path === "/api/chat/messages") {
       if (request.method === "OPTIONS") return chatMessages.onRequestOptions({ request });
       if (request.method === "GET") return chatMessages.onRequestGet({ env, url, request });
       if (request.method === "POST") return chatMessages.onRequestPost({ env, request });
+      if (request.method === "PUT") return chatMessages.onRequestPut({ env, request });
+      if (request.method === "DELETE") return chatMessages.onRequestDelete({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -390,6 +394,18 @@ export default {
       if (request.method === "OPTIONS") return reviews.onRequestOptions({ request });
       if (request.method === "GET") return reviews.onRequestGet({ env, url, request });
       if (request.method === "POST") return reviews.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/upload (파일 업로드)
+    // ---------------------------
+    if (path === "/api/upload") {
+      if (request.method === "OPTIONS") return upload.onRequestOptions({ request });
+      if (request.method === "POST") return upload.onRequestPost({ request, env });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

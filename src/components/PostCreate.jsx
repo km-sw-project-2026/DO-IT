@@ -18,14 +18,13 @@ function CommunityInput() {
   const [files, setFiles] = useState([]);
   const [uploadMsg, setUploadMsg] = useState("");
 
-  // ✅ 파일 선택창 열기 (사진/파일 분리)
-  const openFilePicker = (mode = "all") => {
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+  // ✅ 파일 선택창 열기
+  const openFilePicker = () => {
     const el = document.getElementById("community-file-input");
     if (!el) return;
-
-    if (mode === "image") el.setAttribute("accept", "image/*");
-    else el.removeAttribute("accept");
-
+    el.removeAttribute("accept");
     el.click();
   };
 
@@ -34,84 +33,30 @@ function CommunityInput() {
     setFiles((prev) => prev.filter((f) => `${f.name}-${f.size}` !== key));
   };
 
-  // ✅ 파일 선택 시: 기존 + 추가, 중복 제거, 최대 10개 제한
+  // ✅ 파일 선택 시: 기존 + 추가, 중복 제거, 최대 5개 제한, 5MB 체크
   const onChangeFiles = (e) => {
     const list = Array.from(e.target.files || []);
-    const merged = [...files, ...list];
+    e.target.value = "";
 
-    const uniq = [];
-    const seen = new Set();
-    for (const f of merged) {
-      const k = `${f.name}-${f.size}`;
-      if (seen.has(k)) continue;
-      seen.add(k);
-      uniq.push(f);
-    }
-
-    if (uniq.length > 10) {
-      setUploadMsg("파일은 최대 10개까지만 선택할 수 있어요.");
-      setFiles(uniq.slice(0, 10));
+    const tooBig = list.find((f) => f.size > MAX_FILE_SIZE);
+    if (tooBig) {
+      setUploadMsg(`"${tooBig.name}" 파일이 5MB를 초과합니다.`);
       return;
     }
 
-    setFiles(uniq);
+    if (list.length === 0) return;
+    // 파일 1개만 허용
+    setFiles([list[0]]);
     setUploadMsg("");
   };
 
-  const uploadFiles = async () => {
-    // ✅ 로그인 체크
-    if (!currentUserId) {
-      alert("로그인 후 업로드할 수 있어요.");
-      navigate("/login");
-      return;
-    }
-
-    if (files.length === 0) {
-      setUploadMsg("선택된 파일이 없어요.");
-      return;
-    }
-
-    // 2GB 미만 체크
-    const MAX = 2 * 1024 * 1024 * 1024;
-    const tooBig = files.find((f) => f.size >= MAX);
-    if (tooBig) {
-      setUploadMsg(`"${tooBig.name}" 파일이 2GB 이상이라 업로드 불가`);
-      return;
-    }
-
-    try {
-      setUploadMsg("업로드 중...");
-
-      for (const f of files) {
-        const fd = new FormData();
-        fd.append("file", f);
-        fd.append("user_id", String(currentUserId));
-
-        const resp = await fetch("/api/upload", {
-          method: "POST",
-          body: fd,
-        });
-
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) {
-          setUploadMsg(data?.message || "업로드 실패");
-          return;
-        }
-      }
-
-      setUploadMsg("업로드 요청 성공! (다음 단계에서 실제 저장 연결)");
-    } catch (e) {
-      console.error(e);
-      setUploadMsg("업로드 중 오류 발생");
-    }
-  };
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return;          // ✅ 연타 방지
-    setIsSubmitting(true);             // ✅ 잠금
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     try {
       if (!currentUserId) {
@@ -125,6 +70,7 @@ function CommunityInput() {
       if (!t) return alert("제목을 입력해줘!");
       if (!c) return alert("내용을 입력해줘!");
 
+      // 1. 글 등록
       const resp = await fetch("/api/posts", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -138,7 +84,24 @@ function CommunityInput() {
       }
 
       const newId = data?.result?.meta?.last_row_id;
-      // 새 글 작성 이벤트 발생
+
+      // 2. 파일 업로드 (글 등록 성공 후, 1개)
+      if (files.length > 0 && newId) {
+        setUploadMsg("파일 업로드 중...");
+        const fd = new FormData();
+        fd.append("file", files[0]);
+        fd.append("post_id", String(newId));
+        fd.append("user_id", String(currentUserId));
+
+        const upResp = await fetch("/api/upload", { method: "POST", body: fd });
+        if (!upResp.ok) {
+          const upData = await upResp.json().catch(() => ({}));
+          setUploadMsg(upData?.message || `"${files[0].name}" 업로드 실패`);
+        } else {
+          setUploadMsg("");
+        }
+      }
+
       try {
         window.dispatchEvent(new CustomEvent("post:created", { detail: { post_id: newId } }));
       } catch (e) {
@@ -147,7 +110,7 @@ function CommunityInput() {
       if (newId) navigate(`/post/${newId}`);
       else navigate("/post");
     } finally {
-      setIsSubmitting(false);          // ✅ 잠금 해제
+      setIsSubmitting(false);
     }
   };
 
@@ -201,39 +164,23 @@ function CommunityInput() {
         <div className="Community-input-footer">
           <div className="upload-bar">
             <div className="upload-actions">
-              {/* 사진 */}
+              {/* 파일 첨부 */}
               <button
                 type="button"
                 className="upload-icon-btn"
-                onClick={() => openFilePicker("image")}
-                title="사진 추가"
-              >
-                <img src="/images/icon/picture.png" alt="사진" />
-              </button>
-
-              {/* 파일 */}
-              <button
-                type="button"
-                className="upload-icon-btn"
-                onClick={() => openFilePicker("all")}
-                title="파일 추가"
+                onClick={() => openFilePicker()}
+                title="파일 첨부"
               >
                 <img src="/images/icon/link.png" alt="파일" />
               </button>
 
-              {/* 숨겨진 input */}
+              {/* 숨겨진 input (1개만) */}
               <input
                 id="community-file-input"
                 type="file"
-                multiple
                 onChange={onChangeFiles}
                 style={{ display: "none" }}
               />
-
-              {/* 업로드 버튼 */}
-              <button type="button" className="upload-btn" onClick={uploadFiles}>
-                업로드
-              </button>
 
               <button type="submit" className="Community-input-button" disabled={isSubmitting}>
                 {isSubmitting ? "등록 중..." : "등록"}
@@ -250,7 +197,7 @@ function CommunityInput() {
                     <div className="file-chip" key={key}>
                       <span className="file-chip-name">{f.name}</span>
                       <span className="file-chip-size">
-                        {Math.round(f.size / 1024 / 1024)}MB
+                        {(f.size / 1024 / 1024).toFixed(1)}MB
                       </span>
                       <button
                         type="button"
@@ -265,7 +212,7 @@ function CommunityInput() {
                 })}
               </div>
             ) : (
-              <div className="upload-hint">사진/파일을 추가해보세요 (최대 10개)</div>
+              <div className="upload-hint">파일을 첨부해보세요 (1개, 최대 5MB)</div>
             )}
 
             {/* 업로드 메시지 */}

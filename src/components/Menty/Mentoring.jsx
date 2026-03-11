@@ -18,6 +18,7 @@ function Mentoring() {
     const [reviewPage, setReviewPage] = useState(1);
     const [reviewLoading, setReviewLoading] = useState(false);
     const [reportModal, setReportModal] = useState(false);
+    const [reportTargetId, setReportTargetId] = useState(null);
     const [reportReason, setReportReason] = useState("1");
     const [reportText, setReportText] = useState("");
     const REVIEW_SIZE = 5;
@@ -170,7 +171,7 @@ function Mentoring() {
                                     })()}
                                     <div className="Mento-review">
                                         <span>{rv.review_content}</span>
-                                        <button onClick={() => setReportModal(true)}>신고</button>
+                                        <button onClick={() => { setReportTargetId(rv.user_id); setReportModal(true); }}>신고</button>
                                     </div>
                                 </div>
                             ))}
@@ -291,20 +292,43 @@ function Mentoring() {
                                 <button
                                     className="btn-report-submit"
                                     onClick={async () => {
-                                        await fetch("/api/report", {
-                                            method: "POST",
-                                            headers: { "Content-Type": "application/json" },
-                                            body: JSON.stringify({
-                                                reporter_id: currentUser?.user_id,
-                                                reason: reportReason,
-                                                detail: reportText,
-                                                target_type: "review",
-                                            }),
-                                        }).catch(() => {});
+                                        if (!reportTargetId) {
+                                            alert("신고 대상 정보가 없습니다.");
+                                            return;
+                                        }
+                                        const reasonLabels = {
+                                            "1": "해당 수업과 관련없는 내용",
+                                            "2": "저작권 불법 도용",
+                                            "3": "음란 / 욕설 등 부적절한 내용",
+                                            "4": "같은내용 도배",
+                                            "5": "기타",
+                                        };
+                                        const reportContent = `${reasonLabels[reportReason] || reportReason}${reportText ? ` / ${reportText}` : ""}`;
+                                        try {
+                                            const res = await fetch("/api/report", {
+                                                method: "POST",
+                                                headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({
+                                                    reporter_id: currentUser?.user_id,
+                                                    reported_id: reportTargetId,
+                                                    report_type: "REVIEW",
+                                                    report_content: reportContent,
+                                                }),
+                                            });
+                                            if (!res.ok) {
+                                                const data = await res.json().catch(() => ({}));
+                                                alert(data.message || "신고 접수에 실패했습니다.");
+                                                return;
+                                            }
+                                        } catch {
+                                            alert("네트워크 오류가 발생했습니다.");
+                                            return;
+                                        }
                                         alert("신고가 접수되었습니다.");
                                         setReportModal(false);
                                         setReportText("");
                                         setReportReason("1");
+                                        setReportTargetId(null);
                                     }}
                                 >신고하기</button>
                                 <button className="btn-report-close" onClick={() => setReportModal(false)}>닫기</button>

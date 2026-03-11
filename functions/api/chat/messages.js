@@ -1,7 +1,7 @@
 const CORS = (req) => ({
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": req?.headers?.get("Origin") || "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 });
 const json = (data, status = 200, req) =>
@@ -110,6 +110,66 @@ export async function onRequestPost({ env, request }) {
     } catch { /* 알림 실패해도 메시지 전송은 성공 */ }
 
     return json({ message_id: result.meta?.last_row_id }, 201, request);
+  } catch (e) {
+    return json({ message: e?.message || "서버 오류" }, 500, request);
+  }
+}
+
+/**
+ * PUT /api/chat/messages
+ * body: { message_id, sender_id, content }
+ */
+export async function onRequestPut({ env, request }) {
+  try {
+    const body = await request.json().catch(() => ({}));
+    const { message_id, sender_id, content } = body;
+    if (!message_id || !sender_id || !content?.trim())
+      return json({ message: "message_id, sender_id, content 필요" }, 400, request);
+
+    const row = await env.D1_DB
+      .prepare(`SELECT sender_id FROM chat_message WHERE message_id = ?`)
+      .bind(Number(message_id))
+      .first();
+    if (!row) return json({ message: "메시지 없음" }, 404, request);
+    if (row.sender_id !== Number(sender_id))
+      return json({ message: "본인 메시지만 수정할 수 있어요" }, 403, request);
+
+    await env.D1_DB
+      .prepare(`UPDATE chat_message SET content = ? WHERE message_id = ?`)
+      .bind(content.trim(), Number(message_id))
+      .run();
+
+    return json({ ok: true }, 200, request);
+  } catch (e) {
+    return json({ message: e?.message || "서버 오류" }, 500, request);
+  }
+}
+
+/**
+ * DELETE /api/chat/messages
+ * body: { message_id, sender_id }
+ */
+export async function onRequestDelete({ env, request }) {
+  try {
+    const body = await request.json().catch(() => ({}));
+    const { message_id, sender_id } = body;
+    if (!message_id || !sender_id)
+      return json({ message: "message_id, sender_id 필요" }, 400, request);
+
+    const row = await env.D1_DB
+      .prepare(`SELECT sender_id FROM chat_message WHERE message_id = ?`)
+      .bind(Number(message_id))
+      .first();
+    if (!row) return json({ message: "메시지 없음" }, 404, request);
+    if (row.sender_id !== Number(sender_id))
+      return json({ message: "본인 메시지만 삭제할 수 있어요" }, 403, request);
+
+    await env.D1_DB
+      .prepare(`DELETE FROM chat_message WHERE message_id = ?`)
+      .bind(Number(message_id))
+      .run();
+
+    return json({ ok: true }, 200, request);
   } catch (e) {
     return json({ message: e?.message || "서버 오류" }, 500, request);
   }

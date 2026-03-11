@@ -13,9 +13,6 @@ const DEFAULT_CATEGORIES = [
 const LS_CAT = "doit_calendar_categories_v1";
 const LS_EVT = "doit_calendar_events_v1";
 
-function startOfMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
 function addMonths(date, diff) {
   return new Date(date.getFullYear(), date.getMonth() + diff, 1);
 }

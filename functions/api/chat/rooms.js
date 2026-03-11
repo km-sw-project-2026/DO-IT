@@ -26,6 +26,7 @@ export async function onRequestGet({ env, url, request }) {
           cr.room_id,
           cr.mentoring_id,
           cr.created_at,
+          mt.status AS mentoring_status,
           u_mentor.user_id  AS mentor_user_id,
           u_mentor.nickname AS mentor_nickname,
           u_mentor.profile_image AS mentor_image,
@@ -39,7 +40,7 @@ export async function onRequestGet({ env, url, request }) {
         JOIN mentee me ON me.mentee_id = mt.mentee_id
         JOIN "user" u_mentee ON u_mentee.user_id = me.user_id
         WHERE (men.user_id = ? OR me.user_id = ?)
-          AND mt.status = 'ACCEPTED'
+          AND mt.status IN ('ACCEPTED', 'ENDED')
           AND cr.room_id NOT IN (
             SELECT room_id FROM chat_room_hide WHERE user_id = ?
           )
@@ -61,6 +62,7 @@ export async function onRequestGet({ env, url, request }) {
           ? r.mentee_image || "/images/profile.jpg"
           : r.mentor_image || "/images/profile.jpg",
       is_mentor: r.mentor_user_id === user_id,
+      is_ended: r.mentoring_status === "ENDED",
     }));
 
     return json({ rooms }, 200, request);

@@ -37,7 +37,7 @@ function Mentypage() {
         setIsMentor(me.role === "MENTOR" || me.role === "ADMIN");
         setStatusLoaded(true);
       });
-  }, []);
+  }, [me]);
 
   useEffect(() => {
     fetch(`/api/mentors?page=${page}&size=${PAGE_SIZE}`)
