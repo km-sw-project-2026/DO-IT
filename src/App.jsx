@@ -18,6 +18,7 @@ import MRSDB from './components/MRSDB.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
 import Bookmark from './components/Bookmark.jsx';
 import DocEditor from "./components/DocEditor";
+import DocViewer from "./components/DocViewer";
 
 
 function App() {
@@ -29,14 +30,20 @@ function App() {
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path='/mypagementy' element={<MypageMenty/>} />
-        <Route path='/mypagementor' element={<MypageMentor/>} />
-        <Route path='/mypagerepository' element={<MypageRepository/>} />
-        <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete/>} />
-        <Route path='/mrfi' element={<MRFI/>} />
-        <Route path='/mrsdb' element={<MRSDB/>} />
-        <Route path='/Bookmark' element={<Bookmark/>} />
-        <Route path="/editor" element={<DocEditor/>} />
+        <Route path='/mypagementy' element={<MypageMenty />} />
+        <Route path='/mypagementor' element={<MypageMentor />} />
+        <Route path='/mypagerepository' element={<MypageRepository />} />
+        <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete />} />
+        <Route path='/mrfi' element={<MRFI />} />
+        <Route path='/mrsdb' element={<MRSDB />} />
+        <Route path='/Bookmark' element={<Bookmark />} />
+        <Route path="/editor" element={<DocEditor />} />
+        <Route path="/doc-editor" element={<DocEditor />} />
+        <Route path="/doc-editor/:id" element={<DocEditor />} />
+        <Route path="/mypagerepository" element={<MypageRepository />} />
+        <Route path="/doc-view/:id" element={<DocViewer />} />
+        <Route path="/doc-edit" element={<DocEditor />} />
+        <Route path="/doc-edit/:id" element={<DocEditor />} />
       </Route>
       <Route element={<UserLayout />}>
         <Route path='/login' element={<Login />} />

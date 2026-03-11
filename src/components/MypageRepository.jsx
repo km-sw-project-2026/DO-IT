@@ -1,9 +1,26 @@
-
 import "../css/MypageRepository.css";
 import { data } from "../js/MypageRepository.js";
 import MypageRepositoryfile from "./MypageRepositoryfile.jsx";
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+
+const LS_FOLDERS = "doit_repository_folders_v1";
+const LS_DOCS = "doit_repository_docs_v1";
+
+function safeParse(value, fallback) {
+  try {
+    const v = JSON.parse(value);
+    return v ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 function MypageRepositoryBtn({ btn }) {
   return (
@@ -17,20 +34,43 @@ function MypageRepositoryBtn({ btn }) {
 }
 
 function MypageRepository() {
-  // ✅ 접기/펼치기 상태
+  const location = useLocation();
+
   const [isFolderOpen, setIsFolderOpen] = useState(true);
-  const [isSuggestOpen, setIsSuggestOpen] = useState(true);
+  const [isFileOpen, setIsFileOpen] = useState(true);
 
-  // ✅ 폴더 목록(일단 프론트에서만 관리)
-  const [folders, setFolders] = useState(() => [
-    { id: 1, name: "폴더 1" },
-    { id: 2, name: "폴더 2" },
-    { id: 3, name: "폴더 3" },
-  ]);
+  const [folders, setFolders] = useState(() =>
+    safeParse(localStorage.getItem(LS_FOLDERS), [
+      { id: 1, name: "폴더 1" },
+      { id: 2, name: "폴더 2" },
+      { id: 3, name: "폴더 3" },
+    ])
+  );
 
-  // ✅ 폴더 추가 UI 상태
+  const [docs, setDocs] = useState(() =>
+    safeParse(localStorage.getItem(LS_DOCS), [])
+  );
+
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem(LS_FOLDERS, JSON.stringify(folders));
+  }, [folders]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_DOCS, JSON.stringify(docs));
+  }, [docs]);
+
+  useEffect(() => {
+    const onStorage = () => {
+      setFolders(safeParse(localStorage.getItem(LS_FOLDERS), []));
+      setDocs(safeParse(localStorage.getItem(LS_DOCS), []));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   const addFolder = () => {
     const name = newFolderName.trim();
@@ -39,13 +79,49 @@ function MypageRepository() {
     setFolders((prev) => [{ id: Date.now(), name }, ...prev]);
     setNewFolderName("");
     setIsAddingFolder(false);
-    setIsFolderOpen(true); // 추가하면 펼쳐지게
+    setIsFolderOpen(true);
   };
 
   const cancelAddFolder = () => {
     setNewFolderName("");
     setIsAddingFolder(false);
   };
+
+  const toggleFavorite = (id) => {
+    setDocs((prev) =>
+      prev.map((doc) =>
+        doc.id === id
+          ? { ...doc, isFavorite: !doc.isFavorite }
+          : doc
+      )
+    );
+  };
+
+  const removeDoc = (id) => {
+    const ok = window.confirm("이 파일을 삭제할까요?");
+    if (!ok) return;
+    setDocs((prev) => prev.filter((doc) => doc.id !== id));
+  };
+
+  const isFavoritePage = location.pathname.includes("favorite");
+  const isTrashPage = location.pathname.includes("trash");
+
+  const filteredDocs = useMemo(() => {
+    let result = docs;
+
+    if (isFavoritePage) {
+      result = result.filter((doc) => doc.isFavorite);
+    }
+
+    const q = keyword.trim().toLowerCase();
+    if (q) {
+      result = result.filter((doc) =>
+        (doc.title || "").toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [docs, keyword, isFavoritePage]);
 
   return (
     <section>
@@ -58,7 +134,12 @@ function MypageRepository() {
             </div>
 
             <div className="search">
-              <input type="text" placeholder="검색어를 입력해주세요" />
+              <input
+                type="text"
+                placeholder="검색어를 입력해주세요"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
               <button type="button">
                 <img src="/images/icon/search1.png" alt="검색" />
               </button>
@@ -66,29 +147,18 @@ function MypageRepository() {
           </div>
 
           <div className="mypagerepository-contents">
+            {/* 왼쪽 메뉴 복구 */}
             <div className="mypagerepository-inventory">
               {data.map((item, index) => (
                 <MypageRepositoryBtn key={index} btn={item} />
               ))}
 
-              <div className="mypagerepository-button">
-                <div className="mypagerepository-button-span">
-                  <div className="Storage-bar">
-                    <div className="Storage-ber-used"></div>
-                  </div>
-                </div>
-                <p className="Storage-capacity">43.2GB/100GB</p>
-                <button>추가 저장공간 구매</button>
-              </div>
             </div>
 
             <div className="mypagerepository-collection">
-              {/* =======================
-                  ✅ 내 폴더
-                  ======================= */}
+              {/* 내 폴더 */}
               <div className="mypagerepository-main">
                 <div className="mypagerepository-main-header">
-                  {/* ✅ 아이콘 + 이름 전체가 토글 버튼 */}
                   <button
                     type="button"
                     className="mr-header-toggle"
@@ -117,7 +187,6 @@ function MypageRepository() {
                   </button>
                 </div>
 
-                {/* ✅ 폴더 추가 입력창 */}
                 {isAddingFolder && (
                   <div className="mr-add-row">
                     <input
@@ -140,7 +209,6 @@ function MypageRepository() {
                   </div>
                 )}
 
-                {/* ✅ 슬라이드 영역 (부드럽게 접힘/펼침) */}
                 <div className={`mr-slide ${isFolderOpen ? "open" : ""}`}>
                   <ul className="mypagerepository-main-body">
                     {folders.map((f) => (
@@ -150,74 +218,143 @@ function MypageRepository() {
                 </div>
               </div>
 
-              {/* =======================
-                  ✅ 추천 파일
-                  ======================= */}
-              <div className="mypagerepository-file-bottom">
-                <div className="mypagerepository-bottom">
-                  {/* ✅ 아이콘 + 이름 전체가 토글 버튼 */}
-                  <button
-                    type="button"
-                    className="mr-header-toggle"
-                    onClick={() => setIsSuggestOpen((v) => !v)}
-                    aria-expanded={isSuggestOpen}
-                    aria-label="추천 파일 접기/펼치기"
-                  >
-                    <img
-                      className={`mr-arrow ${isSuggestOpen ? "open" : ""}`}
-                      src="/images/icon/aroow.png"
-                      alt=""
-                    />
-                    <p>추천 파일</p>
-                  </button>
-                </div>
+              {/* 내 파일 */}
+              {!isTrashPage && (
+                <div className="mypagerepository-file-bottom">
+                  <div className="mypagerepository-bottom">
+                    <button
+                      type="button"
+                      className="mr-header-toggle"
+                      onClick={() => setIsFileOpen((v) => !v)}
+                      aria-expanded={isFileOpen}
+                      aria-label="내 파일 접기/펼치기"
+                    >
+                      <img
+                        className={`mr-arrow ${isFileOpen ? "open" : ""}`}
+                        src="/images/icon/aroow.png"
+                        alt=""
+                      />
+                      <p>{isFavoritePage ? "즐겨찾기 파일" : "내 파일"}</p>
+                    </button>
 
-                {/* ✅ 슬라이드 영역 (부드럽게 접힘/펼침) */}
-                <div className={`mr-slide ${isSuggestOpen ? "open" : ""}`}>
-                  <div className="mypagerepository-file-list">
-                    {/* ✅ 헤더 */}
-                    <div className="mypagerepository-file-name">
-                      <p>이름</p>
-                      <p className="mr-col-date">날짜</p>
-                      <span className="mr-col-actions" />
-                    </div>
+                    <Link to="/doc-editor">
+                      <button
+                        type="button"
+                        className="mr-add"
+                        aria-label="파일 추가"
+                      >
+                        <img src="/images/icon/Plus.png" alt="" />
+                      </button>
+                    </Link>
+                  </div>
 
-                    {/* ✅ row */}
-                    <div className="mypagerepository-file-suggestion">
-                      <div className="mypagerepository-file-gather">
-                        <button>
-                          <img src="/images/icon/img.png" alt="" />
-                        </button>
-                        <p>자료구조 노트필기</p>
+                  <div className={`mr-slide ${isFileOpen ? "open" : ""}`}>
+                    <div className="mypagerepository-file-list">
+                      <div className="mypagerepository-file-name">
+                        <p>이름</p>
+                        <p className="mr-col-date">날짜</p>
+                        <span className="mr-col-actions" />
                       </div>
 
-                      <p className="mr-date">12월 1일 12:10</p>
-
-                      {/* ✅ 오른쪽 액션(아이콘 + 점점점 모두 여기로) */}
-                      <div className="mypagerepository-file-actions">
-                        <button className="mypagerepository-download">
-                          <img src="/images/icon/download.png" alt="" />
-                        </button>
-                        <button className="mypagerepository-pan">
-                          <img src="/images/icon/pan.png" alt="" />
-                        </button>
-                        <button className="mypagerepository-star">
-                          <img src="/images/icon/star.png" alt="" />
-                        </button>
-
-                        <button className="mypagerepository-ooo-button" aria-label="더보기">
-                          <div className="mypagerepository-ooo">
-                            <span>•</span>
-                            <span>•</span>
-                            <span>•</span>
+                      {filteredDocs.length === 0 ? (
+                        <div className="mypagerepository-file-suggestion">
+                          <div className="mypagerepository-file-gather">
+                            <p>
+                              {isFavoritePage
+                                ? "즐겨찾기한 파일이 없어요."
+                                : "저장된 문서가 없어요."}
+                            </p>
                           </div>
-                        </button>
-                      </div>
+                        </div>
+                      ) : (
+                        filteredDocs.map((doc) => (
+                          <div key={doc.id} className="mypagerepository-file-suggestion">
+                            <div className="mypagerepository-file-gather">
+                              <Link
+                                to={`/doc-view/${doc.id}`}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                  textDecoration: "none",
+                                  color: "inherit",
+                                }}
+                              >
+                                <button type="button">
+                                  <img src="/images/icon/img.png" alt="" />
+                                </button>
+                                <p>{doc.title || "제목 없음"}</p>
+                              </Link>
+                            </div>
+
+                            <p className="mr-date">
+                              {formatDate(doc.updatedAt || doc.createdAt)}
+                            </p>
+
+                            <div className="mypagerepository-file-actions">
+                              <button
+                                className="mypagerepository-download"
+                                type="button"
+                                onClick={() => {
+                                  const blob = new Blob(
+                                    [
+                                      `<!doctype html><html><head><meta charset="utf-8"><title>${doc.title}</title></head><body>${doc.html || ""}</body></html>`,
+                                    ],
+                                    { type: "text/html;charset=utf-8" }
+                                  );
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement("a");
+                                  a.href = url;
+                                  a.download = `${doc.title || "document"}.html`;
+                                  a.click();
+                                  URL.revokeObjectURL(url);
+                                }}
+                              >
+                                <img src="/images/icon/download.png" alt="" />
+                              </button>
+
+                              <Link to={`/doc-edit/${doc.id}`}>
+                                <button className="mypagerepository-pan" type="button">
+                                  <img src="/images/icon/pan.png" alt="" />
+                                </button>
+                              </Link>
+
+                              <button
+                                className="mypagerepository-star"
+                                type="button"
+                                onClick={() => toggleFavorite(doc.id)}
+                                aria-label="즐겨찾기"
+                              >
+                                <img
+                                  src={
+                                    doc.isFavorite
+                                      ? "/images/icon/star2.png"
+                                      : "/images/icon/star.png"
+                                  }
+                                  alt="즐겨찾기"
+                                />
+                              </button>
+
+                              <button
+                                className="mypagerepository-ooo-button"
+                                type="button"
+                                onClick={() => removeDoc(doc.id)}
+                                aria-label="삭제"
+                              >
+                                <div className="mypagerepository-ooo">
+                                  <span>•</span>
+                                  <span>•</span>
+                                  <span>•</span>
+                                </div>
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
-                {/* /추천 파일 */}
-              </div>
+              )}
             </div>
           </div>
         </div>
