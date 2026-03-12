@@ -194,6 +194,40 @@ main {
   gap: 26px;
 }
 
+.folder-grid-empty {
+  width: min(1100px, 92%);
+  min-height: 290px;
+  margin: 0 auto;
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px;
+  text-align: center;
+}
+
+.folder-grid-empty img {
+  width: 120px;
+  opacity: 0.75;
+}
+
+.folder-grid-empty p {
+  font-size: 24px;
+  font-weight: 800;
+  color: #16364c;
+}
+
+.folder-grid-empty span {
+  max-width: 620px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(22, 54, 76, 0.82);
+}
+
 /* 폴더 카드 */
 .folder-card {
   width: 370px;
@@ -536,11 +570,31 @@ main {
 
 .main-page-file-list {
   width: min(1100px, 92%);
-  margin: 0 auto;
+  margin: 28px auto 36px;
   background: #fff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  padding: 18px 22px;
+  box-shadow: 0 12px 30px rgba(49, 97, 130, 0.12);
+}
+
+.main-page-preview-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.main-page-preview-header h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #18384d;
+}
+
+.main-page-preview-header span {
+  font-size: 14px;
+  color: #5f7889;
 }
 
 .main-page-file-header {
@@ -586,6 +640,27 @@ main {
 
 .main-page-file-item.checked {
   background: #e8f4fc;
+}
+
+.main-page-file-item-featured {
+  background: linear-gradient(90deg, rgba(101, 186, 237, 0.12), rgba(255, 255, 255, 0.9));
+}
+
+.main-page-file-featured-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #dff2ff;
+  color: #2074ad;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.main-page-file-featured-name span {
+  font-weight: 700;
 }
 
 .main-page-file-item a {

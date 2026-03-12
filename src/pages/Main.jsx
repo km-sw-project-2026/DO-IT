@@ -12,7 +12,7 @@ import {
 } from "../api/repository";
 import { getMainFolderIds } from "../utils/repositoryMainFolders";
 import { clearRecentOpenedDoc, getRecentOpenedDoc, setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
-import { formatRepositoryDateShort, formatRepositoryDateTime } from "../utils/repositoryDate";
+import { formatRepositoryDateShort } from "../utils/repositoryDate";
 
 function Main() {
   const me = getCurrentUser();
@@ -292,36 +292,32 @@ function Main() {
                 </Link>
               ))
             ) : (
-              <>
-                <button className="folder-card">
-                  <img src="/images/folder.png" alt="수학" />
-                  <p>수학</p>
-                </button>
-                <button className="folder-card">
-                  <img src="/images/folder.png" alt="영어" />
-                  <p>영어</p>
-                </button>
-                <button className="folder-card">
-                  <img src="/images/folder.png" alt="국어" />
-                  <p>국어</p>
-                </button>
-              </>
+              <div className="folder-grid-empty">
+                <img src="/images/folder.png" alt="" />
+                <p>메인에 보여줄 폴더를 아직 고르지 않았어요.</p>
+                <span>자료함에서 폴더 메뉴의 `메인 바로가기 추가`로 최대 3개까지 선택할 수 있습니다.</span>
+              </div>
             )}
           </div>
         </div>
 
-        {checkedDocs.length > 0 && (
-          <div className="main-page-file-actions">
-            <span>{checkedDocs.length}개 선택됨</span>
-            <div className="main-page-file-actions-buttons">
-              <button onClick={startMoveDocs}>이동</button>
-              <button onClick={moveDocsToTrash}>휴지통</button>
-              <button onClick={() => { setCheckedDocs([]); setIsAllChecked(false); }}>취소</button>
-            </div>
-          </div>
-        )}
-
         <div className="main-page-file-list">
+          <div className="main-page-preview-header">
+            <h4>자료함 미리보기</h4>
+            <span>최근 열람한 자료와 내 파일을 한 번에 볼 수 있습니다.</span>
+          </div>
+
+          {checkedDocs.length > 0 && (
+            <div className="main-page-file-actions">
+              <span>{checkedDocs.length}개 선택됨</span>
+              <div className="main-page-file-actions-buttons">
+                <button onClick={startMoveDocs}>이동</button>
+                <button onClick={moveDocsToTrash}>휴지통</button>
+                <button onClick={() => { setCheckedDocs([]); setIsAllChecked(false); }}>취소</button>
+              </div>
+            </div>
+          )}
+
           <div className="main-page-file-header">
             <div className="main-page-file-select">
               <input
@@ -334,9 +330,30 @@ function Main() {
             <p className="main-page-file-date-col">날짜</p>
           </div>
 
+          {recentOpenedDoc && (
+            <div className="main-page-file-item main-page-file-item-featured">
+              <div className="main-page-file-select">
+                <span className="main-page-file-featured-badge">최근</span>
+              </div>
+              <div className="main-page-file-name-col main-page-file-featured-name">
+                <img src="/images/icon/img.png" alt="" />
+                <span>{recentOpenedDoc.title || "(제목없음)"}</span>
+              </div>
+              <p className="main-page-file-date-col">
+                {recentOpenedDoc.openedAt
+                  ? formatRepositoryDateShort(recentOpenedDoc.openedAt)
+                  : "-"}
+              </p>
+            </div>
+          )}
+
           {visibleDocs.length === 0 ? (
             <div className="main-page-file-empty">
-              <p>파일이 없습니다.</p>
+              <p>
+                {recentOpenedDoc
+                  ? "내 파일은 아직 없습니다."
+                  : "파일이 없습니다."}
+              </p>
             </div>
           ) : (
             visibleDocs.map((doc) => (
@@ -373,20 +390,6 @@ function Main() {
             ))
           )}
         </div>
-
-        {recentOpenedDoc && (
-          <div style={{ marginTop: 18 }}>
-            <h4>최근 연 파일</h4>
-            <div style={{ padding: 12, border: "1px solid #eee", borderRadius: 6 }}>
-              <strong>{recentOpenedDoc.title || "(제목없음)"}</strong>
-              <div style={{ color: "#999", fontSize: 13 }}>
-                {recentOpenedDoc.openedAt
-                  ? formatRepositoryDateTime(recentOpenedDoc.openedAt)
-                  : "기록 없음"}
-              </div>
-            </div>
-          </div>
-        )}
       </section>
       <section className="main-page-community">
         <div className="recent-wrap">
