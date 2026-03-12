@@ -52,13 +52,29 @@
 
 .star {
     font-size: 26px;
-    color: #555;
+    color: #ddd;
     cursor: pointer;
     transition: color 0.15s, transform 0.1s;
     user-select: none;
+    position: relative;
+    display: inline-block;
 }
 
 .star.filled {
+    color: #FFB400;
+}
+
+/* 반쪽 별: 글자색은 회색으로 두고 왼쪽 50%만 노란색 클립 */
+.star.half {
+    color: #ddd;
+}
+.star.half::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    overflow: hidden;
     color: #FFB400;
 }
 

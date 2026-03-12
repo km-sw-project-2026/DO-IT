@@ -8,16 +8,18 @@ import "../css/StarRating.css";
  * @param {"sm"|"md"|"lg"} size
  */
 function StarRating({ rating = 0, count, layout = "col", size = "md" }) {
-  const filled = Math.round(rating);
-
-  const stars = [1, 2, 3, 4, 5].map((i) => (
-    <span
-      key={i}
-      className={`star-rating__star${i <= filled ? " filled" : ""}`}
-    >
-      ★
-    </span>
-  ));
+  const stars = [1, 2, 3, 4, 5].map((i) => {
+    const full = rating >= i;
+    const half = !full && rating >= i - 0.5;
+    return (
+      <span
+        key={i}
+        className={`star-rating__star${full ? " filled" : half ? " half" : ""}`}
+      >
+        ★
+      </span>
+    );
+  });
 
   const label =
     rating !== null && rating !== undefined ? (

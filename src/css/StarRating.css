@@ -31,11 +31,27 @@
 
 /* 별 하나 */
 .star-rating__star {
-  color: #555;
+  color: #ddd;
   transition: color 0.1s;
+  position: relative;
+  display: inline-block;
 }
 
 .star-rating__star.filled {
+  color: #FFB400;
+}
+
+/* 반쪽 별 */
+.star-rating__star.half {
+  color: #ddd;
+}
+.star-rating__star.half::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  overflow: hidden;
   color: #FFB400;
 }
 

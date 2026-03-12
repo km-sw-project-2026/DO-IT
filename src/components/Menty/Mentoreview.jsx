@@ -18,6 +18,13 @@ function Mentoreview() {
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
     const [anonymous, setAnonymous] = useState(false);
+
+    // 별 위에서 마우스 위치에 따라 0.5 or 1.0 을 반환
+    const getStarValue = (star, e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        return x < rect.width / 2 ? star - 0.5 : star;
+    };
     const [text, setText] = useState("");
     const [photos, setPhotos] = useState([]); // { url, base64 }[]
     const [submitting, setSubmitting] = useState(false);
@@ -98,15 +105,20 @@ function Mentoreview() {
                 <div className="Mentoreview-profile-info">
                     <p className="Mentoreview-profile-name">{mentor?.name || "OOO"} 멘토님</p>
                     <div className="Mentoreview-stars">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <span
-                                key={star}
-                                className={star <= (hovered || rating) ? "star filled" : "star"}
-                                onClick={() => setRating(star)}
-                                onMouseEnter={() => setHovered(star)}
-                                onMouseLeave={() => setHovered(0)}
-                            >★</span>
-                        ))}
+                        {[1, 2, 3, 4, 5].map((star) => {
+                            const active = hovered || rating;
+                            const full  = active >= star;
+                            const half  = !full && active >= star - 0.5;
+                            return (
+                                <span
+                                    key={star}
+                                    className={`star${full ? " filled" : half ? " half" : ""}`}
+                                    onClick={(e) => setRating(getStarValue(star, e))}
+                                    onMouseMove={(e) => setHovered(getStarValue(star, e))}
+                                    onMouseLeave={() => setHovered(0)}
+                                >★</span>
+                            );
+                        })}
                         <p>{rating} / 5</p>
                     </div>
                     <div className="Mentoreview-anonymous">
