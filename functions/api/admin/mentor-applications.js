@@ -140,6 +140,12 @@ export async function onRequestPost({ env, request }) {
         .bind(applyId)
         .run();
 
+      // 신청자에게 수락 알림
+      await env.D1_DB
+        .prepare(`INSERT INTO notification (user_id, message, is_read) VALUES (?, ?, 0)`)
+        .bind(applyRow.user_id, "멘토 신청이 승인되었습니다! 이제 멘토 활동을 시작할 수 있어요.")
+        .run();
+
       return json({ message: "승인 완료! 멘토 권한이 부여되었습니다." }, 200, request);
     }
 
@@ -147,6 +153,12 @@ export async function onRequestPost({ env, request }) {
     await env.D1_DB
       .prepare("UPDATE mentor_application SET status = 'REJECTED' WHERE mentor_apply_id = ?")
       .bind(applyId)
+      .run();
+
+    // 신청자에게 거절 알림
+    await env.D1_DB
+      .prepare(`INSERT INTO notification (user_id, message, is_read) VALUES (?, ?, 0)`)
+      .bind(applyRow.user_id, "멘토 신청이 거절되었습니다. 추후 다시 지원하실 수 있습니다.")
       .run();
 
     return json({ message: "거절 처리 완료." }, 200, request);

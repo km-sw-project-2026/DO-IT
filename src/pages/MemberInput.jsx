@@ -1,6 +1,8 @@
 import "../css/MemberInput.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TermsModal from "../components/TermsModal";
+import PrivacyModal from "../components/PrivacyModal";
 
 function MemberInput() {
   const navigate = useNavigate();
@@ -16,6 +18,12 @@ function MemberInput() {
   // ✅ 아이디 중복확인 완료 여부(중요!)
   const [idChecked, setIdChecked] = useState(false);
   const [idAvailable, setIdAvailable] = useState(false);
+
+  // ✅ 약관 동의
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   // 아이디 입력이 바뀌면 다시 확인해야 함
   const onChangeLoginId = (v) => {
@@ -72,6 +80,8 @@ function MemberInput() {
     if (pw1 !== pw2) return alert("비밀번호가 서로 다릅니다.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))
       return alert("이메일 형식이 올바르지 않습니다.");
+    if (!agreeTerms || !agreePrivacy)
+      return alert("이용약관 및 개인정보처리방침에 동의해주세요.");
 
     try {
       setLoading(true);
@@ -111,6 +121,7 @@ function MemberInput() {
   };
 
   return (
+    <>
     <div className="member-input-page">
       <div className="member-input-bg">
         <h3>회원가입</h3>
@@ -190,6 +201,35 @@ function MemberInput() {
           />
         </div>
 
+        <div className="terms-agree-section">
+          <label className="terms-agree-row">
+            <input
+              type="checkbox"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+            />
+            <span>
+              <button type="button" className="terms-link" onClick={() => setShowTerms(true)}>
+                이용약관
+              </button>
+              에 동의합니다. (필수)
+            </span>
+          </label>
+          <label className="terms-agree-row">
+            <input
+              type="checkbox"
+              checked={agreePrivacy}
+              onChange={(e) => setAgreePrivacy(e.target.checked)}
+            />
+            <span>
+              <button type="button" className="terms-link" onClick={() => setShowPrivacy(true)}>
+                개인정보처리방침
+              </button>
+              에 동의합니다. (필수)
+            </span>
+          </label>
+        </div>
+
         <div className="confirm">
           <button type="button" onClick={onSignup} disabled={loading}>
             {loading ? "처리 중..." : "회원가입"}
@@ -197,6 +237,10 @@ function MemberInput() {
         </div>
       </div>
     </div>
+
+    {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+    {showPrivacy && <PrivacyModal onClose={() => setShowPrivacy(false)} />}
+    </>
   );
 }
 
