@@ -10,6 +10,11 @@ function getUserId(request) {
   return id ? id : null;
 }
 
+async function hasMyFileDisplayNameColumn(env) {
+  const { results } = await env.D1_DB.prepare("PRAGMA table_info(my_file)").all();
+  return (results || []).some((column) => column.name === "display_name");
+}
+
 export async function onRequestPatch({ env, request, params }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
@@ -25,6 +30,10 @@ export async function onRequestPatch({ env, request, params }) {
       AND (is_deleted IS NULL OR is_deleted <> 'Y')
   `).bind(myFileId, userId).first();
   if (!exist) return json({ message: "파일이 없어요" }, 404);
+
+  if (!(await hasMyFileDisplayNameColumn(env))) {
+    return json({ message: "display_name 컬럼이 없어 파일명을 변경할 수 없어요. 스키마 적용이 필요합니다." }, 409);
+  }
 
   await env.D1_DB.prepare(`
     UPDATE my_file

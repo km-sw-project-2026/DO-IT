@@ -1,7 +1,9 @@
 import "../css/MypageRepository.css";
 import { data } from "../js/MypageRepository.js";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
+import { getCurrentUser } from "../utils/auth";
+import { apiGetFolders, apiGetFiles, apiCreateFolder, apiGetTrash, apiRenameFolder, apiDeleteFolder, apiRenameFile, apiDeleteFile } from "../api/repository";
 
 const LS_FOLDERS = "doit_repository_folders_v1";
 const LS_DOCS = "doit_repository_docs_v1";
@@ -34,6 +36,15 @@ function MypageRepositoryBtn({ btn }) {
 
 function MypageRepository() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const me = getCurrentUser();
+  const userId = me?.user_id;
+
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [userId, navigate]);
 
   const [isFolderOpen, setIsFolderOpen] = useState(true);
   const [isFileOpen, setIsFileOpen] = useState(true);
@@ -47,34 +58,58 @@ function MypageRepository() {
   const [draggingDocId, setDraggingDocId] = useState(null);
   const [dragOverFolderId, setDragOverFolderId] = useState(null);
 
-  const [folders, setFolders] = useState(() =>
-    safeParse(localStorage.getItem(LS_FOLDERS), [])
-  );
-
-  const [docs, setDocs] = useState(() =>
-    safeParse(localStorage.getItem(LS_DOCS), [])
-  );
+  const [folders, setFolders] = useState([]);
+  const [docs, setDocs] = useState([]);
 
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(LS_FOLDERS, JSON.stringify(folders));
-  }, [folders]);
+    if (!userId) return;
 
-  useEffect(() => {
-    localStorage.setItem(LS_DOCS, JSON.stringify(docs));
-  }, [docs]);
+    async function loadData() {
+      try {
+        const [foldersRes, trashRes] = await Promise.all([
+          apiGetFolders(userId, null),
+          apiGetTrash(userId),
+        ]);
 
-  useEffect(() => {
-    const onStorage = () => {
-      setFolders(safeParse(localStorage.getItem(LS_FOLDERS), []));
-      setDocs(safeParse(localStorage.getItem(LS_DOCS), []));
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+        const folderList = (foldersRes.folders || []).map((f) => ({
+          id: f.folder_id,
+          name: f.folder_name,
+          parentId: f.parent_id,
+          createdAt: f.created_at,
+          isDeleted: false,
+          deletedAt: null,
+        }));
+
+        const trashFolderIds = new Set((trashRes.trash?.folders || []).map((f) => f.folder_id));
+
+        const rootFiles = await apiGetFiles(userId, null);
+        const fileList = (rootFiles.files || []).map((f) => ({
+          id: f.my_file_id,
+          folderId: f.folder_id,
+          title: f.display_name || f.origin_name,
+          name: f.display_name || f.origin_name,
+          createdAt: f.added_at || f.uploaded_at,
+          isDeleted: false,
+          isFavorite: false,
+          deletedAt: null,
+        }));
+
+        setFolders(folderList.filter((f) => !trashFolderIds.has(f.id)));
+        setDocs(fileList);
+        setInitialized(true);
+      } catch (e) {
+        console.warn("Failed to load repository data:", e);
+        setInitialized(true);
+      }
+    }
+
+    loadData();
+  }, [userId]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -106,21 +141,27 @@ function MypageRepository() {
     };
   }, []);
 
-  const addFolder = () => {
+  const addFolder = async () => {
     const name = newFolderName.trim();
-    if (!name) return;
+    if (!name || !userId) return;
 
-    setFolders((prev) => [
-      {
-        id: Date.now(),
-        name,
-        parentId: null,
-        createdAt: new Date().toISOString(),
-        isDeleted: false,
-        deletedAt: null,
-      },
-      ...prev,
-    ]);
+    try {
+      const res = await apiCreateFolder(userId, name, null);
+      setFolders((prev) => [
+        {
+          id: res.folder_id,
+          name,
+          parentId: null,
+          createdAt: new Date().toISOString(),
+          isDeleted: false,
+          deletedAt: null,
+        },
+        ...prev,
+      ]);
+    } catch (e) {
+      console.warn("Failed to create folder:", e);
+      alert("폴더 생성에 실패했습니다.");
+    }
 
     setNewFolderName("");
     setIsAddingFolder(false);
@@ -132,7 +173,7 @@ function MypageRepository() {
     setIsAddingFolder(false);
   };
 
-  const renameFolder = (id) => {
+  const renameFolder = async (id) => {
     const folder = folders.find((item) => item.id === id);
     const newName = window.prompt("새 폴더 이름을 입력하세요.", folder?.name || "");
 
@@ -141,47 +182,59 @@ function MypageRepository() {
     const trimmed = newName.trim();
     if (!trimmed) return;
 
-    setFolders((prev) =>
-      prev.map((folder) =>
-        folder.id === id ? { ...folder, name: trimmed } : folder
-      )
-    );
+    try {
+      await apiRenameFolder(userId, id, trimmed);
+      setFolders((prev) =>
+        prev.map((folder) =>
+          folder.id === id ? { ...folder, name: trimmed } : folder
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to rename folder:", e);
+      alert("폴더 이름 변경에 실패했습니다.");
+    }
 
     setMenuFolderId(null);
   };
 
-  const moveFolderToTrash = (id) => {
+  const moveFolderToTrash = async (id) => {
     const ok = window.confirm("폴더를 휴지통으로 이동할까요?");
     if (!ok) return;
 
-    const now = new Date().toISOString();
+    try {
+      await apiDeleteFolder(userId, id);
+      const now = new Date().toISOString();
 
-    setFolders((prev) =>
-      prev.map((folder) =>
-        folder.id === id
-          ? {
-              ...folder,
-              isDeleted: true,
-              deletedAt: now,
-            }
-          : folder
-      )
-    );
+      setFolders((prev) =>
+        prev.map((folder) =>
+          folder.id === id
+            ? {
+                ...folder,
+                isDeleted: true,
+                deletedAt: now,
+              }
+            : folder
+        )
+      );
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.folderId === id && !doc.isDeleted
-          ? {
-              ...doc,
-              isDeleted: true,
-              deletedAt: now,
-              updatedAt: now,
-              deletedByFolder: true,
-              originFolderId: id,
-            }
-          : doc
-      )
-    );
+      setDocs((prev) =>
+        prev.map((doc) =>
+          doc.folderId === id && !doc.isDeleted
+            ? {
+                ...doc,
+                isDeleted: true,
+                deletedAt: now,
+                updatedAt: now,
+                deletedByFolder: true,
+                originFolderId: id,
+              }
+            : doc
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to move folder to trash:", e);
+      alert("폴더 이동에 실패했습니다.");
+    }
 
     setMenuFolderId(null);
   };
@@ -194,26 +247,32 @@ function MypageRepository() {
     );
   };
 
-  const moveDocToTrash = (id) => {
+  const moveDocToTrash = async (id) => {
     const ok = window.confirm("이 파일을 휴지통으로 이동할까요?");
     if (!ok) return;
 
-    const now = new Date().toISOString();
+    try {
+      await apiDeleteFile(userId, id);
+      const now = new Date().toISOString();
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === id
-          ? {
-              ...doc,
-              isDeleted: true,
-              deletedAt: now,
-              updatedAt: now,
-              deletedByFolder: false,
-              originFolderId: doc.folderId ?? null,
-            }
-          : doc
-      )
-    );
+      setDocs((prev) =>
+        prev.map((doc) =>
+          doc.id === id
+            ? {
+                ...doc,
+                isDeleted: true,
+                deletedAt: now,
+                updatedAt: now,
+                deletedByFolder: false,
+                originFolderId: doc.folderId ?? null,
+              }
+            : doc
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to move doc to trash:", e);
+      alert("파일 이동에 실패했습니다.");
+    }
 
     setMenuDocId(null);
   };

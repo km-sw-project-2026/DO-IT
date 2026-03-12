@@ -8,12 +8,6 @@ export const data = [
     to: "/mypagerepository"
   },
   {
-    class: "share",
-    src: "/images/icon/share.png",
-    text: "공유 자료함",
-    to: "/mrsdb"
-  },
-  {
     class: "star",
     src: "/images/icon/star.png",
     text: "즐겨찾기",

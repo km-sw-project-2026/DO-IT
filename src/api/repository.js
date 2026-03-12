@@ -24,17 +24,18 @@ export async function apiGetFolders(userId, parentId = null) {
   }
 }
 
-export async function apiGetFiles(userId, folderId) {
-  if (!userId || !folderId) return [];
+export async function apiGetFiles(userId, folderId = null) {
+  if (!userId) return { files: [] };
   try {
-    const res = await fetch(`/api/repository/files?folderId=${encodeURIComponent(folderId)}`, {
+    const qs = folderId === null ? "" : `?folderId=${encodeURIComponent(folderId)}`;
+    const res = await fetch(`/api/repository/files${qs}`, {
       headers: { "x-user-id": String(userId) },
     });
     if (!res.ok) throw new Error(await res.text());
     return await safeJsonResponse(res);
   } catch (e) {
     console.warn("apiGetFiles failed:", e);
-    return [];
+    return { files: [] };
   }
 }
 
@@ -114,6 +115,82 @@ export async function apiCreateFolder(userId, folderName, parentId = null) {
     return await safeJsonResponse(res);
   } catch (e) {
     console.warn("apiCreateFolder failed:", e);
+    throw e;
+  }
+}
+
+export async function apiGetTrash(userId) {
+  if (!userId) return { trash: { folders: [], files: [] } };
+  try {
+    const res = await fetch(`/api/repository/trash`, {
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiGetTrash failed:", e);
+    return { trash: { folders: [], files: [] } };
+  }
+}
+
+export async function apiRenameFolder(userId, folderId, folderName) {
+  if (!userId || !folderId || !folderName) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/folders/${encodeURIComponent(folderId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ folder_name: folderName }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiRenameFolder failed:", e);
+    throw e;
+  }
+}
+
+export async function apiDeleteFolder(userId, folderId) {
+  if (!userId || !folderId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/folders/${encodeURIComponent(folderId)}`, {
+      method: "DELETE",
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiDeleteFolder failed:", e);
+    throw e;
+  }
+}
+
+export async function apiRenameFile(userId, fileId, displayName) {
+  if (!userId || !fileId || !displayName) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/files/${encodeURIComponent(fileId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ display_name: displayName }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiRenameFile failed:", e);
+    throw e;
+  }
+}
+
+export async function apiDeleteFile(userId, fileId) {
+  if (!userId || !fileId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/files/${encodeURIComponent(fileId)}`, {
+      method: "DELETE",
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiDeleteFile failed:", e);
     throw e;
   }
 }

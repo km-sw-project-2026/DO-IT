@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getCurrentUser } from "../utils/auth";
+import { apiCreateNote, apiUpdateNote } from "../api/repository";
 import "../css/DocEditor.css";
 
 const LS_DOCS = "doit_repository_docs_v1";
@@ -404,41 +406,36 @@ export default function DocEditor() {
     e.preventDefault();
   };
 
-  const save = () => {
+  const save = async () => {
     if (!editorRef.current) return;
 
-    const docs = safeParse(localStorage.getItem(LS_DOCS), []);
+    const me = getCurrentUser();
+    if (!me?.user_id) {
+      alert("로그인 후 저장할 수 있습니다.");
+      return;
+    }
+
     const now = new Date().toISOString();
     cleanupEditorMarkup();
     const html = editorRef.current.innerHTML;
 
-    if (id) {
-      const next = docs.map((doc) =>
-        String(doc.id) === String(id)
-          ? {
-              ...doc,
-              title,
-              html,
-              updatedAt: now,
-            }
-          : doc
-      );
-      localStorage.setItem(LS_DOCS, JSON.stringify(next));
-    } else {
-      const newDoc = {
-        id: Date.now(),
-        title,
-        html,
-        folderId: null,
-        isFavorite: false,
-        createdAt: now,
-        updatedAt: now,
-      };
-      localStorage.setItem(LS_DOCS, JSON.stringify([newDoc, ...docs]));
-    }
+    try {
+      if (id) {
+        await apiUpdateNote(me.user_id, id, title, html);
+      } else {
+        await apiCreateNote(me.user_id, null, title, html, "html");
+      }
 
-    setSavedAt(now);
-    showStatus("저장됨!");
+      setSavedAt(now);
+      showStatus("저장됨!");
+
+      setTimeout(() => {
+        navigate("/mypagerepository");
+      }, 500);
+    } catch (e) {
+      console.error("保存 실패:", e);
+      showStatus("저장 실패");
+    }
   };
 
   const clearDoc = () => {
@@ -465,6 +462,10 @@ export default function DocEditor() {
 
   return (
     <div className="doc-editor">
+      <div className="doc-status-bar">
+        <span className="doc-status">{status}</span>
+      </div>
+
       <div className="doc-top">
         <input
           className="doc-title"

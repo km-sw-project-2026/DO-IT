@@ -2,6 +2,8 @@ import "../css/MypageRepositoryDelete.css";
 import { data } from "../js/MypageRepository.js";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
+import { getCurrentUser } from "../utils/auth";
+import { apiGetTrash, apiDeleteFolder, apiDeleteFile } from "../api/repository";
 
 const LS_FOLDERS = "doit_repository_folders_v1";
 const LS_DOCS = "doit_repository_docs_v1";
@@ -34,6 +36,14 @@ function MypageRepositoryBtn({ btn }) {
 
 function MypageRepositoryDelete() {
   const navigate = useNavigate();
+  const me = getCurrentUser();
+  const userId = me?.user_id;
+
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [userId, navigate]);
 
   const [keyword, setKeyword] = useState("");
   const [menuFolderId, setMenuFolderId] = useState(null);

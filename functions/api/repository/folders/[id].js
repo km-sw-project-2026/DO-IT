@@ -10,9 +10,18 @@ function getUserId(request) {
   return id ? id : null;
 }
 
+async function getMyFolderColumns(env) {
+  const { results } = await env.D1_DB.prepare("PRAGMA table_info(my_folder)").all();
+  return new Set((results || []).map((column) => column.name));
+}
+
 export async function onRequestPatch({ env, request, params }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  const columns = await getMyFolderColumns(env);
+  const notDeletedFilter = columns.has("is_deleted")
+    ? "AND (is_deleted IS NULL OR is_deleted <> 'Y')"
+    : "";
 
   const folderId = Number(params.id);
   const body = await request.json().catch(() => ({}));
@@ -22,7 +31,7 @@ export async function onRequestPatch({ env, request, params }) {
   const exist = await env.D1_DB.prepare(`
     SELECT folder_id FROM my_folder
     WHERE folder_id = ? AND user_id = ?
-      AND (is_deleted IS NULL OR is_deleted <> 'Y')
+      ${notDeletedFilter}
   `).bind(folderId, userId).first();
   if (!exist) return json({ message: "폴더가 없어요" }, 404);
 
@@ -40,15 +49,27 @@ export async function onRequestPatch({ env, request, params }) {
 export async function onRequestDelete({ env, request, params }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  const columns = await getMyFolderColumns(env);
+  const notDeletedFilter = columns.has("is_deleted")
+    ? "AND (is_deleted IS NULL OR is_deleted <> 'Y')"
+    : "";
 
   const folderId = Number(params.id);
 
   const exist = await env.D1_DB.prepare(`
     SELECT folder_id FROM my_folder
     WHERE folder_id = ? AND user_id = ?
-      AND (is_deleted IS NULL OR is_deleted <> 'Y')
+      ${notDeletedFilter}
   `).bind(folderId, userId).first();
   if (!exist) return json({ message: "폴더가 없어요" }, 404);
+
+  if (!columns.has("is_deleted")) {
+    return json({ message: "is_deleted 컬럼이 없어 폴더 휴지통 기능을 사용할 수 없어요. 스키마 적용이 필요합니다." }, 409);
+  }
+
+  const folderDeleteSet = columns.has("deleted_at")
+    ? "is_deleted = 'Y', deleted_at = datetime('now')"
+    : "is_deleted = 'Y'";
 
   // 1) 폴더(하위 포함) 휴지통 이동
   await env.D1_DB.prepare(`
@@ -61,7 +82,7 @@ export async function onRequestDelete({ env, request, params }) {
       WHERE f.user_id = ?
     )
     UPDATE my_folder
-    SET is_deleted = 'Y', deleted_at = datetime('now')
+    SET ${folderDeleteSet}
     WHERE user_id = ? AND folder_id IN (SELECT folder_id FROM subfolders)
   `).bind(folderId, userId, userId, userId).run();
 

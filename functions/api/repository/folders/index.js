@@ -10,9 +10,18 @@ function getUserId(request) {
   return id ? id : null;
 }
 
+async function getMyFolderColumns(env) {
+  const { results } = await env.D1_DB.prepare("PRAGMA table_info(my_folder)").all();
+  return new Set((results || []).map((column) => column.name));
+}
+
 export async function onRequestGet({ env, request, url }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  const columns = await getMyFolderColumns(env);
+  const notDeletedFilter = columns.has("is_deleted")
+    ? "AND (is_deleted IS NULL OR is_deleted <> 'Y')"
+    : "";
 
   const u = new URL(url);
   const parentIdRaw = u.searchParams.get("parentId");
@@ -25,7 +34,7 @@ export async function onRequestGet({ env, request, url }) {
           SELECT folder_id, parent_id, folder_name, created_at
           FROM my_folder
           WHERE user_id = ?
-            AND (is_deleted IS NULL OR is_deleted <> 'Y')
+            ${notDeletedFilter}
             AND parent_id IS NULL
           ORDER BY folder_id DESC
         `).bind(userId)
@@ -33,7 +42,7 @@ export async function onRequestGet({ env, request, url }) {
           SELECT folder_id, parent_id, folder_name, created_at
           FROM my_folder
           WHERE user_id = ?
-            AND (is_deleted IS NULL OR is_deleted <> 'Y')
+            ${notDeletedFilter}
             AND parent_id = ?
           ORDER BY folder_id DESC
         `).bind(userId, parentId);
@@ -45,6 +54,10 @@ export async function onRequestGet({ env, request, url }) {
 export async function onRequestPost({ env, request }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  const columns = await getMyFolderColumns(env);
+  const notDeletedFilter = columns.has("is_deleted")
+    ? "AND (is_deleted IS NULL OR is_deleted <> 'Y')"
+    : "";
 
   const body = await request.json().catch(() => ({}));
   const folder_name = (body.folder_name ?? "").trim();
@@ -59,15 +72,20 @@ export async function onRequestPost({ env, request }) {
     const p = await env.D1_DB.prepare(`
       SELECT folder_id FROM my_folder
       WHERE folder_id = ? AND user_id = ?
-        AND (is_deleted IS NULL OR is_deleted <> 'Y')
+        ${notDeletedFilter}
     `).bind(parent_id, userId).first();
     if (!p) return json({ message: "parent_id 폴더가 없어요" }, 404);
   }
 
-  const ins = await env.D1_DB.prepare(`
-    INSERT INTO my_folder (parent_id, folder_name, user_id, is_deleted)
-    VALUES (?, ?, ?, 'N')
-  `).bind(parent_id, folder_name, userId).run();
+  const ins = columns.has("is_deleted")
+    ? await env.D1_DB.prepare(`
+        INSERT INTO my_folder (parent_id, folder_name, user_id, is_deleted)
+        VALUES (?, ?, ?, 'N')
+      `).bind(parent_id, folder_name, userId).run()
+    : await env.D1_DB.prepare(`
+        INSERT INTO my_folder (parent_id, folder_name, user_id)
+        VALUES (?, ?, ?)
+      `).bind(parent_id, folder_name, userId).run();
 
   return json({ folder_id: ins.meta.last_row_id, parent_id, folder_name }, 201);
 }

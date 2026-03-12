@@ -20,6 +20,14 @@ import * as adminReports from "../functions/api/admin/reports.js";
 import * as adminNotice from "../functions/api/admin/notice.js";
 import * as adminBan from "../functions/api/admin/ban.js";
 
+import * as repoFolders from "../functions/api/repository/folders/index.js";
+import * as repoFoldersById from "../functions/api/repository/folders/[id].js";
+import * as repoFiles from "../functions/api/repository/files/index.js";
+import * as repoFilesById from "../functions/api/repository/files/[id].js";
+import * as repoNotes from "../functions/api/repository/notes/index.js";
+import * as repoNotesById from "../functions/api/repository/notes/[id].js";
+import * as repoTrash from "../functions/api/repository/trash/index.js";
+
 
 
 export default {
@@ -182,6 +190,98 @@ export default {
     if (path === "/api/admin/ban") {
       if (request.method === "OPTIONS") return adminBan.onRequestOptions({ request });
       if (request.method === "POST") return adminBan.onRequestPost({ request, env });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/folders (폴더 목록/생성)
+    // ---------------------------
+    if (path === "/api/repository/folders") {
+      if (request.method === "GET") return repoFolders.onRequestGet({ env, request, url });
+      if (request.method === "POST") return repoFolders.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/folders/:id (폴더 수정/삭제)
+    // ---------------------------
+    const mFolderById = path.match(/^\/api\/repository\/folders\/(\d+)\/?$/);
+    if (mFolderById) {
+      const id = mFolderById[1];
+      const params = { id };
+      if (request.method === "PATCH") return repoFoldersById.onRequestPatch({ env, request, params });
+      if (request.method === "DELETE") return repoFoldersById.onRequestDelete({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/files (파일 목록)
+    // ---------------------------
+    if (path === "/api/repository/files") {
+      if (request.method === "GET") return repoFiles.onRequestGet({ env, request, url });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/files/:id (파일 수정/삭제)
+    // ---------------------------
+    const mFileById = path.match(/^\/api\/repository\/files\/(\d+)\/?$/);
+    if (mFileById) {
+      const id = mFileById[1];
+      const params = { id };
+      if (request.method === "PATCH") return repoFilesById.onRequestPatch({ env, request, params });
+      if (request.method === "DELETE") return repoFilesById.onRequestDelete({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/notes (노트 목록/생성)
+    // ---------------------------
+    if (path === "/api/repository/notes") {
+      if (request.method === "GET") return repoNotes.onRequestGet({ env, request, url });
+      if (request.method === "POST") return repoNotes.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/notes/:id (노트 조회/수정/삭제)
+    // ---------------------------
+    const mNoteById = path.match(/^\/api\/repository\/notes\/(\d+)\/?$/);
+    if (mNoteById) {
+      const id = mNoteById[1];
+      const params = { id };
+      if (request.method === "GET") return repoNotesById.onRequestGet({ env, request, params });
+      if (request.method === "PUT") return repoNotesById.onRequestPut({ env, request, params });
+      if (request.method === "DELETE") return repoNotesById.onRequestDelete({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    // ---------------------------
+    // /api/repository/trash (휴지통)
+    // ---------------------------
+    if (path === "/api/repository/trash") {
+      if (request.method === "GET") return repoTrash.onRequestGet({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

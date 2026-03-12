@@ -337,7 +337,7 @@
 
 .mypagerepository-file-name {
   display: grid;
-  grid-template-columns: 1fr 220px 220px;
+  grid-template-columns: 80px 1fr 220px 220px;
   align-items: center;
   column-gap: 16px;
   border-bottom: 1px solid #c4c4c4;
@@ -348,11 +348,16 @@
   text-align: left;
 }
 
+.mypagerepository-file-suggestion .mr-file-checkbox {
+  width: 30px;
+  justify-content: center;
+}
+
 .mypagerepository-file-suggestion {
   display: grid;
-  grid-template-columns: 1fr 220px 220px;
+  grid-template-columns: 30px 1fr 220px 220px;
   align-items: center;
-  column-gap: 16px;
+  column-gap: 8px;
   padding: 12px 40px;
   border-bottom: 1px solid #eee;
   cursor: grab;
@@ -365,7 +370,7 @@
 .mypagerepository-file-gather {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0;
   min-width: 0;
 }
 
@@ -517,4 +522,77 @@
   background: #e9f5ff;
   border-radius: 10px;
   outline: 2px dashed #3fb5ff;
+}
+
+/* =========================
+   체크 박스 및 일괄 작업
+ ========================= */
+.mr-checkbox-col {
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.mr-checkbox-col input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.mr-select-all-label {
+  font-size: 14px;
+  color: #2c2c2c;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mr-select-all-label {
+  font-size: 14px;
+  color: #2c2c2c;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mypagerepository-file-name .mr-checkbox-col {
+  padding: 0;
+}
+
+.mypagerepository-file-suggestion.selected {
+  background: #f0f7ff;
+}
+
+.mr-batch-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 40px;
+  background: #f8f8f8;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.mr-batch-actions span {
+  font-weight: 600;
+  color: #2c2c2c;
+}
+
+.mr-batch-actions button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.mr-batch-actions button:hover {
+  background: #f0f0f0;
+}
+
+.mr-batch-actions select {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
 }

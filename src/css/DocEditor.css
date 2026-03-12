@@ -8,6 +8,26 @@
 }
 
 /* 상단 영역 */
+.doc-status-bar {
+  width: 900px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.doc-status-bar .doc-status {
+  background: #4caf50;
+  color: white;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
 .doc-top {
   width: 900px;
   display: flex;

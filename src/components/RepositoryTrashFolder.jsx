@@ -1,19 +1,9 @@
 import "../css/MypageRepositoryDelete.css";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { data } from "../js/MypageRepository.js";
-
-const LS_FOLDERS = "doit_repository_folders_v1";
-const LS_DOCS = "doit_repository_docs_v1";
-
-function safeParse(value, fallback) {
-  try {
-    const v = JSON.parse(value);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
+import { getCurrentUser } from "../utils/auth";
+import { apiGetFolders, apiGetFiles, apiDeleteFile } from "../api/repository";
 
 function formatDate(value) {
   if (!value) return "-";
@@ -35,27 +25,66 @@ function MypageRepositoryBtn({ btn }) {
 function RepositoryTrashFolder() {
   const { folderId } = useParams();
   const folderIdNum = Number(folderId);
+  const navigate = useNavigate();
+  const me = getCurrentUser();
+  const userId = me?.user_id;
 
   const [menuDocId, setMenuDocId] = useState(null);
+  const [selectedDocs, setSelectedDocs] = useState(new Set());
 
-  const [folders, setFolders] = useState(() =>
-    safeParse(localStorage.getItem(LS_FOLDERS), [])
-  );
-  const [docs, setDocs] = useState(() =>
-    safeParse(localStorage.getItem(LS_DOCS), [])
-  );
+  const [, setFolders] = useState([]);
+  const [docs, setDocs] = useState([]);
+  const [_loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    localStorage.setItem(LS_FOLDERS, JSON.stringify(folders));
-  }, [folders]);
+  const [targetFolder, setTargetFolder] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem(LS_DOCS, JSON.stringify(docs));
-  }, [docs]);
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
 
-  const targetFolder = useMemo(() => {
-    return folders.find((folder) => folder.id === folderIdNum) || null;
-  }, [folders, folderIdNum]);
+    async function loadData() {
+      setLoading(true);
+      try {
+        const [foldersRes, filesRes] = await Promise.all([
+          apiGetFolders(userId, null),
+          apiGetFiles(userId, folderIdNum),
+        ]);
+
+        const folderList = (foldersRes.folders || []).map((f) => ({
+          id: f.folder_id,
+          name: f.folder_name,
+          parentId: f.parent_id,
+          createdAt: f.created_at,
+          isDeleted: false,
+        }));
+
+        const currentFolder = folderList.find((f) => f.id === folderIdNum);
+        setTargetFolder(currentFolder || { id: folderIdNum, name: "알 수 없는 폴더" });
+
+        const fileList = (filesRes.files || []).map((f) => ({
+          id: f.my_file_id,
+          folderId: f.folder_id,
+          name: f.display_name || f.origin_name,
+          title: f.display_name || f.origin_name,
+          createdAt: f.added_at,
+          isDeleted: true,
+          deletedByFolder: true,
+          originFolderId: folderIdNum,
+        }));
+
+        setFolders(folderList);
+        setDocs(fileList);
+      } catch (e) {
+        console.warn("Failed to load folder data:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, [userId, folderIdNum, navigate]);
 
   const trashedFolderDocs = useMemo(() => {
     return docs.filter(
@@ -95,6 +124,66 @@ function RepositoryTrashFolder() {
     setMenuDocId(null);
   };
 
+  const toggleDocSelect = (docId) => {
+    setSelectedDocs((prev) => {
+      const next = new Set(prev);
+      if (next.has(docId)) {
+        next.delete(docId);
+      } else {
+        next.add(docId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedDocs.size === trashedFolderDocs.length) {
+      setSelectedDocs(new Set());
+    } else {
+      setSelectedDocs(new Set(trashedFolderDocs.map((d) => d.id)));
+    }
+  };
+
+  const deleteSelectedForever = async () => {
+    const docCount = selectedDocs.size;
+
+    if (docCount === 0) {
+      const ok = window.confirm(`폴더 안의 모든 파일(${trashedFolderDocs.length}개)을 영구 삭제하시겠습니까?`);
+      if (!ok) return;
+
+      try {
+        for (const doc of trashedFolderDocs) {
+          await apiDeleteFile(userId, doc.id);
+        }
+        setDocs((prev) => prev.filter((doc) => doc.folderId !== Number(folderId)));
+      } catch (e) {
+        console.warn("Failed to delete all files:", e);
+        alert("파일 삭제에 실패했습니다.");
+      }
+    } else {
+      const ok = window.confirm(`${docCount}개 파일을 영구 삭제하시겠습니까?`);
+      if (!ok) return;
+
+      try {
+        for (const docId of selectedDocs) {
+          await apiDeleteFile(userId, docId);
+        }
+        setDocs((prev) => prev.filter((doc) => !selectedDocs.has(doc.id)));
+      } catch (e) {
+        console.warn("Failed to delete selected files:", e);
+        alert("파일 삭제에 실패했습니다.");
+      }
+    }
+
+    setSelectedDocs(new Set());
+    setMenuDocId(null);
+  };
+
+  const isAllSelected = trashedFolderDocs.length > 0
+    ? selectedDocs.size === trashedFolderDocs.length
+    : false;
+  const selectedCount = selectedDocs.size;
+
   return (
     <section>
       <div className="mypagerepositorydelete">
@@ -127,10 +216,27 @@ function RepositoryTrashFolder() {
                 </div>
 
                 <div className="mypagerepositorydelete-file-name">
-                  <p>이름</p>
-                  <p className="mr-col-date">날짜</p>
-                  <p className="mr-col-type">형식</p>
-                  <span className="mr-col-actions" />
+                  <div className="trash-select-all">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      onChange={toggleSelectAll}
+                    />
+                    <span>전체 선택</span>
+                  </div>
+                  {selectedCount > 0 && (
+                    <span className="trash-selected-count">
+                      {selectedCount}개 선택됨
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    className="trash-empty-btn"
+                    onClick={deleteSelectedForever}
+                    disabled={trashedFolderDocs.length === 0}
+                  >
+                    {selectedCount > 0 ? "영구삭제" : "휴지통 비우기"}
+                  </button>
                 </div>
 
                 {trashedFolderDocs.length === 0 ? (
@@ -143,7 +249,12 @@ function RepositoryTrashFolder() {
                       key={doc.id}
                       className="mypagerepositorydelete-file-suggestion"
                     >
-                      <div className="mypagerepositorydelete-file-gather">
+                      <div className="mypagerepositorydelete-file-gather" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedDocs.has(doc.id)}
+                          onChange={() => toggleDocSelect(doc.id)}
+                        />
                         <button type="button">
                           <img src="/images/icon/img.png" alt="" />
                         </button>
@@ -196,7 +307,7 @@ function RepositoryTrashFolder() {
                                 type="button"
                                 onClick={() => deleteDocForever(doc.id)}
                               >
-                                완전 삭제
+                                영구 삭제
                               </button>
                             </div>
                           )}

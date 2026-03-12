@@ -1,8 +1,34 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
+const LS_FOLDERS = "doit_repository_folders_v1";
+const LS_DOCS = "doit_repository_docs_v1";
+
+function safeParse(value, fallback) {
+  try {
+    const v = JSON.parse(value);
+    return v ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+}
+
 function Main() {
   const [latestNote, setLatestNote] = useState(null);
+  const [folders, setFolders] = useState(() =>
+    safeParse(localStorage.getItem(LS_FOLDERS), [])
+  );
+  const [docs, setDocs] = useState(() =>
+    safeParse(localStorage.getItem(LS_DOCS), [])
+  );
+  const [checkedDocs, setCheckedDocs] = useState([]);
+  const [isAllChecked, setIsAllChecked] = useState(false);
 
   useEffect(() => {
     try {
@@ -12,6 +38,112 @@ function Main() {
       setLatestNote(null);
     }
   }, []);
+
+  useEffect(() => {
+    const onStorage = () => {
+      setFolders(safeParse(localStorage.getItem(LS_FOLDERS), []));
+      setDocs(safeParse(localStorage.getItem(LS_DOCS), []));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const visibleFolders = folders
+    .map((folder) => ({
+      ...folder,
+      isDeleted: folder.isDeleted ?? false,
+    }))
+    .filter((folder) => folder.parentId === null && !folder.isDeleted);
+
+  const visibleDocs = docs
+    .map((doc) => ({
+      ...doc,
+      isDeleted: doc.isDeleted ?? false,
+    }))
+    .filter((doc) => !doc.isDeleted && doc.folderId === null);
+
+  const handleCheckDoc = (docId) => {
+    setCheckedDocs((prev) =>
+      prev.includes(docId)
+        ? prev.filter((id) => id !== docId)
+        : [...prev, docId]
+    );
+  };
+
+  const handleCheckAll = () => {
+    if (isAllChecked) {
+      setCheckedDocs([]);
+    } else {
+      setCheckedDocs(visibleDocs.map((doc) => doc.id));
+    }
+    setIsAllChecked(!isAllChecked);
+  };
+
+  const moveDocsToTrash = () => {
+    const ok = window.confirm(`${checkedDocs.length}개의 파일을 휴지통으로 이동할까요?`);
+    if (!ok) return;
+
+    const now = new Date().toISOString();
+
+    setDocs((prev) =>
+      prev.map((doc) =>
+        checkedDocs.includes(doc.id)
+          ? {
+              ...doc,
+              isDeleted: true,
+              deletedAt: now,
+              updatedAt: now,
+              deletedByFolder: false,
+              originFolderId: doc.folderId ?? null,
+            }
+          : doc
+      )
+    );
+
+    setCheckedDocs([]);
+  };
+
+  const startMoveDocs = () => {
+    const targetFolderId = window.prompt("이동할 폴더 ID를 입력하세요:\n" + 
+      visibleFolders.map(f => `${f.name}: ${f.id}`).join("\n"));
+    
+    if (!targetFolderId) return;
+    
+    const targetId = Number(targetFolderId);
+    if (!targetId) {
+      alert("유효하지 않은 폴더 ID입니다.");
+      return;
+    }
+
+    const hasFolder = visibleFolders.some(f => f.id === targetId);
+    if (!hasFolder) {
+      alert("해당 폴더가 없습니다.");
+      return;
+    }
+
+    setDocs((prev) =>
+      prev.map((doc) =>
+        checkedDocs.includes(doc.id)
+          ? {
+              ...doc,
+              folderId: targetId,
+              updatedAt: new Date().toISOString(),
+            }
+          : doc
+      )
+    );
+
+    setCheckedDocs([]);
+    alert(`${checkedDocs.length}개 파일이 이동되었습니다.`);
+  };
+
+  useEffect(() => {
+    if (visibleDocs.length > 0 && checkedDocs.length === visibleDocs.length) {
+      setIsAllChecked(true);
+    } else {
+      setIsAllChecked(false);
+    }
+  }, [checkedDocs, visibleDocs.length]);
 
   return (
     <main>
@@ -41,22 +173,87 @@ function Main() {
         </div>
         <div className="folder-area">
           <div className="folder-grid">
-            <button className="folder-card">
-              <img src="/images/folder.png" alt="수학" />
-              <p>수학</p>
-            </button>
-
-            <button className="folder-card">
-              <img src="/images/folder.png" alt="영어" />
-              <p>영어</p>
-            </button>
-
-            <button className="folder-card">
-              <img src="/images/folder.png" alt="국어" />
-              <p>국어</p>
-            </button>
+            {visibleFolders.length > 0 ? (
+              visibleFolders.map((folder) => (
+                <Link to={`/repository/folder/${folder.id}`} key={folder.id}>
+                  <button className="folder-card">
+                    <img src="/images/folder.png" alt={folder.name} />
+                    <p>{folder.name}</p>
+                  </button>
+                </Link>
+              ))
+            ) : (
+              <>
+                <button className="folder-card">
+                  <img src="/images/folder.png" alt="수학" />
+                  <p>수학</p>
+                </button>
+                <button className="folder-card">
+                  <img src="/images/folder.png" alt="영어" />
+                  <p>영어</p>
+                </button>
+                <button className="folder-card">
+                  <img src="/images/folder.png" alt="국어" />
+                  <p>국어</p>
+                </button>
+              </>
+            )}
           </div>
         </div>
+
+        {checkedDocs.length > 0 && (
+          <div className="main-page-file-actions">
+            <span>{checkedDocs.length}개 선택됨</span>
+            <div className="main-page-file-actions-buttons">
+              <button onClick={startMoveDocs}>이동</button>
+              <button onClick={moveDocsToTrash}>휴지통</button>
+              <button onClick={() => { setCheckedDocs([]); setIsAllChecked(false); }}>취소</button>
+            </div>
+          </div>
+        )}
+
+        <div className="main-page-file-list">
+          <div className="main-page-file-header">
+            <div className="main-page-file-select">
+              <input
+                type="checkbox"
+                checked={isAllChecked}
+                onChange={handleCheckAll}
+              />
+            </div>
+            <p className="main-page-file-name-col">이름</p>
+            <p className="main-page-file-date-col">날짜</p>
+          </div>
+
+          {visibleDocs.length === 0 ? (
+            <div className="main-page-file-empty">
+              <p>파일이 없습니다.</p>
+            </div>
+          ) : (
+            visibleDocs.map((doc) => (
+              <div
+                key={doc.id}
+                className={`main-page-file-item ${checkedDocs.includes(doc.id) ? "checked" : ""}`}
+              >
+                <div className="main-page-file-select">
+                  <input
+                    type="checkbox"
+                    checked={checkedDocs.includes(doc.id)}
+                    onChange={() => handleCheckDoc(doc.id)}
+                  />
+                </div>
+                <Link to={`/doc-view/${doc.id}`} className="main-page-file-name-col">
+                  <img src="/images/icon/img.png" alt="" />
+                  <span>{doc.title || "제목 없음"}</span>
+                </Link>
+                <p className="main-page-file-date-col">
+                  {formatDate(doc.updatedAt || doc.createdAt)}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+
         {latestNote && (
           <div style={{ marginTop: 18 }}>
             <h4>최근 작성한 노트</h4>

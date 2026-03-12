@@ -113,6 +113,70 @@
   padding: 0 40px 10px 40px;
 }
 
+.trash-select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trash-select-all input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.trash-select-all span {
+  font-size: 14px;
+  color: #333;
+}
+
+.trash-selected-count {
+  font-size: 14px;
+  color: #3fb5ff;
+  font-weight: 500;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.trash-restore-btn {
+  background: #3fb5ff;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.trash-restore-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.trash-restore-btn:hover:not(:disabled) {
+  background: #2a9fd6;
+}
+
+.trash-empty-btn {
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.trash-empty-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.trash-empty-btn:hover:not(:disabled) {
+  background: #e63939;
+}
+
 .mypagerepositorydelete-file-suggestion {
   display: grid;
   grid-template-columns: 1fr 220px 140px 120px;
@@ -120,6 +184,13 @@
   column-gap: 16px;
   padding: 12px 40px;
   border-bottom: 1px solid #eee;
+}
+
+.mypagerepositorydelete-file-gather input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin-right: 8px;
 }
 
 .mypagerepositorydelete-file-gather {
