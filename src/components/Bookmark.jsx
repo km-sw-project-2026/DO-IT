@@ -1,24 +1,12 @@
 import "../css/Bookmark.css";
 import { data } from "../js/mypageRepositoryData.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
-
-const LS_DOCS = "doit_repository_docs_v1";
-
-function safeParse(value, fallback) {
-  try {
-    const v = JSON.parse(value);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function formatDate(value) {
-  if (!value) return "-";
-  const d = new Date(value);
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
+import { getCurrentUser } from "../utils/auth";
+import { setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
+import { formatRepositoryDate } from "../utils/repositoryDate";
+import { sortRepositoryItems } from "../utils/repositorySort";
+import { apiDeleteFile, apiDeleteNote, apiGetFiles, apiGetNotes, apiSetFileFavorite, apiSetNoteFavorite } from "../api/repository";
 
 function MypageRepositoryBtn({ btn }) {
   return (
@@ -32,20 +20,60 @@ function MypageRepositoryBtn({ btn }) {
 }
 
 function Bookmark() {
+  const navigate = useNavigate();
+  const me = getCurrentUser();
+  const userId = me?.user_id;
   const [keyword, setKeyword] = useState("");
   const [menuDocId, setMenuDocId] = useState(null);
-  const [docs, setDocs] = useState(() =>
-    safeParse(localStorage.getItem(LS_DOCS), [])
-  );
+  const [docs, setDocs] = useState([]);
+  const [sortKey, setSortKey] = useState("latest");
 
   useEffect(() => {
-    const onStorage = () => {
-      setDocs(safeParse(localStorage.getItem(LS_DOCS), []));
-    };
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
 
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+    async function loadData() {
+      try {
+        const [filesRes, notesRes] = await Promise.all([
+          apiGetFiles(userId, null),
+          apiGetNotes(userId, null),
+        ]);
+
+        const fileDocs = (filesRes.files || []).map((file) => ({
+          id: `file-${file.my_file_id}`,
+          resourceId: file.my_file_id,
+          docType: "file",
+          title: file.display_name || file.origin_name,
+          html: "",
+          createdAt: file.added_at || file.uploaded_at,
+          updatedAt: file.added_at || file.uploaded_at,
+          isDeleted: false,
+          isFavorite: Boolean(file.is_favorite),
+          filePath: file.file_path || "",
+        }));
+
+        const noteDocs = (notesRes || []).map((note) => ({
+          id: String(note.note_id),
+          resourceId: note.note_id,
+          docType: "note",
+          title: note.title || "제목 없음",
+          html: note.content || "",
+          createdAt: note.created_at,
+          updatedAt: note.updated_at || note.created_at,
+          isDeleted: false,
+          isFavorite: Boolean(note.is_favorite),
+        }));
+
+        setDocs([...noteDocs, ...fileDocs]);
+      } catch (e) {
+        console.warn("Failed to load favorites:", e);
+      }
+    }
+
+    loadData();
+  }, [navigate, userId]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -72,40 +100,79 @@ function Bookmark() {
       );
     }
 
-    return result;
-  }, [docs, keyword]);
+    return sortRepositoryItems(result, sortKey, {
+      nameField: "title",
+      dateField: "updatedAt",
+    });
+  }, [docs, keyword, sortKey]);
 
-  const toggleFavorite = (id) => {
-    const next = docs.map((doc) =>
-      doc.id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
-    );
-    setDocs(next);
-    localStorage.setItem(LS_DOCS, JSON.stringify(next));
+  const toggleFavorite = async (id) => {
+    const targetDoc = docs.find((doc) => doc.id === id);
+    if (!targetDoc) return;
+
+    const nextFavorite = !targetDoc.isFavorite;
+
+    try {
+      if (targetDoc.docType === "note") {
+        await apiSetNoteFavorite(userId, targetDoc.resourceId, nextFavorite);
+      } else {
+        await apiSetFileFavorite(userId, targetDoc.resourceId, nextFavorite);
+      }
+
+      setDocs((prev) =>
+        prev.map((doc) =>
+          doc.id === id ? { ...doc, isFavorite: nextFavorite } : doc
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to toggle bookmark favorite:", e);
+      alert("즐겨찾기 변경에 실패했습니다.");
+    }
   };
 
-  const moveDocToTrash = (id) => {
+  const moveDocToTrash = async (id) => {
     const ok = window.confirm("이 파일을 휴지통으로 이동할까요?");
     if (!ok) return;
 
-    const now = new Date().toISOString();
+    const targetDoc = docs.find((doc) => doc.id === id);
+    if (!targetDoc) return;
 
-    const next = docs.map((doc) =>
-      doc.id === id
-        ? {
-            ...doc,
-            isDeleted: true,
-            deletedAt: now,
-            updatedAt: now,
-          }
-        : doc
-    );
+    try {
+      if (targetDoc.docType === "note") {
+        await apiDeleteNote(userId, targetDoc.resourceId);
+      } else {
+        await apiDeleteFile(userId, targetDoc.resourceId);
+      }
 
-    setDocs(next);
-    localStorage.setItem(LS_DOCS, JSON.stringify(next));
-    setMenuDocId(null);
+      setDocs((prev) => prev.filter((doc) => doc.id !== id));
+      setMenuDocId(null);
+    } catch (e) {
+      console.warn("Failed to move bookmark doc to trash:", e);
+      alert("휴지통 이동에 실패했습니다.");
+    }
   };
 
   const downloadDoc = (doc) => {
+    if (doc.docType === "file") {
+      if (!doc.filePath) {
+        alert("이 업로드 파일은 지금 바로 다운로드할 수 없어요.");
+        return;
+      }
+      const link = document.createElement("a");
+      setRecentOpenedDoc({
+        id: doc.id,
+        title: doc.title,
+        docType: "file",
+        filePath: doc.filePath,
+      });
+      link.href = doc.filePath;
+      link.download = doc.title || "file";
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.click();
+      return;
+    }
+
     const blob = new Blob(
       [
         `<!doctype html><html><head><meta charset="utf-8"><title>${doc.title || "document"}</title></head><body>${doc.html || ""}</body></html>`,
@@ -138,6 +205,17 @@ function Bookmark() {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
+              <select
+                className="Bookmark-sort-select"
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value)}
+                aria-label="정렬"
+              >
+                <option value="latest">최신순</option>
+                <option value="oldest">오래된순</option>
+                <option value="name_asc">이름 오름차순</option>
+                <option value="name_desc">이름 내림차순</option>
+              </select>
               <button type="button">
                 <img src="/images/icon/search1.png" alt="검색" />
               </button>
@@ -174,19 +252,30 @@ function Bookmark() {
                       favoriteDocs.map((doc) => (
                         <div key={doc.id} className="Bookmark-file-suggestion">
                           <div className="Bookmark-file-gather">
-                            <Link
-                              to={`/doc-view/${doc.id}`}
-                              className="Bookmark-file-link"
-                            >
-                              <button type="button">
+                            {doc.docType === "note" ? (
+                              <Link
+                                to={`/doc-view/${doc.id}`}
+                                className="Bookmark-file-link"
+                              >
+                                <button type="button">
+                                  <img src="/images/icon/img.png" alt="" />
+                                </button>
+                                <p>{doc.title || "제목 없음"}</p>
+                              </Link>
+                            ) : (
+                              <button
+                                type="button"
+                                className="Bookmark-file-link"
+                                onClick={() => downloadDoc(doc)}
+                              >
                                 <img src="/images/icon/img.png" alt="" />
+                                <p>{doc.title || "제목 없음"}</p>
                               </button>
-                              <p>{doc.title || "제목 없음"}</p>
-                            </Link>
+                            )}
                           </div>
 
                           <p className="Bookmark-date">
-                            {formatDate(doc.updatedAt || doc.createdAt)}
+                            {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
                           </p>
 
                           <div className="Bookmark-file-actions">
@@ -198,11 +287,22 @@ function Bookmark() {
                               <img src="/images/icon/download.png" alt="" />
                             </button>
 
-                            <Link to={`/doc-edit/${doc.id}`}>
-                              <button className="Bookmark-pan" type="button">
+                            {doc.docType === "note" ? (
+                              <Link to={`/doc-edit/${doc.id}`}>
+                                <button className="Bookmark-pan" type="button">
+                                  <img src="/images/icon/pan.png" alt="" />
+                                </button>
+                              </Link>
+                            ) : (
+                              <button
+                                className="Bookmark-pan"
+                                type="button"
+                                disabled
+                                title="업로드 파일은 편집할 수 없어요."
+                              >
                                 <img src="/images/icon/pan.png" alt="" />
                               </button>
-                            </Link>
+                            )}
 
                             <button
                               className="Bookmark-star"

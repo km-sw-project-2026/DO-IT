@@ -1,15 +1,17 @@
-import "../css/MypageRepositoryDelete.css";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import "../css/MRFI.css";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { data } from "../js/MypageRepository.js";
 import { getCurrentUser } from "../utils/auth";
-import { apiGetFolders, apiGetFiles, apiDeleteFile } from "../api/repository";
-
-function formatDate(value) {
-  if (!value) return "-";
-  const d = new Date(value);
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
+import { formatRepositoryDate } from "../utils/repositoryDate";
+import { sortRepositoryItems } from "../utils/repositorySort";
+import {
+  apiGetTrashFolder,
+  apiPurgeTrashFile,
+  apiPurgeTrashNote,
+  apiRestoreTrashFile,
+  apiRestoreTrashNote,
+} from "../api/repository";
 
 function MypageRepositoryBtn({ btn }) {
   return (
@@ -22,7 +24,7 @@ function MypageRepositoryBtn({ btn }) {
   );
 }
 
-function RepositoryTrashFolder() {
+export default function RepositoryTrashFolder() {
   const { folderId } = useParams();
   const folderIdNum = Number(folderId);
   const navigate = useNavigate();
@@ -31,12 +33,10 @@ function RepositoryTrashFolder() {
 
   const [menuDocId, setMenuDocId] = useState(null);
   const [selectedDocs, setSelectedDocs] = useState(new Set());
-
-  const [, setFolders] = useState([]);
   const [docs, setDocs] = useState([]);
-  const [_loading, setLoading] = useState(true);
-
   const [targetFolder, setTargetFolder] = useState(null);
+  const [keyword, setKeyword] = useState("");
+  const [sortKey, setSortKey] = useState("latest");
 
   useEffect(() => {
     if (!userId) {
@@ -45,242 +45,286 @@ function RepositoryTrashFolder() {
     }
 
     async function loadData() {
-      setLoading(true);
       try {
-        const [foldersRes, filesRes] = await Promise.all([
-          apiGetFolders(userId, null),
-          apiGetFiles(userId, folderIdNum),
-        ]);
+        const trashFolder = await apiGetTrashFolder(userId, folderIdNum);
+        setTargetFolder(
+          trashFolder.folder
+            ? {
+                id: trashFolder.folder.folder_id,
+                name: trashFolder.folder.folder_name,
+              }
+            : { id: folderIdNum, name: "알 수 없는 폴더" }
+        );
 
-        const folderList = (foldersRes.folders || []).map((f) => ({
-          id: f.folder_id,
-          name: f.folder_name,
-          parentId: f.parent_id,
-          createdAt: f.created_at,
-          isDeleted: false,
+        const fileList = (trashFolder.files || []).map((file) => ({
+          id: `file-${file.my_file_id}`,
+          resourceId: file.my_file_id,
+          title: file.display_name || file.origin_name,
+          docType: "file",
+          createdAt: file.deleted_at || file.added_at,
+          updatedAt: file.deleted_at || file.added_at,
         }));
 
-        const currentFolder = folderList.find((f) => f.id === folderIdNum);
-        setTargetFolder(currentFolder || { id: folderIdNum, name: "알 수 없는 폴더" });
-
-        const fileList = (filesRes.files || []).map((f) => ({
-          id: f.my_file_id,
-          folderId: f.folder_id,
-          name: f.display_name || f.origin_name,
-          title: f.display_name || f.origin_name,
-          createdAt: f.added_at,
-          isDeleted: true,
-          deletedByFolder: true,
-          originFolderId: folderIdNum,
+        const noteList = (trashFolder.notes || []).map((note) => ({
+          id: `note-${note.note_id}`,
+          resourceId: note.note_id,
+          title: note.title || "제목 없음",
+          docType: "note",
+          createdAt: note.updated_at || note.created_at,
+          updatedAt: note.updated_at || note.created_at,
         }));
 
-        setFolders(folderList);
-        setDocs(fileList);
+        setDocs([...noteList, ...fileList]);
       } catch (e) {
-        console.warn("Failed to load folder data:", e);
-      } finally {
-        setLoading(false);
+        console.warn("Failed to load trash folder:", e);
       }
     }
 
     loadData();
-  }, [userId, folderIdNum, navigate]);
+  }, [folderIdNum, navigate, userId]);
 
-  const trashedFolderDocs = useMemo(() => {
-    return docs.filter(
-      (doc) =>
-        doc.isDeleted &&
-        doc.deletedByFolder &&
-        doc.originFolderId === folderIdNum
-    );
-  }, [docs, folderIdNum]);
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setMenuDocId(null);
+    };
 
-  const restoreDocFromTrashFolder = (docId) => {
-    const now = new Date().toISOString();
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === docId
-          ? {
-              ...doc,
-              isDeleted: false,
-              deletedAt: null,
-              updatedAt: now,
-              folderId: null,
-              deletedByFolder: false,
-            }
-          : doc
-      )
+  const filteredDocs = useMemo(() => {
+    const q = keyword.trim().toLowerCase();
+    const result = docs.filter((doc) =>
+      !q || (doc.title || "").toLowerCase().includes(q)
     );
 
-    setMenuDocId(null);
-  };
+    return sortRepositoryItems(result, sortKey, {
+      nameField: "title",
+      dateField: "updatedAt",
+    });
+  }, [docs, keyword, sortKey]);
 
-  const deleteDocForever = (docId) => {
-    const ok = window.confirm("파일을 완전히 삭제할까요?");
-    if (!ok) return;
+  const isAllSelected =
+    filteredDocs.length > 0 &&
+    filteredDocs.every((doc) => selectedDocs.has(doc.id));
 
-    setDocs((prev) => prev.filter((doc) => doc.id !== docId));
-    setMenuDocId(null);
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedDocs((prev) => {
+        const next = new Set(prev);
+        filteredDocs.forEach((doc) => next.delete(doc.id));
+        return next;
+      });
+      return;
+    }
+    setSelectedDocs((prev) => {
+      const next = new Set(prev);
+      filteredDocs.forEach((doc) => next.add(doc.id));
+      return next;
+    });
   };
 
   const toggleDocSelect = (docId) => {
     setSelectedDocs((prev) => {
       const next = new Set(prev);
-      if (next.has(docId)) {
-        next.delete(docId);
-      } else {
-        next.add(docId);
-      }
+      if (next.has(docId)) next.delete(docId);
+      else next.add(docId);
       return next;
     });
   };
 
-  const toggleSelectAll = () => {
-    if (selectedDocs.size === trashedFolderDocs.length) {
-      setSelectedDocs(new Set());
-    } else {
-      setSelectedDocs(new Set(trashedFolderDocs.map((d) => d.id)));
-    }
-  };
-
-  const deleteSelectedForever = async () => {
-    const docCount = selectedDocs.size;
-
-    if (docCount === 0) {
-      const ok = window.confirm(`폴더 안의 모든 파일(${trashedFolderDocs.length}개)을 영구 삭제하시겠습니까?`);
-      if (!ok) return;
-
-      try {
-        for (const doc of trashedFolderDocs) {
-          await apiDeleteFile(userId, doc.id);
-        }
-        setDocs((prev) => prev.filter((doc) => doc.folderId !== Number(folderId)));
-      } catch (e) {
-        console.warn("Failed to delete all files:", e);
-        alert("파일 삭제에 실패했습니다.");
+  const restoreDoc = async (doc) => {
+    try {
+      if (doc.docType === "note") {
+        await apiRestoreTrashNote(userId, doc.resourceId, null);
+      } else {
+        await apiRestoreTrashFile(userId, doc.resourceId, null);
       }
-    } else {
-      const ok = window.confirm(`${docCount}개 파일을 영구 삭제하시겠습니까?`);
-      if (!ok) return;
-
-      try {
-        for (const docId of selectedDocs) {
-          await apiDeleteFile(userId, docId);
-        }
-        setDocs((prev) => prev.filter((doc) => !selectedDocs.has(doc.id)));
-      } catch (e) {
-        console.warn("Failed to delete selected files:", e);
-        alert("파일 삭제에 실패했습니다.");
-      }
+      setDocs((prev) => prev.filter((item) => item.id !== doc.id));
+      setSelectedDocs((prev) => {
+        const next = new Set(prev);
+        next.delete(doc.id);
+        return next;
+      });
+    } catch (e) {
+      console.warn("Failed to restore trash folder doc:", e);
+      alert("복원에 실패했습니다.");
     }
-
-    setSelectedDocs(new Set());
     setMenuDocId(null);
   };
 
-  const isAllSelected = trashedFolderDocs.length > 0
-    ? selectedDocs.size === trashedFolderDocs.length
-    : false;
+  const purgeDoc = async (doc) => {
+    const ok = window.confirm("파일을 완전히 삭제할까요?");
+    if (!ok) return;
+
+    try {
+      if (doc.docType === "note") {
+        await apiPurgeTrashNote(userId, doc.resourceId);
+      } else {
+        await apiPurgeTrashFile(userId, doc.resourceId);
+      }
+      setDocs((prev) => prev.filter((item) => item.id !== doc.id));
+      setSelectedDocs((prev) => {
+        const next = new Set(prev);
+        next.delete(doc.id);
+        return next;
+      });
+    } catch (e) {
+      console.warn("Failed to purge trash folder doc:", e);
+      alert("영구 삭제에 실패했습니다.");
+    }
+    setMenuDocId(null);
+  };
+
+  const purgeSelected = async () => {
+    const targetDocs = selectedDocs.size > 0
+      ? docs.filter((doc) => selectedDocs.has(doc.id))
+      : docs;
+
+    if (targetDocs.length === 0) return;
+
+    const ok = window.confirm(
+      selectedDocs.size > 0
+        ? `${selectedDocs.size}개 파일을 영구 삭제하시겠습니까?`
+        : `폴더 안 파일 ${docs.length}개를 영구 삭제하시겠습니까?`
+    );
+    if (!ok) return;
+
+    try {
+      for (const doc of targetDocs) {
+        if (doc.docType === "note") {
+          await apiPurgeTrashNote(userId, doc.resourceId);
+        } else {
+          await apiPurgeTrashFile(userId, doc.resourceId);
+        }
+      }
+      const removedIds = new Set(targetDocs.map((doc) => doc.id));
+      setDocs((prev) => prev.filter((doc) => !removedIds.has(doc.id)));
+      setSelectedDocs(new Set());
+    } catch (e) {
+      console.warn("Failed to purge selected trash folder docs:", e);
+      alert("영구 삭제에 실패했습니다.");
+    }
+  };
+
   const selectedCount = selectedDocs.size;
 
   return (
     <section>
-      <div className="mypagerepositorydelete">
-        <div className="mypagerepositorydelete-inner">
-          <div className="mypagerepositorydelete-header">
-            <div className="mypagerepositorydelete-title">
-              <h2>{targetFolder?.name || "휴지통 폴더"}</h2>
+      <div className="mrfi">
+        <div className="mrfi-inner">
+          <div className="mrfi-header">
+            <div className="mrfi-title">
+              <h2>내 자료함</h2>
               <img src="/images/mypagerepository.png" alt="" />
+            </div>
+            <div className="search">
+              <input
+                type="text"
+                placeholder="검색어를 입력해주세요"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+              <select
+                className="mrfi-sort-select"
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value)}
+                aria-label="정렬"
+              >
+                <option value="latest">최신순</option>
+                <option value="oldest">오래된순</option>
+                <option value="name_asc">이름 오름차순</option>
+                <option value="name_desc">이름 내림차순</option>
+              </select>
+              <button type="button">
+                <img src="/images/icon/search1.png" alt="검색" />
+              </button>
             </div>
           </div>
 
-          <div className="mypagerepositorydelete-contents">
-            {/* 왼쪽 메뉴 */}
-            <div className="mypagerepositorydelete-inventory">
+          <div className="mrfi-contents">
+            <div className="mrfi-inventory">
               {data.map((item, index) => (
                 <MypageRepositoryBtn key={index} btn={item} />
               ))}
             </div>
 
-            {/* 오른쪽 내용 */}
-            <div
-              className="mypagerepositorydelete-collection"
-              style={{ width: "100%" }}
-            >
-              <div className="mypagerepositorydelete-file-list">
-                <div className="mypagerepositorydelete-file-topbar">
-                  <Link to="/repository/trash" className="trash-back-link">
-                    ← 휴지통으로 돌아가기
-                  </Link>
+            <div className="mrfi-contents-inner">
+              <div className="mrfi-main-header">
+                <img src="/images/icon/aroow.png" alt="" />
+                <p>{targetFolder?.name || "휴지통 폴더"}</p>
+                <span className="mrfi-trash-badge">휴지통</span>
+                <Link to="/repository/trash" className="mrfi-trash-back">
+                  휴지통으로
+                </Link>
+              </div>
+
+              <div className="mrfi-trash-toolbar">
+                <label className="mrfi-trash-select">
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    onChange={toggleSelectAll}
+                  />
+                  <span>전체 선택</span>
+                </label>
+                {selectedCount > 0 && (
+                  <span className="mrfi-trash-selected">{selectedCount}개 선택됨</span>
+                )}
+                <button
+                  type="button"
+                  className="mrfi-trash-danger"
+                  onClick={purgeSelected}
+                  disabled={filteredDocs.length === 0}
+                >
+                  {selectedCount > 0 ? "영구삭제" : "휴지통 비우기"}
+                </button>
+              </div>
+
+              <div className="mrfi-file-list">
+                <div className="mrfi-file-name">
+                  <p>이름</p>
+                  <p>날짜</p>
+                  <span className="mrfi-actions-col" />
                 </div>
 
-                <div className="mypagerepositorydelete-file-name">
-                  <div className="trash-select-all">
-                    <input
-                      type="checkbox"
-                      checked={isAllSelected}
-                      onChange={toggleSelectAll}
-                    />
-                    <span>전체 선택</span>
-                  </div>
-                  {selectedCount > 0 && (
-                    <span className="trash-selected-count">
-                      {selectedCount}개 선택됨
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    className="trash-empty-btn"
-                    onClick={deleteSelectedForever}
-                    disabled={trashedFolderDocs.length === 0}
-                  >
-                    {selectedCount > 0 ? "영구삭제" : "휴지통 비우기"}
-                  </button>
-                </div>
-
-                {trashedFolderDocs.length === 0 ? (
-                  <div className="mypagerepositorydelete-file-empty">
-                    <p>폴더 안 파일이 없습니다.</p>
+                {filteredDocs.length === 0 ? (
+                  <div className="mrfi-file-empty">
+                    <p>이 폴더의 휴지통 항목이 없습니다.</p>
                   </div>
                 ) : (
-                  trashedFolderDocs.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="mypagerepositorydelete-file-suggestion"
-                    >
-                      <div className="mypagerepositorydelete-file-gather" onClick={(e) => e.stopPropagation()}>
+                  filteredDocs.map((doc) => (
+                    <div key={doc.id} className="mrfi-file-suggestion mrfi-trash-row">
+                      <div className="mrfi-file-gather">
                         <input
+                          className="mrfi-trash-checkbox"
                           type="checkbox"
                           checked={selectedDocs.has(doc.id)}
                           onChange={() => toggleDocSelect(doc.id)}
                         />
-                        <button type="button">
+                        <Link to={`/doc-view/${doc.id}`} className="mrfi-file-link">
                           <img src="/images/icon/img.png" alt="" />
-                        </button>
-                        <p>{doc.title || "제목 없음"}</p>
+                          <p>{doc.title || "제목 없음"}</p>
+                        </Link>
                       </div>
 
-                      <p className="mr-date">
-                        {formatDate(doc.updatedAt || doc.createdAt)}
-                      </p>
-                      <p className="mr-type">파일</p>
+                      <p className="mrfi-date">{formatRepositoryDate(doc.updatedAt || doc.createdAt)}</p>
 
-                      <div
-                        className="mypagerepositorydelete-file-img-gather"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <div className="mrfi-file-actions">
                         <button
-                          className="mypagerepositorydelete-restore"
+                          className="mrfi-restore"
                           type="button"
-                          onClick={() => restoreDocFromTrashFolder(doc.id)}
+                          onClick={() => restoreDoc(doc)}
                         >
-                            <img src="/images/icon/reroll.png" alt="복원" />
+                          <img src="/images/icon/reroll.png" alt="복원" />
                         </button>
 
-                        <div className="mypagerepository-file-more-wrap">
+                        <div
+                          className="mrfi-file-more-wrap"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
-                            className="mypagerepositorydelete-ooo-button"
+                            className="mrfi-ooo-button"
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
@@ -288,7 +332,7 @@ function RepositoryTrashFolder() {
                               setMenuDocId(menuDocId === doc.id ? null : doc.id);
                             }}
                           >
-                            <div className="mypagerepositorydelete-ooo">
+                            <div className="mrfi-ooo">
                               <span>•</span>
                               <span>•</span>
                               <span>•</span>
@@ -296,17 +340,11 @@ function RepositoryTrashFolder() {
                           </button>
 
                           {menuDocId === doc.id && (
-                            <div className="folder-menu file-menu-like-folder">
-                              <button
-                                type="button"
-                                onClick={() => restoreDocFromTrashFolder(doc.id)}
-                              >
+                            <div className="mrfi-menu">
+                              <button type="button" onClick={() => restoreDoc(doc)}>
                                 파일만 복원
                               </button>
-                              <button
-                                type="button"
-                                onClick={() => deleteDocForever(doc.id)}
-                              >
+                              <button type="button" onClick={() => purgeDoc(doc)}>
                                 영구 삭제
                               </button>
                             </div>
@@ -324,5 +362,3 @@ function RepositoryTrashFolder() {
     </section>
   );
 }
-
-export default RepositoryTrashFolder;

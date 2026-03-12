@@ -17,6 +17,12 @@
   margin-bottom: 10px;
 }
 
+.Bookmark-header .search {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
 .Bookmark-title {
   margin-left: 220px;
   display: flex;
@@ -43,19 +49,31 @@
   border: 3px solid #3fb5ff;
   border-radius: 4px 0 0 4px;
   padding: 10px;
-  margin-left: 40px;
   color: #2c2c2c;
   font-size: 16px;
+}
+
+.Bookmark-sort-select {
+  height: 62px;
+  min-width: 150px;
+  border-top: 3px solid #3fb5ff;
+  border-bottom: 3px solid #3fb5ff;
+  border-left: none;
+  border-right: none;
+  padding: 0 14px;
+  background: #fff;
+  font-size: 15px;
+  color: #2c2c2c;
 }
 
 .Bookmark-header .search button {
   background: #3fb5ff;
   width: 62px;
   height: 62px;
-  position: absolute;
   border-radius: 0 4px 4px 0;
   border: none;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .Bookmark-header .search button img {
@@ -209,6 +227,11 @@
   text-decoration: none;
   color: inherit;
   min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
 }
 
 .Bookmark-file-gather p,

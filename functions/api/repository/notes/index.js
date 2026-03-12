@@ -1,3 +1,5 @@
+import { ensureMyNoteTable } from "./schema.js";
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -13,6 +15,7 @@ function getUserId(request) {
 export async function onRequestGet({ env, request, url }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  await ensureMyNoteTable(env);
 
   const u = new URL(url);
   const folderIdRaw = u.searchParams.get("folderId");
@@ -20,14 +23,14 @@ export async function onRequestGet({ env, request, url }) {
 
   const stmt = folderId === null
     ? env.D1_DB.prepare(`
-        SELECT note_id, folder_id, user_id, title, content, content_type, created_at, updated_at
+        SELECT note_id, folder_id, user_id, title, content, content_type, created_at, updated_at, COALESCE(is_favorite, 0) AS is_favorite
         FROM my_note
         WHERE user_id = ?
           AND (is_deleted IS NULL OR is_deleted <> 'Y')
         ORDER BY note_id DESC
       `).bind(userId)
     : env.D1_DB.prepare(`
-        SELECT note_id, folder_id, user_id, title, content, content_type, created_at, updated_at
+        SELECT note_id, folder_id, user_id, title, content, content_type, created_at, updated_at, COALESCE(is_favorite, 0) AS is_favorite
         FROM my_note
         WHERE user_id = ?
           AND (is_deleted IS NULL OR is_deleted <> 'Y')
@@ -42,6 +45,7 @@ export async function onRequestGet({ env, request, url }) {
 export async function onRequestPost({ env, request }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  await ensureMyNoteTable(env);
 
   const body = await request.json().catch(() => ({}));
   const folder_id = body.folder_id === undefined || body.folder_id === null || body.folder_id === "" ? null : Number(body.folder_id);

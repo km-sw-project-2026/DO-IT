@@ -23,8 +23,22 @@ async function hasMyFileDisplayNameColumn(env) {
 export async function onRequestGet({ env, request }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  await env.D1_DB.prepare(`
+    CREATE TABLE IF NOT EXISTS my_note (
+      note_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      folder_id INTEGER,
+      user_id INTEGER NOT NULL,
+      title TEXT,
+      content TEXT,
+      content_type TEXT DEFAULT 'html',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      is_deleted TEXT DEFAULT 'N'
+    )
+  `).run();
   const myFolderColumns = await getTableColumns(env, "my_folder");
   const myFileColumns = await getTableColumns(env, "my_file");
+  const myNoteColumns = await getTableColumns(env, "my_note");
   const displayNameSelect = (await hasMyFileDisplayNameColumn(env))
     ? "mf.display_name"
     : "f.origin_name AS display_name";
@@ -77,5 +91,14 @@ export async function onRequestGet({ env, request }) {
     ? await fileStmt.bind(userId).all()
     : await fileStmt.all();
 
-  return json({ trash: { folders: folders.results, files: files.results } });
+  const notes = myNoteColumns.has("is_deleted")
+    ? await env.D1_DB.prepare(`
+        SELECT note_id, folder_id, title, updated_at, created_at
+        FROM my_note
+        WHERE user_id = ? AND is_deleted = 'Y'
+        ORDER BY updated_at DESC, note_id DESC
+      `).bind(userId).all()
+    : { results: [] };
+
+  return json({ trash: { folders: folders.results, files: files.results, notes: notes.results } });
 }

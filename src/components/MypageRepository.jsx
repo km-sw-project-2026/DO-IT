@@ -3,25 +3,14 @@ import { data } from "../js/MypageRepository.js";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
-import { apiGetFolders, apiGetFiles, apiCreateFolder, apiGetTrash, apiRenameFolder, apiDeleteFolder, apiRenameFile, apiDeleteFile } from "../api/repository";
-
+import { getMainFolderIds, setMainFolderIds, toggleMainFolderIds } from "../utils/repositoryMainFolders";
+import { setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
+import { getRecentCreatedDoc } from "../utils/repositoryRecentCreated";
+import { formatRepositoryDate } from "../utils/repositoryDate";
+import { sortRepositoryItems } from "../utils/repositorySort";
+import { apiGetFolders, apiGetFiles, apiGetNotes, apiCreateFolder, apiGetTrash, apiRenameFolder, apiDeleteFolder, apiDeleteFile, apiDeleteNote, apiMoveFile, apiMoveNote, apiSetFileFavorite, apiSetNoteFavorite } from "../api/repository";
 const LS_FOLDERS = "doit_repository_folders_v1";
 const LS_DOCS = "doit_repository_docs_v1";
-
-function safeParse(value, fallback) {
-  try {
-    const v = JSON.parse(value);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function formatDate(value) {
-  if (!value) return "-";
-  const d = new Date(value);
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
 
 function MypageRepositoryBtn({ btn }) {
   return (
@@ -57,6 +46,9 @@ function MypageRepository() {
 
   const [draggingDocId, setDraggingDocId] = useState(null);
   const [dragOverFolderId, setDragOverFolderId] = useState(null);
+  const [selectedDocIds, setSelectedDocIds] = useState([]);
+  const [mainFolderIds, setMainFolderIdsState] = useState(() => getMainFolderIds());
+  const [recentCreatedDoc, setRecentCreatedDocState] = useState(() => getRecentCreatedDoc());
 
   const [folders, setFolders] = useState([]);
   const [docs, setDocs] = useState([]);
@@ -64,16 +56,17 @@ function MypageRepository() {
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [keyword, setKeyword] = useState("");
-  const [initialized, setInitialized] = useState(false);
-
+  const [sortKey, setSortKey] = useState("latest");
   useEffect(() => {
     if (!userId) return;
 
     async function loadData() {
       try {
-        const [foldersRes, trashRes] = await Promise.all([
+        const [foldersRes, trashRes, rootFiles, rootNotes] = await Promise.all([
           apiGetFolders(userId, null),
           apiGetTrash(userId),
+          apiGetFiles(userId, null),
+          apiGetNotes(userId, null),
         ]);
 
         const folderList = (foldersRes.folders || []).map((f) => ({
@@ -87,29 +80,62 @@ function MypageRepository() {
 
         const trashFolderIds = new Set((trashRes.trash?.folders || []).map((f) => f.folder_id));
 
-        const rootFiles = await apiGetFiles(userId, null);
         const fileList = (rootFiles.files || []).map((f) => ({
-          id: f.my_file_id,
+          id: `file-${f.my_file_id}`,
+          resourceId: f.my_file_id,
           folderId: f.folder_id,
           title: f.display_name || f.origin_name,
           name: f.display_name || f.origin_name,
           createdAt: f.added_at || f.uploaded_at,
+          updatedAt: f.added_at || f.uploaded_at,
           isDeleted: false,
-          isFavorite: false,
+          isFavorite: Boolean(f.is_favorite),
           deletedAt: null,
+          docType: "file",
+          fileType: f.file_type || ".file",
+          fileSize: f.file_size || "-",
+          filePath: f.file_path || "",
+          html: "",
+        }));
+
+        const noteList = (rootNotes || []).map((note) => ({
+          id: String(note.note_id),
+          resourceId: note.note_id,
+          folderId: note.folder_id,
+          title: note.title || "제목 없음",
+          name: note.title || "제목 없음",
+          createdAt: note.created_at,
+          updatedAt: note.updated_at || note.created_at,
+          isDeleted: false,
+          isFavorite: Boolean(note.is_favorite),
+          deletedAt: null,
+          docType: "note",
+          fileType: ".html",
+          fileSize: "-",
+          html: note.content || "",
         }));
 
         setFolders(folderList.filter((f) => !trashFolderIds.has(f.id)));
-        setDocs(fileList);
-        setInitialized(true);
+        setDocs([...noteList, ...fileList]);
       } catch (e) {
         console.warn("Failed to load repository data:", e);
-        setInitialized(true);
       }
     }
 
     loadData();
   }, [userId]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_FOLDERS, JSON.stringify(folders));
+  }, [folders]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_DOCS, JSON.stringify(docs));
+  }, [docs]);
+
+  useEffect(() => {
+    setMainFolderIds(mainFolderIds);
+  }, [mainFolderIds]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -139,6 +165,15 @@ function MypageRepository() {
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
+  }, []);
+
+  useEffect(() => {
+    const onStorage = () => {
+      setRecentCreatedDocState(getRecentCreatedDoc());
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const addFolder = async () => {
@@ -216,6 +251,7 @@ function MypageRepository() {
             : folder
         )
       );
+      setMainFolderIdsState((prev) => prev.filter((folderId) => folderId !== id));
 
       setDocs((prev) =>
         prev.map((doc) =>
@@ -239,12 +275,42 @@ function MypageRepository() {
     setMenuFolderId(null);
   };
 
-  const toggleFavorite = (id) => {
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
-      )
-    );
+  const toggleFavorite = async (id) => {
+    const targetDoc = docs.find((doc) => doc.id === id);
+    if (!targetDoc) return;
+
+    const nextFavorite = !targetDoc.isFavorite;
+
+    try {
+      if (targetDoc.docType === "note") {
+        await apiSetNoteFavorite(userId, targetDoc.resourceId, nextFavorite);
+      } else {
+        await apiSetFileFavorite(userId, targetDoc.resourceId, nextFavorite);
+      }
+
+      setDocs((prev) =>
+        prev.map((doc) =>
+          doc.id === id ? { ...doc, isFavorite: nextFavorite } : doc
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to toggle favorite:", e);
+      alert("즐겨찾기 변경에 실패했습니다.");
+    }
+  };
+
+  const toggleMainFolder = (folderId) => {
+    const { nextIds, changed, limited } = toggleMainFolderIds(mainFolderIds, folderId);
+
+    if (limited) {
+      alert("메인 페이지 바로가기는 폴더 3개까지 선택할 수 있습니다.");
+      return;
+    }
+
+    if (!changed) return;
+
+    setMainFolderIdsState(nextIds);
+    setMenuFolderId(null);
   };
 
   const moveDocToTrash = async (id) => {
@@ -252,7 +318,15 @@ function MypageRepository() {
     if (!ok) return;
 
     try {
-      await apiDeleteFile(userId, id);
+      const targetDoc = docs.find((doc) => doc.id === id);
+      if (!targetDoc) return;
+
+      if (targetDoc.docType === "note") {
+        await apiDeleteNote(userId, targetDoc.resourceId);
+      } else {
+        await apiDeleteFile(userId, targetDoc.resourceId);
+      }
+
       const now = new Date().toISOString();
 
       setDocs((prev) =>
@@ -283,53 +357,127 @@ function MypageRepository() {
     setMenuDocId(null);
   };
 
-  const moveDoc = () => {
+  const moveDoc = async () => {
     if (!movingDocId) return;
+
+    const targetDoc = docs.find((doc) => doc.id === movingDocId);
+    if (!targetDoc) return;
 
     const targetId = Number(moveTargetFolderId);
     if (!targetId) return;
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === movingDocId
-          ? {
-              ...doc,
-              folderId: targetId,
-              updatedAt: new Date().toISOString(),
-            }
-          : doc
-      )
-    );
+    try {
+      if (targetDoc.docType === "note") {
+        await apiMoveNote(userId, targetDoc.resourceId, targetId);
+      } else {
+        await apiMoveFile(userId, targetDoc.resourceId, targetId);
+      }
+      setDocs((prev) =>
+        prev.map((doc) =>
+          doc.id === movingDocId
+            ? {
+                ...doc,
+                folderId: targetId,
+                updatedAt: new Date().toISOString(),
+              }
+            : doc
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to move doc:", e);
+      alert("파일 이동에 실패했습니다.");
+      return;
+    }
 
     setMovingDocId(null);
     setMoveTargetFolderId("");
   };
 
-  const moveDocToFolder = (docId, folderId) => {
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === docId
-          ? {
-              ...doc,
-              folderId,
-              updatedAt: new Date().toISOString(),
-            }
-          : doc
-      )
+  const moveDocToFolder = async (docId, folderId) => {
+    const targetDoc = docs.find((doc) => doc.id === docId);
+    if (!targetDoc) return;
+
+    try {
+      if (targetDoc.docType === "note") {
+        await apiMoveNote(userId, targetDoc.resourceId, folderId);
+      } else {
+        await apiMoveFile(userId, targetDoc.resourceId, folderId);
+      }
+      setDocs((prev) =>
+        prev.map((doc) =>
+          doc.id === docId
+            ? {
+                ...doc,
+                folderId,
+                updatedAt: new Date().toISOString(),
+              }
+            : doc
+        )
+      );
+    } catch (e) {
+      console.warn("Failed to move doc to folder:", e);
+      alert("파일 이동에 실패했습니다.");
+    }
+  };
+
+  const downloadDoc = (doc) => {
+    if (doc.docType === "file") {
+      if (!doc.filePath) {
+        alert("이 업로드 파일은 지금 바로 다운로드할 수 없어요.");
+        return;
+      }
+
+      const link = document.createElement("a");
+      setRecentOpenedDoc({
+        id: doc.id,
+        title: doc.title,
+        docType: "file",
+        filePath: doc.filePath,
+      });
+      link.href = doc.filePath;
+      link.download = doc.title || "file";
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.click();
+      return;
+    }
+
+    const blob = new Blob(
+      [
+        `<!doctype html><html><head><meta charset="utf-8"><title>${doc.title}</title></head><body>${doc.html || ""}</body></html>`,
+      ],
+      { type: "text/html;charset=utf-8" }
     );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${doc.title || "document"}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const isFavoritePage = location.pathname.includes("favorite");
   const isTrashPage = location.pathname.includes("trash");
+  const isRepositoryHome = !isTrashPage && !isFavoritePage;
 
   const visibleFolders = useMemo(() => {
-    return folders
+    const q = keyword.trim().toLowerCase();
+
+    const result = folders
       .map((folder) => ({
         ...folder,
         isDeleted: folder.isDeleted ?? false,
       }))
-      .filter((folder) => folder.parentId === null && !folder.isDeleted);
-  }, [folders]);
+      .filter((folder) => folder.parentId === null && !folder.isDeleted)
+      .filter((folder) =>
+        !q || (folder.name || "").toLowerCase().includes(q)
+      );
+
+    return sortRepositoryItems(result, sortKey, {
+      nameField: "name",
+      dateField: "createdAt",
+    });
+  }, [folders, keyword, sortKey]);
 
   const filteredDocs = useMemo(() => {
     let result = docs.map((doc) => ({
@@ -363,8 +511,116 @@ function MypageRepository() {
       );
     }
 
-    return result;
-  }, [docs, keyword, isFavoritePage, isTrashPage]);
+    return sortRepositoryItems(result, sortKey, {
+      nameField: "title",
+      dateField: "updatedAt",
+    });
+  }, [docs, keyword, isFavoritePage, isTrashPage, sortKey]);
+
+  const selectableDocs = useMemo(() => {
+    return filteredDocs;
+  }, [filteredDocs]);
+
+  const isAllSelected =
+    selectableDocs.length > 0 &&
+    selectableDocs.every((doc) => selectedDocIds.includes(doc.id));
+
+  const toggleSelectDoc = (docId) => {
+    setSelectedDocIds((prev) =>
+      prev.includes(docId)
+        ? prev.filter((id) => id !== docId)
+        : [...prev, docId]
+    );
+  };
+
+  const toggleSelectAllDocs = () => {
+    if (isAllSelected) {
+      setSelectedDocIds([]);
+      return;
+    }
+    setSelectedDocIds(selectableDocs.map((doc) => doc.id));
+  };
+
+  const moveSelectedDocsToTrash = async () => {
+    if (selectedDocIds.length === 0) return;
+    const ok = window.confirm(`${selectedDocIds.length}개의 파일을 휴지통으로 이동할까요?`);
+    if (!ok) return;
+
+    try {
+      const targets = docs.filter((doc) => selectedDocIds.includes(doc.id));
+      await Promise.all(
+        targets.map((doc) =>
+          doc.docType === "note"
+            ? apiDeleteNote(userId, doc.resourceId)
+            : apiDeleteFile(userId, doc.resourceId)
+        )
+      );
+      const now = new Date().toISOString();
+      setDocs((prev) =>
+        prev.map((doc) =>
+          selectedDocIds.includes(doc.id)
+            ? {
+                ...doc,
+                isDeleted: true,
+                deletedAt: now,
+                updatedAt: now,
+                deletedByFolder: false,
+                originFolderId: doc.folderId ?? null,
+              }
+            : doc
+        )
+      );
+      setSelectedDocIds([]);
+    } catch (e) {
+      console.warn("Failed to move selected docs to trash:", e);
+      alert("파일 이동에 실패했습니다.");
+    }
+  };
+
+  const moveSelectedDocs = async () => {
+    if (selectedDocIds.length === 0) return;
+    const targetFolderId = window.prompt(
+      "이동할 폴더 ID를 입력하세요.\n" + visibleFolders.map((folder) => `${folder.name}: ${folder.id}`).join("\n")
+    );
+    if (!targetFolderId) return;
+
+    const targetId = Number(targetFolderId);
+    if (!targetId) {
+      alert("유효한 폴더 ID를 입력하세요.");
+      return;
+    }
+
+    if (!visibleFolders.some((folder) => folder.id === targetId)) {
+      alert("해당 폴더가 없습니다.");
+      return;
+    }
+
+    try {
+      const targets = docs.filter((doc) => selectedDocIds.includes(doc.id));
+      await Promise.all(
+        targets.map((doc) =>
+          doc.docType === "note"
+            ? apiMoveNote(userId, doc.resourceId, targetId)
+            : apiMoveFile(userId, doc.resourceId, targetId)
+        )
+      );
+      setDocs((prev) =>
+        prev.map((doc) =>
+          selectedDocIds.includes(doc.id)
+            ? {
+                ...doc,
+                folderId: targetId,
+                updatedAt: new Date().toISOString(),
+              }
+            : doc
+        )
+      );
+      setSelectedDocIds([]);
+    } catch (e) {
+      console.warn("Failed to move selected docs:", e);
+      alert("파일 이동에 실패했습니다.");
+    }
+  };
 
   return (
     <section>
@@ -383,6 +639,17 @@ function MypageRepository() {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
+              <select
+                className="mr-sort-select"
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value)}
+                aria-label="정렬"
+              >
+                <option value="latest">최신순</option>
+                <option value="oldest">오래된순</option>
+                <option value="name_asc">이름 오름차순</option>
+                <option value="name_desc">이름 내림차순</option>
+              </select>
               <button type="button">
                 <img src="/images/icon/search1.png" alt="검색" />
               </button>
@@ -482,7 +749,7 @@ function MypageRepository() {
                             }}
                             onDrop={(e) => {
                               e.preventDefault();
-                              const docId = Number(e.dataTransfer.getData("docId"));
+                              const docId = e.dataTransfer.getData("docId");
                               if (!docId) return;
                               moveDocToFolder(docId, f.id);
                               setDraggingDocId(null);
@@ -494,6 +761,9 @@ function MypageRepository() {
                               className="mr-folder-card-link"
                             >
                               <div className="mypagerepository-bg">
+                                {mainFolderIds.includes(f.id) && (
+                                  <span className="mypagerepository-folder-badge">메인</span>
+                                )}
                                 <img src="/images/icon/folder.png" alt="" />
                                 <p>{f.name}</p>
                               </div>
@@ -519,6 +789,19 @@ function MypageRepository() {
                                 className="folder-menu"
                                 onClick={(e) => e.stopPropagation()}
                               >
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    toggleMainFolder(f.id);
+                                  }}
+                                >
+                                  {mainFolderIds.includes(f.id)
+                                    ? "메인 바로가기 해제"
+                                    : "메인 바로가기 추가"}
+                                </button>
+
                                 <button
                                   type="button"
                                   onClick={(e) => {
@@ -611,10 +894,33 @@ function MypageRepository() {
                     </div>
                   )}
 
+                  {selectedDocIds.length > 0 && (
+                    <div className="mr-batch-actions">
+                      <span>{selectedDocIds.length}개 선택됨</span>
+                      <button type="button" onClick={moveSelectedDocs}>
+                        이동
+                      </button>
+                      <button type="button" onClick={moveSelectedDocsToTrash}>
+                        휴지통
+                      </button>
+                      <button type="button" onClick={() => setSelectedDocIds([])}>
+                        선택 해제
+                      </button>
+                    </div>
+                  )}
+
                   {isFileOpen && (
                     <div className="mr-slide open">
                       <div className="mypagerepository-file-list">
                         <div className="mypagerepository-file-name">
+                          <label className="mr-checkbox-col">
+                            <input
+                              type="checkbox"
+                              checked={isAllSelected}
+                              onChange={toggleSelectAllDocs}
+                            />
+                            <span className="mr-select-all-label">전체 선택</span>
+                          </label>
                           <p>이름</p>
                           <p className="mr-col-date">날짜</p>
                           <span className="mr-col-actions" />
@@ -634,11 +940,14 @@ function MypageRepository() {
                               key={doc.id}
                               className={`mypagerepository-file-suggestion ${
                                 draggingDocId === doc.id ? "dragging-doc" : ""
+                              } ${
+                                selectedDocIds.includes(doc.id) ? "selected" : ""
                               }`}
                               draggable
                               onDragStart={(e) => {
                                 setDraggingDocId(doc.id);
                                 e.dataTransfer.setData("docId", String(doc.id));
+                                e.dataTransfer.setData("text/plain", String(doc.id));
                                 e.dataTransfer.effectAllowed = "move";
                               }}
                               onDragEnd={() => {
@@ -646,58 +955,99 @@ function MypageRepository() {
                                 setDragOverFolderId(null);
                               }}
                             >
+                              <div className="mr-file-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedDocIds.includes(doc.id)}
+                                  onChange={() => toggleSelectDoc(doc.id)}
+                                  onClick={(e) => e.stopPropagation()}
+                                  onMouseDown={(e) => e.stopPropagation()}
+                                />
+                              </div>
                               <div className="mypagerepository-file-gather">
-                                <Link
-                                  to={`/doc-view/${doc.id}`}
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "10px",
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                  }}
-                                >
-                                  <button type="button">
-                                    <img src="/images/icon/img.png" alt="" />
+                                {doc.docType === "note" ? (
+                                  <Link
+                                    to={`/doc-view/${doc.id}`}
+                                    draggable={false}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                      textDecoration: "none",
+                                      color: "inherit",
+                                    }}
+                                  >
+                                    <button type="button" draggable={false}>
+                                      <img src="/images/icon/img.png" alt="" draggable={false} />
+                                    </button>
+                                    <p>{doc.title || "제목 없음"}</p>
+                                    {isRepositoryHome &&
+                                    recentCreatedDoc?.id &&
+                                    String(recentCreatedDoc.id) === String(doc.id) ? (
+                                      <span className="mypagerepository-file-badge is-new">신규</span>
+                                    ) : null}
+                                  </Link>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    draggable={false}
+                                    onClick={() => downloadDoc(doc)}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                      textDecoration: "none",
+                                      color: "inherit",
+                                      background: "transparent",
+                                      border: "none",
+                                      padding: 0,
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <img src="/images/icon/img.png" alt="" draggable={false} />
+                                    <p>{doc.title || "제목 없음"}</p>
+                                    {isRepositoryHome &&
+                                    recentCreatedDoc?.id &&
+                                    String(recentCreatedDoc.id) === String(doc.id) ? (
+                                      <span className="mypagerepository-file-badge is-new">신규</span>
+                                    ) : null}
                                   </button>
-                                  <p>{doc.title || "제목 없음"}</p>
-                                </Link>
+                                )}
                               </div>
 
                               <p className="mr-date">
-                                {formatDate(doc.updatedAt || doc.createdAt)}
+                                {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
                               </p>
 
                               <div className="mypagerepository-file-actions">
                                 <button
                                   className="mypagerepository-download"
                                   type="button"
-                                  onClick={() => {
-                                    const blob = new Blob(
-                                      [
-                                        `<!doctype html><html><head><meta charset="utf-8"><title>${doc.title}</title></head><body>${doc.html || ""}</body></html>`,
-                                      ],
-                                      { type: "text/html;charset=utf-8" }
-                                    );
-                                    const url = URL.createObjectURL(blob);
-                                    const a = document.createElement("a");
-                                    a.href = url;
-                                    a.download = `${doc.title || "document"}.html`;
-                                    a.click();
-                                    URL.revokeObjectURL(url);
-                                  }}
+                                  onClick={() => downloadDoc(doc)}
                                 >
                                   <img src="/images/icon/download.png" alt="" />
                                 </button>
 
-                                <Link to={`/doc-edit/${doc.id}`}>
+                                {doc.docType === "note" ? (
+                                  <Link to={`/doc-edit/${doc.id}`} draggable={false}>
+                                    <button
+                                      className="mypagerepository-pan"
+                                      type="button"
+                                      draggable={false}
+                                    >
+                                      <img src="/images/icon/pan.png" alt="" draggable={false} />
+                                    </button>
+                                  </Link>
+                                ) : (
                                   <button
                                     className="mypagerepository-pan"
                                     type="button"
+                                    disabled
+                                    title="업로드 파일은 편집할 수 없어요."
                                   >
-                                    <img src="/images/icon/pan.png" alt="" />
+                                    <img src="/images/icon/pan.png" alt="" draggable={false} />
                                   </button>
-                                </Link>
+                                )}
 
                                 <button
                                   className="mypagerepository-star"
@@ -712,6 +1062,7 @@ function MypageRepository() {
                                         : "/images/icon/star.png"
                                     }
                                     alt="즐겨찾기"
+                                    draggable={false}
                                   />
                                 </button>
 

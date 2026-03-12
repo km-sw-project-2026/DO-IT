@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../utils/auth";
-import { apiCreateNote, apiUpdateNote } from "../api/repository";
+import { apiCreateNote, apiGetNote, apiUpdateNote } from "../api/repository";
+import { setRecentCreatedDoc } from "../utils/repositoryRecentCreated";
+import { formatRepositoryDateTime } from "../utils/repositoryDate";
 import "../css/DocEditor.css";
 
 const LS_DOCS = "doit_repository_docs_v1";
@@ -20,12 +22,21 @@ export default function DocEditor() {
   const savedRangeRef = useRef(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
+  const searchParams = new URLSearchParams(location.search);
+  const folderIdParam = searchParams.get("folderId");
+  const initialTitleParam = searchParams.get("title");
+  const targetFolderId =
+    folderIdParam === null || folderIdParam === ""
+      ? null
+      : Number(folderIdParam);
 
   const [title, setTitle] = useState("새 문서");
   const [savedAt, setSavedAt] = useState(null);
   const [status, setStatus] = useState("");
   const [isTemplate, setIsTemplate] = useState(true);
+  const [currentFolderId, setCurrentFolderId] = useState(targetFolderId);
 
   const [fontSize, setFontSize] = useState("16");
   const [textColor, setTextColor] = useState("#111111");
@@ -39,27 +50,54 @@ export default function DocEditor() {
   });
 
   useEffect(() => {
-    const docs = safeParse(localStorage.getItem(LS_DOCS), []);
+    let cancelled = false;
 
-    if (id) {
-      const found = docs.find((doc) => String(doc.id) === String(id));
-      if (found && editorRef.current) {
-        setTitle(found.title || "제목 없음");
-        editorRef.current.innerHTML = found.html || "<p></p>";
-        setSavedAt(found.updatedAt || found.createdAt || null);
-        setIsTemplate(false);
-        return;
+    async function loadDoc() {
+      const docs = safeParse(localStorage.getItem(LS_DOCS), []);
+
+      if (id) {
+        const found = docs.find((doc) => String(doc.id) === String(id));
+        if (found && editorRef.current) {
+          setTitle(found.title || "제목 없음");
+          editorRef.current.innerHTML = found.html || "<p></p>";
+          setSavedAt(found.updatedAt || found.createdAt || null);
+          setCurrentFolderId(found.folderId ?? null);
+          setIsTemplate(false);
+          return;
+        }
+
+        const me = getCurrentUser();
+        if (me?.user_id) {
+          const note = await apiGetNote(me.user_id, id);
+          if (!cancelled && note && editorRef.current) {
+            setTitle(note.title || "제목 없음");
+            editorRef.current.innerHTML = note.content || "<p></p>";
+            setSavedAt(note.updated_at || note.created_at || null);
+            setCurrentFolderId(note.folder_id ?? null);
+            setIsTemplate(false);
+            return;
+          }
+        }
+      }
+
+      if (!cancelled && editorRef.current) {
+        editorRef.current.innerHTML = `
+          <h1>문서 제목</h1>
+          <p>여기에 글을 작성해보세요.</p>
+        `;
+        if (initialTitleParam) {
+          setTitle(initialTitleParam);
+        }
+        setCurrentFolderId(targetFolderId);
+        setIsTemplate(true);
       }
     }
 
-    if (editorRef.current) {
-      editorRef.current.innerHTML = `
-        <h1>문서 제목</h1>
-        <p>여기에 글을 작성해보세요.</p>
-      `;
-      setIsTemplate(true);
-    }
-  }, [id]);
+    loadDoc();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, initialTitleParam, targetFolderId]);
 
   const showStatus = (msg) => {
     setStatus(msg);
@@ -420,17 +458,70 @@ export default function DocEditor() {
     const html = editorRef.current.innerHTML;
 
     try {
+      let savedId = id;
+      const effectiveFolderId = id ? currentFolderId : targetFolderId;
+
       if (id) {
         await apiUpdateNote(me.user_id, id, title, html);
       } else {
-        await apiCreateNote(me.user_id, null, title, html, "html");
+        const created = await apiCreateNote(me.user_id, targetFolderId, title, html, "html");
+        savedId = created?.note_id ?? savedId;
+        setCurrentFolderId(targetFolderId);
+        setRecentCreatedDoc({
+          id: savedId,
+          title,
+          docType: "note",
+          createdAt: now,
+        });
       }
+
+      const docs = safeParse(localStorage.getItem(LS_DOCS), []);
+      const nextDoc = {
+        id: String(savedId),
+        title,
+        html,
+        folderId: effectiveFolderId,
+        createdAt: now,
+        updatedAt: now,
+        isDeleted: false,
+        isFavorite: false,
+        docType: "note",
+        fileType: ".html",
+        fileSize: "-",
+      };
+
+      const existingDoc = docs.find((doc) => String(doc.id) === String(savedId));
+      const nextDocs = existingDoc
+        ? docs.map((doc) =>
+            String(doc.id) === String(savedId)
+              ? {
+                  ...doc,
+                  ...nextDoc,
+                  createdAt: doc.createdAt || now,
+                }
+              : doc
+          )
+        : [nextDoc, ...docs];
+
+      localStorage.setItem(LS_DOCS, JSON.stringify(nextDocs));
+      localStorage.setItem(
+        "doit_latest_note",
+        JSON.stringify({
+          note_id: savedId,
+          title,
+          created_at: now,
+        })
+      );
 
       setSavedAt(now);
       showStatus("저장됨!");
 
       setTimeout(() => {
-        navigate("/mypagerepository");
+        navigate(
+          effectiveFolderId
+            ? `/repository/folder/${effectiveFolderId}`
+            : "/mypagerepository"
+        );
       }, 500);
     } catch (e) {
       console.error("保存 실패:", e);
@@ -651,7 +742,7 @@ export default function DocEditor() {
       <div className="doc-footer">
         <span className="doc-status">{status}</span>
         <span className="doc-saved">
-          {savedAt ? `마지막 저장: ${new Date(savedAt).toLocaleString()}` : "저장 기록 없음"}
+          {savedAt ? `마지막 저장: ${formatRepositoryDateTime(savedAt)}` : "저장 기록 없음"}
         </span>
       </div>
     </div>

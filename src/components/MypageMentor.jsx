@@ -1,5 +1,5 @@
 import "../css/MypageMentor.css";
-import Mypagedata from "./Mypagedata.jsx";
+import MypageRepositorySummary from "./MypageRepositorySummary.jsx";
 import MypageCommunity from "./MypageCommunity.jsx";
 import {ProfileSetting} from "./ProfileSetting.jsx";
 import { Link } from "react-router-dom";
@@ -64,21 +64,7 @@ export default function MypageMentor() {
                     </div>
                     <div className="mypage-data">
                         <h2 className="mypage-contents-title">내 자료함</h2>
-                        <Link to="/mypagerepository">
-                            <div className="mypage-data-box">
-                                <div className="mypage-data-contents">
-                                    <div className="mypage-data-title">
-                                        <h2>자료함</h2>
-                                    </div>
-                                    <div className="mypage-data-main">
-                                        <Mypagedata />
-                                        <Mypagedata />
-                                        <Mypagedata />
-                                        <Mypagedata />
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
+                        <MypageRepositorySummary />
                     </div>
                 </div>
             </div>

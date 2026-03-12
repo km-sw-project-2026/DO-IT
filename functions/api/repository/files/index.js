@@ -1,3 +1,5 @@
+import { ensureMyFileSchema, hasMyFileDisplayNameColumn } from "./schema.js";
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -10,14 +12,10 @@ function getUserId(request) {
   return id ? id : null;
 }
 
-async function hasMyFileDisplayNameColumn(env) {
-  const { results } = await env.D1_DB.prepare("PRAGMA table_info(my_file)").all();
-  return (results || []).some((column) => column.name === "display_name");
-}
-
 export async function onRequestGet({ env, request, url }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  await ensureMyFileSchema(env);
 
   const u = new URL(url);
   const folderIdStr = u.searchParams.get("folderId");
@@ -35,6 +33,7 @@ export async function onRequestGet({ env, request, url }) {
         mf.my_file_id,
         mf.folder_id,
         mf.created_at AS added_at,
+        COALESCE(mf.is_favorite, 0) AS is_favorite,
         ${displayNameSelect},
         f.file_id,
         f.origin_name,
@@ -56,6 +55,7 @@ export async function onRequestGet({ env, request, url }) {
         mf.my_file_id,
         mf.folder_id,
         mf.created_at AS added_at,
+        COALESCE(mf.is_favorite, 0) AS is_favorite,
         ${displayNameSelect},
         f.file_id,
         f.origin_name,

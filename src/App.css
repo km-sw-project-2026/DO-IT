@@ -595,6 +595,15 @@ main {
   gap: 8px;
 }
 
+.main-page-file-open {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
 .main-page-file-item a img {
   width: 20px;
   height: 20px;

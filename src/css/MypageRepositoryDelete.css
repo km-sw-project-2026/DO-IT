@@ -17,6 +17,12 @@
   margin-bottom: 10px;
 }
 
+.mypagerepositorydelete-header .search {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
 .mypagerepositorydelete-title {
   margin-left: 220px;
   display: flex;
@@ -39,9 +45,21 @@
   border: 3px solid #3fb5ff;
   border-radius: 4px 0 0 4px;
   padding: 10px;
-  margin-left: 40px;
   color: #2c2c2c;
   font-size: 16px;
+}
+
+.mypagerepositorydelete-sort-select {
+  height: 62px;
+  min-width: 150px;
+  border-top: 3px solid #3fb5ff;
+  border-bottom: 3px solid #3fb5ff;
+  border-left: none;
+  border-right: none;
+  padding: 0 14px;
+  background: #fff;
+  font-size: 15px;
+  color: #2c2c2c;
 }
 
 .mypagerepositorydelete-header .search input:focus {
@@ -52,10 +70,10 @@
   background: #3fb5ff;
   width: 62px;
   height: 62px;
-  position: absolute;
   border-radius: 0 4px 4px 0;
   border: none;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .mypagerepositorydelete-header .search button img {
@@ -280,7 +298,19 @@
 }
 
 .mypagerepositorydelete-file-topbar {
-  padding: 0 40px 16px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 40px 12px 40px;
+  border-bottom: 1px solid #c4c4c4;
+}
+
+.mypagerepositorydelete-file-topbar .trash-select-all {
+  flex-shrink: 0;
+}
+
+.mypagerepositorydelete-file-topbar .trash-empty-btn {
+  margin-left: auto;
 }
 
 .trash-back-link {

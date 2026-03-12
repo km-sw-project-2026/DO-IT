@@ -3,25 +3,17 @@ import { data } from "../js/MypageRepository.js";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
-import { apiGetTrash, apiDeleteFolder, apiDeleteFile } from "../api/repository";
-
-const LS_FOLDERS = "doit_repository_folders_v1";
-const LS_DOCS = "doit_repository_docs_v1";
-
-function safeParse(value, fallback) {
-  try {
-    const v = JSON.parse(value);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function formatDate(value) {
-  if (!value) return "-";
-  const d = new Date(value);
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
+import { formatRepositoryDate } from "../utils/repositoryDate";
+import { sortRepositoryItems } from "../utils/repositorySort";
+import {
+  apiGetTrash,
+  apiPurgeTrashFile,
+  apiPurgeTrashFolder,
+  apiPurgeTrashNote,
+  apiRestoreTrashFile,
+  apiRestoreTrashFolder,
+  apiRestoreTrashNote,
+} from "../api/repository";
 
 function MypageRepositoryBtn({ btn }) {
   return (
@@ -48,30 +40,58 @@ function MypageRepositoryDelete() {
   const [keyword, setKeyword] = useState("");
   const [menuFolderId, setMenuFolderId] = useState(null);
   const [menuDocId, setMenuDocId] = useState(null);
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [sortKey, setSortKey] = useState("latest");
 
-  const [folders, setFolders] = useState(() =>
-    safeParse(localStorage.getItem(LS_FOLDERS), [])
-  );
-  const [docs, setDocs] = useState(() =>
-    safeParse(localStorage.getItem(LS_DOCS), [])
-  );
+  const [folders, setFolders] = useState([]);
+  const [docs, setDocs] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem(LS_FOLDERS, JSON.stringify(folders));
-  }, [folders]);
+    if (!userId) return;
 
-  useEffect(() => {
-    localStorage.setItem(LS_DOCS, JSON.stringify(docs));
-  }, [docs]);
+    async function loadTrash() {
+      try {
+        const res = await apiGetTrash(userId);
+        const trashFolders = (res.trash?.folders || []).map((folder) => ({
+          id: folder.folder_id,
+          name: folder.folder_name,
+          parentId: folder.parent_id,
+          createdAt: folder.created_at,
+          deletedAt: folder.deleted_at,
+          isDeleted: true,
+        }));
+        const trashFiles = (res.trash?.files || []).map((file) => ({
+          id: `file-${file.my_file_id}`,
+          resourceId: file.my_file_id,
+          folderId: file.folder_id,
+          title: file.display_name || file.origin_name,
+          createdAt: file.deleted_at,
+          updatedAt: file.deleted_at,
+          deletedAt: file.deleted_at,
+          docType: "file",
+          isDeleted: true,
+        }));
+        const trashNotes = (res.trash?.notes || []).map((note) => ({
+          id: `note-${note.note_id}`,
+          resourceId: note.note_id,
+          folderId: note.folder_id,
+          title: note.title || "제목 없음",
+          createdAt: note.updated_at || note.created_at,
+          updatedAt: note.updated_at || note.created_at,
+          deletedAt: note.updated_at || note.created_at,
+          docType: "note",
+          isDeleted: true,
+        }));
 
-  useEffect(() => {
-    const onStorage = () => {
-      setFolders(safeParse(localStorage.getItem(LS_FOLDERS), []));
-      setDocs(safeParse(localStorage.getItem(LS_DOCS), []));
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+        setFolders(trashFolders);
+        setDocs([...trashNotes, ...trashFiles]);
+      } catch (e) {
+        console.warn("Failed to load trash data:", e);
+      }
+    }
+
+    loadTrash();
+  }, [userId]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -99,19 +119,22 @@ function MypageRepositoryDelete() {
       );
     }
 
-    return result;
-  }, [folders, keyword]);
+    return sortRepositoryItems(result, sortKey, {
+      nameField: "name",
+      dateField: "deletedAt",
+    });
+  }, [folders, keyword, sortKey]);
 
   const trashRootDocs = useMemo(() => {
     const q = keyword.trim().toLowerCase();
+    const trashFolderIds = new Set(trashFolders.map((folder) => folder.id));
 
     let result = docs
       .map((doc) => ({
         ...doc,
         isDeleted: doc.isDeleted ?? false,
-        deletedByFolder: doc.deletedByFolder ?? false,
       }))
-      .filter((doc) => doc.isDeleted && !doc.deletedByFolder);
+      .filter((doc) => doc.isDeleted && !trashFolderIds.has(doc.folderId));
 
     if (q) {
       result = result.filter((doc) =>
@@ -119,83 +142,193 @@ function MypageRepositoryDelete() {
       );
     }
 
-    return result;
-  }, [docs, keyword]);
+    return sortRepositoryItems(result, sortKey, {
+      nameField: "title",
+      dateField: "deletedAt",
+    });
+  }, [docs, keyword, trashFolders, sortKey]);
 
-  const restoreFolder = (folderId) => {
-    const now = new Date().toISOString();
+  const collectFolderTreeIds = (rootFolderId) => {
+    const collected = new Set();
+    const queue = [rootFolderId];
 
-    setFolders((prev) =>
-      prev.map((folder) =>
-        folder.id === folderId
-          ? { ...folder, isDeleted: false, deletedAt: null }
-          : folder
-      )
-    );
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (!currentId || collected.has(currentId)) continue;
+      collected.add(currentId);
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.deletedByFolder && doc.originFolderId === folderId
-          ? {
-              ...doc,
-              isDeleted: false,
-              deletedAt: null,
-              updatedAt: now,
-              folderId: folderId,
-              deletedByFolder: false,
-            }
-          : doc
-      )
-    );
+      folders
+        .filter((folder) => folder.parentId === currentId)
+        .forEach((folder) => queue.push(folder.id));
+    }
 
+    return collected;
+  };
+
+  const restoreFolder = async (folderId) => {
+    try {
+      await apiRestoreTrashFolder(userId, folderId);
+      const subtreeIds = collectFolderTreeIds(folderId);
+      setFolders((prev) => prev.filter((folder) => !subtreeIds.has(folder.id)));
+      setDocs((prev) => prev.filter((doc) => !subtreeIds.has(doc.folderId)));
+    } catch (e) {
+      console.warn("Failed to restore folder:", e);
+      alert("폴더 복원에 실패했습니다.");
+      return;
+    }
+    setSelectedItems((prev) => {
+      const next = new Set(prev);
+      next.delete(`folder-${folderId}`);
+      return next;
+    });
     setMenuFolderId(null);
   };
 
-  const deleteFolderForever = (folderId) => {
+  const deleteFolderForever = async (folderId) => {
     const ok = window.confirm("폴더를 완전히 삭제할까요?");
     if (!ok) return;
 
-    setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
+    try {
+      await apiPurgeTrashFolder(userId, folderId);
+      const subtreeIds = collectFolderTreeIds(folderId);
+      setFolders((prev) => prev.filter((folder) => !subtreeIds.has(folder.id)));
+      setDocs((prev) => prev.filter((doc) => !subtreeIds.has(doc.folderId)));
+    } catch (e) {
+      console.warn("Failed to purge folder:", e);
+      alert("폴더 삭제에 실패했습니다.");
+      return;
+    }
 
-    setDocs((prev) =>
-      prev.filter(
-        (doc) =>
-          !(
-            doc.isDeleted &&
-            doc.deletedByFolder &&
-            doc.originFolderId === folderId
-          )
-      )
-    );
-
+    setSelectedItems((prev) => {
+      const next = new Set(prev);
+      next.delete(`folder-${folderId}`);
+      return next;
+    });
     setMenuFolderId(null);
   };
 
-  const restoreDoc = (docId) => {
-    const now = new Date().toISOString();
+  const restoreDoc = async (docId) => {
+    const targetDoc = docs.find((doc) => doc.id === docId);
+    if (!targetDoc) return;
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        doc.id === docId
-          ? {
-              ...doc,
-              isDeleted: false,
-              deletedAt: null,
-              updatedAt: now,
-              deletedByFolder: false,
-            }
-          : doc
-      )
-    );
+    try {
+      if (targetDoc.docType === "note") {
+        await apiRestoreTrashNote(userId, targetDoc.resourceId);
+      } else {
+        await apiRestoreTrashFile(userId, targetDoc.resourceId);
+      }
+      setDocs((prev) => prev.filter((doc) => doc.id !== docId));
+    } catch (e) {
+      console.warn("Failed to restore doc:", e);
+      alert("파일 복원에 실패했습니다.");
+      return;
+    }
 
+    setSelectedItems((prev) => {
+      const next = new Set(prev);
+      next.delete(`doc-${docId}`);
+      return next;
+    });
     setMenuDocId(null);
   };
 
-  const deleteDocForever = (docId) => {
+  const deleteDocForever = async (docId) => {
     const ok = window.confirm("파일을 완전히 삭제할까요?");
     if (!ok) return;
 
-    setDocs((prev) => prev.filter((doc) => doc.id !== docId));
+    const targetDoc = docs.find((doc) => doc.id === docId);
+    if (!targetDoc) return;
+
+    try {
+      if (targetDoc.docType === "note") {
+        await apiPurgeTrashNote(userId, targetDoc.resourceId);
+      } else {
+        await apiPurgeTrashFile(userId, targetDoc.resourceId);
+      }
+      setDocs((prev) => prev.filter((doc) => doc.id !== docId));
+    } catch (e) {
+      console.warn("Failed to purge doc:", e);
+      alert("파일 삭제에 실패했습니다.");
+      return;
+    }
+    setSelectedItems((prev) => {
+      const next = new Set(prev);
+      next.delete(`doc-${docId}`);
+      return next;
+    });
+    setMenuDocId(null);
+  };
+
+  const trashItems = useMemo(
+    () => [
+      ...trashFolders.map((folder) => ({ key: `folder-${folder.id}`, type: "folder", id: folder.id })),
+      ...trashRootDocs.map((doc) => ({ key: `doc-${doc.id}`, type: "doc", id: doc.id })),
+    ],
+    [trashFolders, trashRootDocs]
+  );
+
+  const isAllSelected = trashItems.length > 0 && trashItems.every((item) => selectedItems.has(item.key));
+
+  const toggleSelectItem = (key) => {
+    setSelectedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedItems(new Set());
+      return;
+    }
+    setSelectedItems(new Set(trashItems.map((item) => item.key)));
+  };
+
+  const emptyTrash = async () => {
+    const selectedCount = selectedItems.size;
+    const targetItems = selectedCount > 0 ? trashItems.filter((item) => selectedItems.has(item.key)) : trashItems;
+
+    if (targetItems.length === 0) return;
+
+    const ok = window.confirm(
+      selectedCount > 0
+        ? `${selectedCount}개 항목을 완전히 삭제할까요?`
+        : `휴지통 항목 ${trashItems.length}개를 모두 완전히 삭제할까요?`
+    );
+    if (!ok) return;
+
+    const folderIds = new Set(targetItems.filter((item) => item.type === "folder").map((item) => item.id));
+    const docIds = new Set(targetItems.filter((item) => item.type === "doc").map((item) => item.id));
+    const allFolderIds = new Set();
+    folderIds.forEach((folderId) => {
+      collectFolderTreeIds(folderId).forEach((id) => allFolderIds.add(id));
+    });
+
+    try {
+      await Promise.all([
+        ...Array.from(folderIds).map((folderId) => apiPurgeTrashFolder(userId, folderId)),
+        ...Array.from(docIds).map((docId) => {
+          const targetDoc = docs.find((doc) => doc.id === docId);
+          if (!targetDoc) return Promise.resolve();
+          return targetDoc.docType === "note"
+            ? apiPurgeTrashNote(userId, targetDoc.resourceId)
+            : apiPurgeTrashFile(userId, targetDoc.resourceId);
+        }),
+      ]);
+      setFolders((prev) => prev.filter((folder) => !allFolderIds.has(folder.id)));
+      setDocs((prev) => prev.filter((doc) => !docIds.has(doc.id) && !allFolderIds.has(doc.folderId)));
+    } catch (e) {
+      console.warn("Failed to empty trash:", e);
+      alert("휴지통 비우기에 실패했습니다.");
+      return;
+    }
+    setSelectedItems(new Set());
+    setMenuFolderId(null);
     setMenuDocId(null);
   };
 
@@ -216,6 +349,17 @@ function MypageRepositoryDelete() {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
+              <select
+                className="mypagerepositorydelete-sort-select"
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value)}
+                aria-label="정렬"
+              >
+                <option value="latest">최신순</option>
+                <option value="oldest">오래된순</option>
+                <option value="name_asc">이름 오름차순</option>
+                <option value="name_desc">이름 내림차순</option>
+              </select>
               <button type="button">
                 <img src="/images/icon/search1.png" alt="검색" />
               </button>
@@ -231,6 +375,28 @@ function MypageRepositoryDelete() {
 
             <div className="mypagerepositorydelete-collection">
               <div className="mypagerepositorydelete-file-list">
+                <div className="mypagerepositorydelete-file-topbar">
+                  <div className="trash-select-all">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      onChange={toggleSelectAll}
+                    />
+                    <span>전체 선택</span>
+                  </div>
+                  {selectedItems.size > 0 && (
+                    <span className="trash-selected-count">{selectedItems.size}개 선택됨</span>
+                  )}
+                  <button
+                    type="button"
+                    className="trash-empty-btn"
+                    onClick={emptyTrash}
+                    disabled={trashItems.length === 0}
+                  >
+                    {selectedItems.size > 0 ? "영구삭제" : "휴지통 비우기"}
+                  </button>
+                </div>
+
                 <div className="mypagerepositorydelete-file-name">
                   <p>이름</p>
                   <p className="mr-col-date">날짜</p>
@@ -245,6 +411,12 @@ function MypageRepositoryDelete() {
                     onClick={() => navigate(`/repository/trash/folder/${folder.id}`)}
                   >
                     <div className="mypagerepositorydelete-file-gather">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.has(`folder-${folder.id}`)}
+                        onChange={() => toggleSelectItem(`folder-${folder.id}`)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
                       <button type="button" onClick={(e) => e.preventDefault()}>
                         <img src="/images/icon/folder.png" alt="폴더" />
                       </button>
@@ -252,7 +424,7 @@ function MypageRepositoryDelete() {
                     </div>
 
                     <p className="mr-date">
-                      {formatDate(folder.deletedAt || folder.createdAt)}
+                      {formatRepositoryDate(folder.deletedAt || folder.createdAt)}
                     </p>
                     <p className="mr-type">폴더</p>
 
@@ -307,6 +479,11 @@ function MypageRepositoryDelete() {
                     className="mypagerepositorydelete-file-suggestion"
                   >
                     <div className="mypagerepositorydelete-file-gather">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.has(`doc-${doc.id}`)}
+                        onChange={() => toggleSelectItem(`doc-${doc.id}`)}
+                      />
                       <Link
                         to={`/doc-view/${doc.id}`}
                         style={{
@@ -325,9 +502,9 @@ function MypageRepositoryDelete() {
                     </div>
 
                     <p className="mr-date">
-                      {formatDate(doc.updatedAt || doc.createdAt)}
+                      {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
                     </p>
-                    <p className="mr-type">파일</p>
+                    <p className="mr-type">{doc.docType === "note" ? "문서" : "파일"}</p>
 
                     <div
                       className="mypagerepositorydelete-file-img-gather"

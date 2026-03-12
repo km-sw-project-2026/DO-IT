@@ -56,6 +56,36 @@ export async function apiGetNotes(userId, folderId = null) {
   }
 }
 
+export async function apiGetNote(userId, noteId) {
+  if (!userId || !noteId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/notes/${encodeURIComponent(noteId)}`, {
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await safeJsonResponse(res);
+    return data.note || null;
+  } catch (e) {
+    console.warn("apiGetNote failed:", e);
+    return null;
+  }
+}
+
+export async function apiGetTrashNote(userId, noteId) {
+  if (!userId || !noteId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/notes/${encodeURIComponent(noteId)}`, {
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await safeJsonResponse(res);
+    return data.note || null;
+  } catch (e) {
+    console.warn("apiGetTrashNote failed:", e);
+    return null;
+  }
+}
+
 export async function apiCreateNote(userId, folderId, title, content, contentType = "html") {
   if (!userId) throw new Error("invalid args");
   try {
@@ -103,6 +133,38 @@ export async function apiDeleteNote(userId, noteId) {
   }
 }
 
+export async function apiMoveNote(userId, noteId, folderId) {
+  if (!userId || !noteId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/notes/${encodeURIComponent(noteId)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ folder_id: folderId }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiMoveNote failed:", e);
+    throw e;
+  }
+}
+
+export async function apiSetNoteFavorite(userId, noteId, isFavorite) {
+  if (!userId || !noteId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/notes/${encodeURIComponent(noteId)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ is_favorite: isFavorite }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiSetNoteFavorite failed:", e);
+    throw e;
+  }
+}
+
 export async function apiCreateFolder(userId, folderName, parentId = null) {
   if (!userId || !folderName) throw new Error("invalid args");
   try {
@@ -130,6 +192,112 @@ export async function apiGetTrash(userId) {
   } catch (e) {
     console.warn("apiGetTrash failed:", e);
     return { trash: { folders: [], files: [] } };
+  }
+}
+
+export async function apiGetTrashFolder(userId, folderId) {
+  if (!userId || !folderId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/folders/${encodeURIComponent(folderId)}`, {
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiGetTrashFolder failed:", e);
+    throw e;
+  }
+}
+
+export async function apiRestoreTrashFolder(userId, folderId) {
+  if (!userId || !folderId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/folders/${encodeURIComponent(folderId)}/restore`, {
+      method: "POST",
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiRestoreTrashFolder failed:", e);
+    throw e;
+  }
+}
+
+export async function apiPurgeTrashFolder(userId, folderId) {
+  if (!userId || !folderId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/folders/${encodeURIComponent(folderId)}/purge`, {
+      method: "DELETE",
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiPurgeTrashFolder failed:", e);
+    throw e;
+  }
+}
+
+export async function apiRestoreTrashFile(userId, fileId, folderId) {
+  if (!userId || !fileId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/files/${encodeURIComponent(fileId)}/restore`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ folder_id: folderId }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiRestoreTrashFile failed:", e);
+    throw e;
+  }
+}
+
+export async function apiPurgeTrashFile(userId, fileId) {
+  if (!userId || !fileId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/files/${encodeURIComponent(fileId)}/purge`, {
+      method: "DELETE",
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiPurgeTrashFile failed:", e);
+    throw e;
+  }
+}
+
+export async function apiRestoreTrashNote(userId, noteId, folderId) {
+  if (!userId || !noteId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/notes/${encodeURIComponent(noteId)}/restore`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ folder_id: folderId }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiRestoreTrashNote failed:", e);
+    throw e;
+  }
+}
+
+export async function apiPurgeTrashNote(userId, noteId) {
+  if (!userId || !noteId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/trash/notes/${encodeURIComponent(noteId)}/purge`, {
+      method: "DELETE",
+      headers: { "x-user-id": String(userId) },
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiPurgeTrashNote failed:", e);
+    throw e;
   }
 }
 
@@ -176,6 +344,38 @@ export async function apiRenameFile(userId, fileId, displayName) {
     return await safeJsonResponse(res);
   } catch (e) {
     console.warn("apiRenameFile failed:", e);
+    throw e;
+  }
+}
+
+export async function apiMoveFile(userId, fileId, folderId) {
+  if (!userId || !fileId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/files/${encodeURIComponent(fileId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ folder_id: folderId }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiMoveFile failed:", e);
+    throw e;
+  }
+}
+
+export async function apiSetFileFavorite(userId, fileId, isFavorite) {
+  if (!userId || !fileId) throw new Error("invalid args");
+  try {
+    const res = await fetch(`/api/repository/files/${encodeURIComponent(fileId)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "x-user-id": String(userId) },
+      body: JSON.stringify({ is_favorite: isFavorite }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return await safeJsonResponse(res);
+  } catch (e) {
+    console.warn("apiSetFileFavorite failed:", e);
     throw e;
   }
 }

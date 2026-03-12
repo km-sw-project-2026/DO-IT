@@ -23,6 +23,12 @@
   margin-bottom: 10px;
 }
 
+.mypagerepository-header .search {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
 .mypagerepository-title {
   margin-left: 220px;
   display: flex;
@@ -45,7 +51,6 @@
   border: 3px solid #3fb5ff;
   border-radius: 4px 0 0 4px;
   padding: 10px;
-  margin-left: 40px;
   color: #2c2c2c;
   font-size: 16px;
 }
@@ -54,14 +59,27 @@
   outline: none;
 }
 
+.mr-sort-select {
+  height: 62px;
+  min-width: 150px;
+  border-top: 3px solid #3fb5ff;
+  border-bottom: 3px solid #3fb5ff;
+  border-left: none;
+  border-right: none;
+  padding: 0 14px;
+  background: #fff;
+  font-size: 15px;
+  color: #2c2c2c;
+}
+
 .mypagerepository-header .search button {
   background: #3fb5ff;
   width: 62px;
   height: 62px;
-  position: absolute;
   border-radius: 0 4px 4px 0;
   border: none;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .mypagerepository-header .search button img {
@@ -172,6 +190,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 .mypagerepository-bg:hover {
@@ -190,6 +209,18 @@
   width: 100%;
   font-weight: bold;
   font-size: 16px;
+}
+
+.mypagerepository-folder-badge {
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #3fb5ff;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .mypagerepository-folder-more {
@@ -332,12 +363,13 @@
 }
 
 .mypagerepository-file-list {
-  width: 1300px;
+  width: 100%;
+  min-width: 0;
 }
 
 .mypagerepository-file-name {
   display: grid;
-  grid-template-columns: 80px 1fr 220px 220px;
+  grid-template-columns: 96px minmax(0, 1fr) 180px 220px;
   align-items: center;
   column-gap: 16px;
   border-bottom: 1px solid #c4c4c4;
@@ -350,14 +382,15 @@
 
 .mypagerepository-file-suggestion .mr-file-checkbox {
   width: 30px;
+  display: flex;
   justify-content: center;
 }
 
 .mypagerepository-file-suggestion {
   display: grid;
-  grid-template-columns: 30px 1fr 220px 220px;
+  grid-template-columns: 32px minmax(0, 1fr) 180px 220px;
   align-items: center;
-  column-gap: 8px;
+  column-gap: 16px;
   padding: 12px 40px;
   border-bottom: 1px solid #eee;
   cursor: grab;
@@ -374,10 +407,33 @@
   min-width: 0;
 }
 
+.mypagerepository-file-gather a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .mypagerepository-file-gather p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.mypagerepository-file-badge {
+  flex-shrink: 0;
+  margin-left: 10px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mypagerepository-file-badge.is-new {
+  background: #ffe8e1;
+  color: #dc5f38;
 }
 
 .mypagerepository-file-gather img {

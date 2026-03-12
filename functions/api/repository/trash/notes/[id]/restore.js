@@ -11,25 +11,24 @@ export async function onRequestPost({ env, request, params }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
 
-  const myFileId = Number(params.id);
+  const noteId = Number(params.id);
   const body = await request.json().catch(() => ({}));
   const hasFolderId = Object.prototype.hasOwnProperty.call(body, "folder_id");
   const folder_id =
     !hasFolderId || body.folder_id === null || body.folder_id === ""
       ? null
       : Number(body.folder_id);
-
   const exist = await env.D1_DB.prepare(`
-    SELECT my_file_id, folder_id FROM my_file
-    WHERE my_file_id = ? AND user_id = ? AND is_deleted = 'Y'
-  `).bind(myFileId, userId).first();
-  if (!exist) return json({ message: "휴지통에 없는 파일이에요" }, 404);
+    SELECT note_id, folder_id FROM my_note
+    WHERE note_id = ? AND user_id = ? AND is_deleted = 'Y'
+  `).bind(noteId, userId).first();
+  if (!exist) return json({ message: "휴지통에 없는 노트예요" }, 404);
 
   await env.D1_DB.prepare(`
-    UPDATE my_file
-    SET is_deleted = 'N', deleted_at = NULL, folder_id = ?
-    WHERE my_file_id = ? AND user_id = ?
-  `).bind(hasFolderId ? folder_id : exist.folder_id ?? null, myFileId, userId).run();
+    UPDATE my_note
+    SET is_deleted = 'N', folder_id = ?
+    WHERE note_id = ? AND user_id = ?
+  `).bind(hasFolderId ? folder_id : exist.folder_id ?? null, noteId, userId).run();
 
-  return json({ ok: true, restored: true, my_file_id: myFileId });
+  return json({ ok: true, restored: true, note_id: noteId });
 }

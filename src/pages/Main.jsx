@@ -1,66 +1,138 @@
 import { Link } from "react-router-dom";
-import React, { useEffect, useState } from "react";
-
-const LS_FOLDERS = "doit_repository_folders_v1";
-const LS_DOCS = "doit_repository_docs_v1";
-
-function safeParse(value, fallback) {
-  try {
-    const v = JSON.parse(value);
-    return v ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function formatDate(value) {
-  if (!value) return "-";
-  const d = new Date(value);
-  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
-}
+import React, { useEffect, useMemo, useState } from "react";
+import { getCurrentUser } from "../utils/auth";
+import {
+  apiDeleteFile,
+  apiDeleteNote,
+  apiGetFiles,
+  apiGetFolders,
+  apiGetNotes,
+  apiMoveFile,
+  apiMoveNote,
+} from "../api/repository";
+import { getMainFolderIds } from "../utils/repositoryMainFolders";
+import { clearRecentOpenedDoc, getRecentOpenedDoc, setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
+import { formatRepositoryDateShort, formatRepositoryDateTime } from "../utils/repositoryDate";
 
 function Main() {
-  const [latestNote, setLatestNote] = useState(null);
-  const [folders, setFolders] = useState(() =>
-    safeParse(localStorage.getItem(LS_FOLDERS), [])
-  );
-  const [docs, setDocs] = useState(() =>
-    safeParse(localStorage.getItem(LS_DOCS), [])
-  );
+  const me = getCurrentUser();
+  const userId = me?.user_id;
+  const [recentOpenedDoc, setRecentOpenedDocState] = useState(() => getRecentOpenedDoc());
+  const [folders, setFolders] = useState([]);
+  const [docs, setDocs] = useState([]);
   const [checkedDocs, setCheckedDocs] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
+  const [mainFolderIds, setMainFolderIds] = useState(() => getMainFolderIds());
 
   useEffect(() => {
-    try {
-      const v = JSON.parse(localStorage.getItem("doit_latest_note") || "null");
-      if (v) setLatestNote(v);
-    } catch {
-      setLatestNote(null);
+    if (!userId) {
+      setFolders([]);
+      setDocs([]);
+      setRecentOpenedDocState(getRecentOpenedDoc());
+      return;
     }
-  }, []);
+
+    async function loadData() {
+      try {
+        const [foldersRes, filesRes, notesRes] = await Promise.all([
+          apiGetFolders(userId, null),
+          apiGetFiles(userId, null),
+          apiGetNotes(userId, null),
+        ]);
+
+        const folderList = (foldersRes.folders || []).map((folder) => ({
+          id: folder.folder_id,
+          name: folder.folder_name,
+          parentId: folder.parent_id,
+          createdAt: folder.created_at,
+          isDeleted: false,
+        }));
+
+        const fileList = (filesRes.files || []).map((file) => ({
+          id: `file-${file.my_file_id}`,
+          resourceId: file.my_file_id,
+          docType: "file",
+          folderId: file.folder_id,
+          title: file.display_name || file.origin_name,
+          filePath: file.file_path || "",
+          createdAt: file.added_at || file.uploaded_at,
+          updatedAt: file.added_at || file.uploaded_at,
+          isDeleted: false,
+        }));
+
+        const noteList = (notesRes || []).map((note) => ({
+          id: String(note.note_id),
+          resourceId: note.note_id,
+          docType: "note",
+          folderId: note.folder_id,
+          title: note.title || "제목 없음",
+          createdAt: note.created_at,
+          updatedAt: note.updated_at || note.created_at,
+          isDeleted: false,
+        }));
+
+        setFolders(folderList);
+        setDocs([...noteList, ...fileList]);
+        setRecentOpenedDocState(getRecentOpenedDoc());
+      } catch (e) {
+        console.warn("Failed to load main repository data:", e);
+      }
+    }
+
+    loadData();
+  }, [userId]);
 
   useEffect(() => {
     const onStorage = () => {
-      setFolders(safeParse(localStorage.getItem(LS_FOLDERS), []));
-      setDocs(safeParse(localStorage.getItem(LS_DOCS), []));
+      setMainFolderIds(getMainFolderIds());
+      setRecentOpenedDocState(getRecentOpenedDoc());
     };
+
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  const visibleFolders = folders
-    .map((folder) => ({
-      ...folder,
-      isDeleted: folder.isDeleted ?? false,
-    }))
-    .filter((folder) => folder.parentId === null && !folder.isDeleted);
+  const rootFolders = useMemo(
+    () =>
+      folders
+        .map((folder) => ({
+          ...folder,
+          isDeleted: folder.isDeleted ?? false,
+        }))
+        .filter((folder) => folder.parentId === null && !folder.isDeleted),
+    [folders]
+  );
 
-  const visibleDocs = docs
-    .map((doc) => ({
-      ...doc,
-      isDeleted: doc.isDeleted ?? false,
-    }))
-    .filter((doc) => !doc.isDeleted && doc.folderId === null);
+  const visibleFolders = useMemo(() => {
+    if (mainFolderIds.length > 0) {
+      return mainFolderIds
+        .map((folderId) => rootFolders.find((folder) => folder.id === folderId))
+        .filter(Boolean);
+    }
+
+    return rootFolders.slice(0, 3);
+  }, [mainFolderIds, rootFolders]);
+
+  const visibleDocs = useMemo(
+    () =>
+      docs
+        .map((doc) => ({
+          ...doc,
+          isDeleted: doc.isDeleted ?? false,
+        }))
+        .filter((doc) => !doc.isDeleted && doc.folderId === null),
+    [docs]
+  );
+
+  useEffect(() => {
+    if (!recentOpenedDoc?.id) return;
+
+    const exists = docs.some((doc) => String(doc.id) === String(recentOpenedDoc.id));
+    if (!exists) {
+      clearRecentOpenedDoc();
+      setRecentOpenedDocState(null);
+    }
+  }, [docs, recentOpenedDoc]);
 
   const handleCheckDoc = (docId) => {
     setCheckedDocs((prev) =>
@@ -79,62 +151,100 @@ function Main() {
     setIsAllChecked(!isAllChecked);
   };
 
-  const moveDocsToTrash = () => {
+  const moveDocsToTrash = async () => {
     const ok = window.confirm(`${checkedDocs.length}개의 파일을 휴지통으로 이동할까요?`);
-    if (!ok) return;
+    if (!ok || !userId) return;
 
-    const now = new Date().toISOString();
+    try {
+      const targets = docs.filter((doc) => checkedDocs.includes(doc.id));
+      await Promise.all(
+        targets.map((doc) =>
+          doc.docType === "note"
+            ? apiDeleteNote(userId, doc.resourceId)
+            : apiDeleteFile(userId, doc.resourceId)
+        )
+      );
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        checkedDocs.includes(doc.id)
-          ? {
-              ...doc,
-              isDeleted: true,
-              deletedAt: now,
-              updatedAt: now,
-              deletedByFolder: false,
-              originFolderId: doc.folderId ?? null,
-            }
-          : doc
-      )
-    );
-
-    setCheckedDocs([]);
+      setDocs((prev) => prev.filter((doc) => !checkedDocs.includes(doc.id)));
+      setCheckedDocs([]);
+    } catch (e) {
+      console.warn("Failed to move main docs to trash:", e);
+      alert("휴지통 이동에 실패했습니다.");
+    }
   };
 
-  const startMoveDocs = () => {
-    const targetFolderId = window.prompt("이동할 폴더 ID를 입력하세요:\n" + 
-      visibleFolders.map(f => `${f.name}: ${f.id}`).join("\n"));
-    
+  const startMoveDocs = async () => {
+    if (!userId) return;
+
+    const targetFolderId = window.prompt(
+      "이동할 폴더 ID를 입력하세요:\n" +
+        rootFolders.map((folder) => `${folder.name}: ${folder.id}`).join("\n")
+    );
+
     if (!targetFolderId) return;
-    
+
     const targetId = Number(targetFolderId);
     if (!targetId) {
       alert("유효하지 않은 폴더 ID입니다.");
       return;
     }
 
-    const hasFolder = visibleFolders.some(f => f.id === targetId);
+    const hasFolder = rootFolders.some((folder) => folder.id === targetId);
     if (!hasFolder) {
       alert("해당 폴더가 없습니다.");
       return;
     }
 
-    setDocs((prev) =>
-      prev.map((doc) =>
-        checkedDocs.includes(doc.id)
-          ? {
-              ...doc,
-              folderId: targetId,
-              updatedAt: new Date().toISOString(),
-            }
-          : doc
-      )
+    try {
+      const targets = docs.filter((doc) => checkedDocs.includes(doc.id));
+      await Promise.all(
+        targets.map((doc) =>
+          doc.docType === "note"
+            ? apiMoveNote(userId, doc.resourceId, targetId)
+            : apiMoveFile(userId, doc.resourceId, targetId)
+        )
+      );
+
+      setDocs((prev) =>
+        prev.map((doc) =>
+          checkedDocs.includes(doc.id)
+            ? {
+                ...doc,
+                folderId: targetId,
+                updatedAt: new Date().toISOString(),
+              }
+            : doc
+        )
+      );
+
+      setCheckedDocs([]);
+      alert(`${targets.length}개 파일이 이동되었습니다.`);
+    } catch (e) {
+      console.warn("Failed to move main docs:", e);
+      alert("파일 이동에 실패했습니다.");
+    }
+  };
+
+  const openFile = (doc) => {
+    if (!doc.filePath) {
+      alert("이 업로드 파일은 지금 바로 열 수 없어요.");
+      return;
+    }
+
+    setRecentOpenedDocState(
+      setRecentOpenedDoc({
+        id: doc.id,
+        title: doc.title,
+        docType: "file",
+        filePath: doc.filePath,
+      })
     );
 
-    setCheckedDocs([]);
-    alert(`${checkedDocs.length}개 파일이 이동되었습니다.`);
+    const link = document.createElement("a");
+    link.href = doc.filePath;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.click();
   };
 
   useEffect(() => {
@@ -147,10 +257,9 @@ function Main() {
 
   return (
     <main>
-      <section className='main-page'>
-
-        <div className='main-page-contents'>
-          <img src='/images/logo.png' alt='' />
+      <section className="main-page">
+        <div className="main-page-contents">
+          <img src="/images/logo.png" alt="" />
           <h1>캘린더에서 친구들과 함께 디데이정리부터 <br></br>
             필기정리 / 정보공유 / 1:1 멘토멘티 서비스까지
           </h1>
@@ -159,8 +268,8 @@ function Main() {
             공부 서비스입니다.</p>
         </div>
       </section>
-      <section className='main-page-mypage'>
-        <div className='main-page-mypage-header'>
+      <section className="main-page-mypage">
+        <div className="main-page-mypage-header">
           <div className="mypage-title">
             <h2>나만의 <span>자료함</span></h2>
             <img
@@ -169,7 +278,7 @@ function Main() {
               className="mypage-emoji"
             />
           </div>
-          <Link to="/mypage"><button>자료함 바로가기</button></Link>
+          <Link to="/mypagerepository"><button>자료함 바로가기</button></Link>
         </div>
         <div className="folder-area">
           <div className="folder-grid">
@@ -242,24 +351,39 @@ function Main() {
                     onChange={() => handleCheckDoc(doc.id)}
                   />
                 </div>
-                <Link to={`/doc-view/${doc.id}`} className="main-page-file-name-col">
-                  <img src="/images/icon/img.png" alt="" />
-                  <span>{doc.title || "제목 없음"}</span>
-                </Link>
+                {doc.docType === "note" ? (
+                  <Link to={`/doc-view/${doc.id}`} className="main-page-file-name-col">
+                    <img src="/images/icon/img.png" alt="" />
+                    <span>{doc.title || "제목 없음"}</span>
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="main-page-file-name-col main-page-file-open"
+                    onClick={() => openFile(doc)}
+                  >
+                    <img src="/images/icon/img.png" alt="" />
+                    <span>{doc.title || "제목 없음"}</span>
+                  </button>
+                )}
                 <p className="main-page-file-date-col">
-                  {formatDate(doc.updatedAt || doc.createdAt)}
+                  {formatRepositoryDateShort(doc.updatedAt || doc.createdAt)}
                 </p>
               </div>
             ))
           )}
         </div>
 
-        {latestNote && (
+        {recentOpenedDoc && (
           <div style={{ marginTop: 18 }}>
-            <h4>최근 작성한 노트</h4>
+            <h4>최근 연 파일</h4>
             <div style={{ padding: 12, border: "1px solid #eee", borderRadius: 6 }}>
-              <strong>{latestNote.title || "(제목없음)"}</strong>
-              <div style={{ color: "#999", fontSize: 13 }}>{new Date(latestNote.created_at).toLocaleString()}</div>
+              <strong>{recentOpenedDoc.title || "(제목없음)"}</strong>
+              <div style={{ color: "#999", fontSize: 13 }}>
+                {recentOpenedDoc.openedAt
+                  ? formatRepositoryDateTime(recentOpenedDoc.openedAt)
+                  : "기록 없음"}
+              </div>
             </div>
           </div>
         )}
@@ -301,15 +425,10 @@ function Main() {
             </div>
           </Link>
         </div>
-</section>
-
-      {/* =======================
-    1:1 멘토멘티 섹션
-======================= */}
+      </section>
 
       <section className="mm-hero">
         <div className="mm-inner">
-          {/* 왼쪽 텍스트 */}
           <div className="mm-left">
             <p className="mm-kicker">DO:IT만의 특별한 서비스</p>
             <h2 className="mm-title">1:1 멘토멘티</h2>
@@ -347,16 +466,13 @@ function Main() {
         </div>
       </section>
 
-      {/* ===== Footer ===== */}
       <footer className="main-footer">
         <div className="footer-inner">
           <p>© 2026 DO:IT. All rights reserved.</p>
         </div>
       </footer>
-
-
-
     </main>
   );
 }
+
 export default Main;

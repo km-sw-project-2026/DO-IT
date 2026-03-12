@@ -1,3 +1,5 @@
+import { ensureFolderSchema } from "./schema.js";
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -18,6 +20,7 @@ async function getMyFolderColumns(env) {
 export async function onRequestGet({ env, request, url }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  await ensureFolderSchema(env);
   const columns = await getMyFolderColumns(env);
   const notDeletedFilter = columns.has("is_deleted")
     ? "AND (is_deleted IS NULL OR is_deleted <> 'Y')"
@@ -54,6 +57,7 @@ export async function onRequestGet({ env, request, url }) {
 export async function onRequestPost({ env, request }) {
   const userId = getUserId(request);
   if (!userId) return json({ message: "로그인 필요(x-user-id)" }, 401);
+  await ensureFolderSchema(env);
   const columns = await getMyFolderColumns(env);
   const notDeletedFilter = columns.has("is_deleted")
     ? "AND (is_deleted IS NULL OR is_deleted <> 'Y')"

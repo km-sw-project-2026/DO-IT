@@ -27,6 +27,14 @@ import * as repoFilesById from "../functions/api/repository/files/[id].js";
 import * as repoNotes from "../functions/api/repository/notes/index.js";
 import * as repoNotesById from "../functions/api/repository/notes/[id].js";
 import * as repoTrash from "../functions/api/repository/trash/index.js";
+import * as repoTrashFolderById from "../functions/api/repository/trash/folders/[id].js";
+import * as repoTrashFolderRestore from "../functions/api/repository/trash/folders/[id]/restore.js";
+import * as repoTrashFolderPurge from "../functions/api/repository/trash/folders/[id]/purge.js";
+import * as repoTrashFileRestore from "../functions/api/repository/trash/files/[id]/restore.js";
+import * as repoTrashFilePurge from "../functions/api/repository/trash/files/[id]/purge.js";
+import * as repoTrashNoteById from "../functions/api/repository/trash/notes/[id].js";
+import * as repoTrashNoteRestore from "../functions/api/repository/trash/notes/[id]/restore.js";
+import * as repoTrashNotePurge from "../functions/api/repository/trash/notes/[id]/purge.js";
 
 
 
@@ -282,6 +290,94 @@ export default {
     // ---------------------------
     if (path === "/api/repository/trash") {
       if (request.method === "GET") return repoTrash.onRequestGet({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashFolderById = path.match(/^\/api\/repository\/trash\/folders\/(\d+)\/?$/);
+    if (mTrashFolderById) {
+      const id = mTrashFolderById[1];
+      const params = { id };
+      if (request.method === "GET") return repoTrashFolderById.onRequestGet({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashFolderRestore = path.match(/^\/api\/repository\/trash\/folders\/(\d+)\/restore\/?$/);
+    if (mTrashFolderRestore) {
+      const id = mTrashFolderRestore[1];
+      const params = { id };
+      if (request.method === "POST") return repoTrashFolderRestore.onRequestPost({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashFolderPurge = path.match(/^\/api\/repository\/trash\/folders\/(\d+)\/purge\/?$/);
+    if (mTrashFolderPurge) {
+      const id = mTrashFolderPurge[1];
+      const params = { id };
+      if (request.method === "DELETE") return repoTrashFolderPurge.onRequestDelete({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashFileRestore = path.match(/^\/api\/repository\/trash\/files\/(\d+)\/restore\/?$/);
+    if (mTrashFileRestore) {
+      const id = mTrashFileRestore[1];
+      const params = { id };
+      if (request.method === "POST") return repoTrashFileRestore.onRequestPost({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashFilePurge = path.match(/^\/api\/repository\/trash\/files\/(\d+)\/purge\/?$/);
+    if (mTrashFilePurge) {
+      const id = mTrashFilePurge[1];
+      const params = { id };
+      if (request.method === "DELETE") return repoTrashFilePurge.onRequestDelete({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashNoteById = path.match(/^\/api\/repository\/trash\/notes\/(\d+)\/?$/);
+    if (mTrashNoteById) {
+      const id = mTrashNoteById[1];
+      const params = { id };
+      if (request.method === "GET") return repoTrashNoteById.onRequestGet({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashNoteRestore = path.match(/^\/api\/repository\/trash\/notes\/(\d+)\/restore\/?$/);
+    if (mTrashNoteRestore) {
+      const id = mTrashNoteRestore[1];
+      const params = { id };
+      if (request.method === "POST") return repoTrashNoteRestore.onRequestPost({ env, request, params });
+      return new Response(JSON.stringify({ message: "method not allowed" }), {
+        status: 405,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const mTrashNotePurge = path.match(/^\/api\/repository\/trash\/notes\/(\d+)\/purge\/?$/);
+    if (mTrashNotePurge) {
+      const id = mTrashNotePurge[1];
+      const params = { id };
+      if (request.method === "DELETE") return repoTrashNotePurge.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

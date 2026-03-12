@@ -17,6 +17,12 @@
   text-align: center;
 }
 
+.mrfi-header .search {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
 .mrfi-title {
   margin-left: 220px;
   display: flex;
@@ -36,7 +42,6 @@
 .mrfi-header .search input {
   width: 722px;
   height: 62px;
-  margin-left: 40px;
   padding: 10px;
   border: 3px solid #3fb5ff;
   border-radius: 4px 0 0 4px;
@@ -48,12 +53,26 @@
   outline: none;
 }
 
+.mrfi-sort-select {
+  height: 62px;
+  min-width: 150px;
+  border-top: 3px solid #3fb5ff;
+  border-bottom: 3px solid #3fb5ff;
+  border-left: none;
+  border-right: none;
+  padding: 0 14px;
+  background: #fff;
+  font-size: 15px;
+  color: #2c2c2c;
+}
+
 .mrfi-header .search button {
   width: 62px;
   height: 62px;
-  position: absolute;
   background: #3fb5ff;
   border-radius: 0 4px 4px 0;
+  border: none;
+  flex-shrink: 0;
 }
 
 .mrfi-header .search button img {
@@ -91,39 +110,6 @@
   height: 20px;
 }
 
-.mrfi-button p {
-  font-weight: 400;
-  font-size: 14px;
-  color: #9d9d9d;
-}
-
-.mrfi-button button {
-  padding: 5px 20px;
-  color: #0093ef;
-  border: 1px solid #0093ef;
-  border-radius: 9px;
-}
-
-.Storage-bar {
-  margin-top: 30px;
-  width: 160px;
-  height: 3px;
-  background: #cfcfcf;
-}
-
-.Storage-ber-used {
-  width: 70px;
-  height: 3px;
-  background: #8fff6d;
-}
-
-.Storage-capacity {
-  width: 170px;
-  text-align: right;
-  font-size: 14px;
-  padding-bottom: 10px;
-}
-
 .mrfi-contents-inner {
   width: 100%;
   display: block;
@@ -149,112 +135,236 @@
   object-fit: contain;
 }
 
+.mr-add {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #2c2c2c;
+  border-radius: 50%;
+  margin-top: 2px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.mr-add img {
+  width: 18px;
+  height: 18px;
+}
+
 .mrfi-file-list {
   width: 100%;
 }
 
-.mrfi-file-name {
-  margin-left: 20px;
-  display: flex;
+.mrfi-trash-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ffe8e8;
+  color: #c73a3a;
+  font-size: 13px;
+  font-weight: 700;
 }
 
-.mrfi-file-list .mrfi-file-name:nth-child(1),
-.mrfi-file-list .mrfi-file-name:nth-child(2) {
-  border-bottom: 1px solid #c4c4c4;
+.mrfi-trash-back {
+  margin-left: auto;
+  text-decoration: none;
+  color: #666;
+  font-size: 14px;
 }
 
-.mrfi-file-list .mrfi-file-name:nth-child(1) {
-  padding: 0 20px 7px;
-}
-
-.mrfi-file-name p {
-  font-size: 20px;
-  font-weight: bold;
-  color: #2c2c2c;
-}
-
-.mrfi-file-name p:nth-child(1) {
-  width: 440px;
-}
-
-.mrfi-file-name p:nth-child(2) {
-  width: 300px;
-}
-
-.mrfi-file-name p:nth-child(3) {
-  width: 200px;
-}
-
-.mrfi-file-name p:nth-child(4) {
-  width: 190px;
-}
-
-.mrfi-file-suggestion {
-  margin-top: 10px;
-  margin-left: 20px;
-  padding: 0 15px 5px;
-  display: flex;
-  align-items: center;
-}
-
-.mrfi-file-suggestion p:nth-child(2) {
-  width: 335px;
-}
-
-.mrfi-file-suggestion p:nth-child(3) {
-  width: 195px;
-}
-
-.mrfi-file-suggestion p:nth-child(4) {
-  width: 195px;
-}
-
-.mrfi-file-gather {
-  width: 415px;
+.mrfi-trash-toolbar {
   display: flex;
   align-items: center;
   gap: 14px;
+  padding: 0 40px 12px;
+  border-bottom: 1px solid #c4c4c4;
 }
 
-.mrfi-file-gather button {
+.mrfi-trash-select {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.mrfi-trash-select input,
+.mrfi-trash-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.mrfi-trash-selected {
+  font-size: 14px;
+  color: #3fb5ff;
+  font-weight: 500;
+}
+
+.mrfi-trash-danger {
+  margin-left: auto;
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.mrfi-trash-danger:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.mrfi-trash-row {
+  background: #fffdfd;
+}
+
+.mrfi-move-box {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: #fff;
+}
+
+.mrfi-move-box select {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.mrfi-move-box button {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.mrfi-file-name {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px 220px;
+  align-items: center;
+  column-gap: 16px;
+  border-bottom: 1px solid #c4c4c4;
+  padding: 0 40px 10px;
+}
+
+.mrfi-file-name p {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c2c2c;
+}
+
+.mrfi-file-suggestion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px 220px;
+  align-items: center;
+  column-gap: 16px;
+  padding: 12px 40px;
+  border-bottom: 1px solid #eee;
+}
+
+.mrfi-folder-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.mrfi-file-gather {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.mrfi-file-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
 }
 
 .mrfi-file-gather img {
-  width: 18px;
-  height: 18px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .mrfi-file-gather p {
-  margin-top: -5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
-.mrfi-file-img-gather {
-  position: relative;
+.mrfi-date {
+  color: #2c2c2c;
+}
+
+.mrfi-file-actions {
   display: flex;
-  margin-left: auto;
-  margin-right: 25px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
 }
 
-.mrfi-reroll img {
+.mrfi-file-actions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mrfi-download img {
+  width: 30px;
+  height: 30px;
+}
+
+.mrfi-pan img {
   width: 24px;
   height: 24px;
-  object-fit: contain;
+}
+
+.mrfi-restore img {
+  width: 24px;
+  height: 24px;
+}
+
+.mrfi-star img {
+  width: 25px;
+  height: 25px;
+}
+
+.mrfi-file-more-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.mrfi-ooo-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
 }
 
 .mrfi-ooo {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 10px;
   display: flex;
   flex-direction: column;
-  margin-right: -30px;
-  margin-bottom: 6px;
+  width: 10px;
 }
 
 .mrfi-ooo span {
@@ -262,8 +372,38 @@
   line-height: 9px;
 }
 
-.mrfi-folder-link {
+.mrfi-menu {
+  position: absolute;
+  top: 32px;
+  left: 100%;
+  margin-left: 10px;
+  width: 120px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  overflow: hidden;
+}
+
+.mrfi-menu button {
+  width: 100%;
+  border: none;
+  background: #fff;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.mrfi-menu button:hover {
+  background: #f3f3f3;
+}
+
+.mrfi-actions-col,
+.mrfi-file-actions-placeholder {
   display: block;
-  text-decoration: none;
-  color: inherit;
+}
+
+.mrfi-file-empty {
+  padding: 24px 40px;
+  color: #666;
 }
