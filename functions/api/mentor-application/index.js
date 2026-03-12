@@ -42,7 +42,7 @@ export async function onRequestPost({ env, request }) {
 
     // 유저 존재 확인
     const userRow = await env.D1_DB
-      .prepare("SELECT user_id FROM user WHERE user_id = ?")
+      .prepare("SELECT user_id FROM \"user\" WHERE user_id = ?")
       .bind(Number(user_id))
       .first();
     if (!userRow) return json({ message: "존재하지 않는 유저입니다." }, 404, request);
@@ -85,20 +85,22 @@ export async function onRequestPost({ env, request }) {
       .run();
 
     // 관리자들에게 알림 발송
-    const admins = await env.D1_DB
-      .prepare(`SELECT user_id FROM "user" WHERE role = 'ADMIN'`)
-      .all();
-    const applicantRow = await env.D1_DB
-      .prepare(`SELECT nickname FROM "user" WHERE user_id = ? LIMIT 1`)
-      .bind(Number(user_id))
-      .first();
-    const applicantName = applicantRow?.nickname || `user#${user_id}`;
-    for (const admin of (admins.results ?? [])) {
-      await env.D1_DB
-        .prepare(`INSERT INTO notification (user_id, message, is_read) VALUES (?, ?, 0)`)
-        .bind(admin.user_id, `${applicantName}님이 멘토 신청을 제출했습니다.`)
-        .run();
-    }
+    try {
+      const admins = await env.D1_DB
+        .prepare(`SELECT user_id FROM "user" WHERE role = 'ADMIN'`)
+        .all();
+      const applicantRow = await env.D1_DB
+        .prepare(`SELECT nickname FROM "user" WHERE user_id = ? LIMIT 1`)
+        .bind(Number(user_id))
+        .first();
+      const applicantName = applicantRow?.nickname || `user#${user_id}`;
+      for (const admin of (admins.results ?? [])) {
+        await env.D1_DB
+          .prepare(`INSERT INTO notification (user_id, message, is_read, link_url) VALUES (?, ?, 0, ?)`)
+          .bind(admin.user_id, `${applicantName}님이 멘토 신청을 제출했습니다.`, '/admin')
+          .run();
+      }
+    } catch { /* 알림 실패여도 신청 체성은 성공 */ }
 
     return json({
       message: "멘토 지원이 완료되었습니다. 관리자 검토 후 결과를 알려드릴게요.",

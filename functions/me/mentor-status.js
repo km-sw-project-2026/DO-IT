@@ -13,7 +13,7 @@ export async function onRequestGet({ env, request }) {
 
     // 유저 존재 확인(추천)
     const userRow = await env.D1_DB
-      .prepare("SELECT user_id, nickname FROM user WHERE user_id = ?")
+      .prepare("SELECT user_id, nickname FROM \"user\" WHERE user_id = ?")
       .bind(userId)
       .first();
     if (!userRow) return json({ message: "유저를 찾을 수 없습니다." }, 404);

@@ -130,17 +130,20 @@ export async function onRequestPost({ env, request }) {
 
         const mentorNickname = mentorUserRow?.nickname || "멘토";
 
-        await env.D1_DB
-          .prepare(`
-            INSERT INTO notification (user_id, message, mentoring_id)
-            VALUES (?, ?, ?)
-          `)
-          .bind(
-            menteeRow.user_id,
-            `${mentorNickname} 멘토가 멘토링 신청을 수락했어요! 🎉`,
-            Number(mentoring_id)
-          )
-          .run();
+        try {
+          await env.D1_DB
+            .prepare(`
+              INSERT INTO notification (user_id, message, mentoring_id, link_url)
+              VALUES (?, ?, ?, ?)
+            `)
+            .bind(
+              menteeRow.user_id,
+              `${mentorNickname} 멘토가 멘토링 신청을 수락했어요! 🎉`,
+              Number(mentoring_id),
+              `/chat?mentoring_id=${mentoring_id}`
+            )
+            .run();
+        } catch { /* 알림 실패여도 수락 성공 */ }
       }
     }
 
@@ -199,14 +202,17 @@ export async function onRequestDelete({ env, request }) {
 
     if (menteeUserRow?.user_id) {
       // 4. 멘티에게 알림
-      await env.D1_DB
-        .prepare(`INSERT INTO notification (user_id, message, mentoring_id) VALUES (?, ?, ?)`)
-        .bind(
-          menteeUserRow.user_id,
-          `${mentorNickname} 멘토님이 멘토링을 종료했어요.`,
-          Number(mentoring_id)
-        )
-        .run();
+      try {
+        await env.D1_DB
+          .prepare(`INSERT INTO notification (user_id, message, mentoring_id, link_url) VALUES (?, ?, ?, ?)`)
+          .bind(
+            menteeUserRow.user_id,
+            `${mentorNickname} 멘토님이 멘토링을 종료했어요.`,
+            Number(mentoring_id),
+            `/chat?mentoring_id=${mentoring_id}`
+          )
+          .run();
+      } catch { /* 알림 실패여도 종료 성공 */ }
     }
 
     // 5. 해당 채팅방에 시스템 메시지 삽입

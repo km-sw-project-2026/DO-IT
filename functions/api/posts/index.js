@@ -5,8 +5,18 @@ function json(data, status = 200) {
   });
 }
 
+async function isBanned(env, userId) {
+  const row = await env.D1_DB
+    .prepare(`SELECT banned_until FROM "user" WHERE user_id = ? LIMIT 1`)
+    .bind(userId)
+    .first();
+  if (!row?.banned_until) return false;
+  const until = new Date(String(row.banned_until).replace(' ', 'T') + 'Z');
+  return until > new Date();
+}
+
 export async function onRequestGet({ env, url }) {
-  url = new URL(url);
+  url = url instanceof URL ? url : new URL(url);
 
   const page = Math.max(1, Number(url.searchParams.get("page") || 1));
 
@@ -131,6 +141,11 @@ export async function onRequestPost({ request, env }) {
   if (!content || content.length > 500) {
     return json({ message: "내용은 500자 이내로 입력해주세요." }, 400);
   }
+
+  if (await isBanned(env, Number(user_id))) {
+    return json({ message: "차단된 계정입니다. 게시글을 작성할 수 없어요." }, 403);
+  }
+
   const result = await env.D1_DB.prepare(`
     INSERT INTO community_post(title, content, user_id)
     VALUES (?, ?, ?)

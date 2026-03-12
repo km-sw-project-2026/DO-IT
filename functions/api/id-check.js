@@ -39,7 +39,7 @@ export async function onRequestPost({ request, env }) {
 
     // ✅ DB 중복 체크
     const exists = await env.D1_DB.prepare(
-      `SELECT user_id FROM user WHERE login_id = ? LIMIT 1`
+      `SELECT user_id FROM "user" WHERE login_id = ? LIMIT 1`
     )
       .bind(login_id)
       .first();

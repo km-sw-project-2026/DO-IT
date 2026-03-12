@@ -38,8 +38,8 @@ function Header() {
     const uid = user?.user_id;
     if (!uid) return;
     fetchNotifications(uid);
-    // 30초마다 폴링
-    const timer = setInterval(() => fetchNotifications(uid), 30000);
+    // 10초마다 폴링
+    const timer = setInterval(() => fetchNotifications(uid), 10000);
     return () => clearInterval(timer);
   }, [user, fetchNotifications]);
 
@@ -143,11 +143,13 @@ function Header() {
                         {notifications.map((n) => (
                           <li
                             key={n.notification_id}
-                            className={`notif-item${n.is_read === 0 ? " unread" : ""}${n.mentoring_id ? " clickable" : ""}`}
+                            className={`notif-item${n.is_read === 0 ? " unread" : ""}${(n.link_url || n.mentoring_id) ? " clickable" : ""}`}
                             onClick={() => {
-                              if (n.mentoring_id) {
+                              const dest = n.link_url
+                                || (n.mentoring_id ? `/chat?mentoring_id=${n.mentoring_id}` : null);
+                              if (dest) {
                                 setShowNotif(false);
-                                navigate(`/chat?mentoring_id=${n.mentoring_id}`);
+                                navigate(dest);
                               }
                             }}
                           >

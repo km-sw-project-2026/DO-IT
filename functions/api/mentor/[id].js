@@ -30,7 +30,7 @@ export async function onRequestGet({ env, params, request }) {
       .prepare(`
         SELECT m.mentor_id, u.user_id, u.nickname, u.profile_image
         FROM mentor m
-        JOIN user u ON u.user_id = m.user_id
+        JOIN "user" u ON u.user_id = m.user_id
         WHERE m.mentor_id = ?
       `)
       .bind(mentorId)

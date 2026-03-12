@@ -21,6 +21,16 @@ export async function onRequestGet({ env, url: _url, request }) {
     const user_id = Number(url.searchParams.get("user_id"));
     if (!user_id) return json({ message: "user_id 필요" }, 400, request);
 
+    // 숨긴 room_id 목록 조회 (chat_room_hide 테이블이 없으면 빈 배열)
+    let hiddenRoomIds = [];
+    try {
+      const hideRows = await env.D1_DB
+        .prepare(`SELECT room_id FROM chat_room_hide WHERE user_id = ?`)
+        .bind(user_id)
+        .all();
+      hiddenRoomIds = (hideRows.results ?? []).map(r => r.room_id);
+    } catch { /* 테이블 없으면 무시 */ }
+
     const rows = await env.D1_DB
       .prepare(`
         SELECT
@@ -42,15 +52,14 @@ export async function onRequestGet({ env, url: _url, request }) {
         JOIN "user" u_mentee ON u_mentee.user_id = me.user_id
         WHERE (men.user_id = ? OR me.user_id = ?)
           AND mt.status IN ('ACCEPTED', 'ENDED')
-          AND cr.room_id NOT IN (
-            SELECT room_id FROM chat_room_hide WHERE user_id = ?
-          )
         ORDER BY cr.created_at DESC
       `)
-      .bind(user_id, user_id, user_id)
+      .bind(user_id, user_id)
       .all();
 
-    const rooms = (rows.results ?? []).map((r) => ({
+    const rooms = (rows.results ?? [])
+      .filter(r => !hiddenRoomIds.includes(r.room_id))
+      .map((r) => ({
       room_id: r.room_id,
       mentoring_id: r.mentoring_id,
       // 상대방 정보 (내가 멘토면 멘티를, 멘티면 멘토를)

@@ -82,7 +82,7 @@ export async function onRequestPost({ request, env }) {
     // ✅ 아이디 중복 체크
     // ======================
     const idDup = await env.D1_DB.prepare(
-      `SELECT user_id FROM user WHERE login_id = ? LIMIT 1`
+      `SELECT user_id FROM "user" WHERE login_id = ? LIMIT 1`
     )
       .bind(login_id)
       .first();
@@ -95,7 +95,7 @@ export async function onRequestPost({ request, env }) {
     // ✅ 이메일 중복 체크
     // ======================
     const emailDup = await env.D1_DB.prepare(
-      `SELECT user_id FROM user WHERE email = ? LIMIT 1`
+      `SELECT user_id FROM "user" WHERE email = ? LIMIT 1`
     )
       .bind(email)
       .first();
@@ -109,7 +109,7 @@ export async function onRequestPost({ request, env }) {
 
     // ✅ 저장
     const result = await env.D1_DB.prepare(
-      `INSERT INTO user (login_id, email, password, nickname, profile_image, role)
+      `INSERT INTO "user" (login_id, email, password, nickname, profile_image, role)
        VALUES (?, ?, ?, ?, ?, 'USER')`
     )
       .bind(login_id, email, hashed, nickname, profile_image)

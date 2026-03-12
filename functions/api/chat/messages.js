@@ -7,6 +7,16 @@ const CORS = (req) => ({
 const json = (data, status = 200, req) =>
   new Response(JSON.stringify(data), { status, headers: CORS(req) });
 
+async function isBanned(env, userId) {
+  const row = await env.D1_DB
+    .prepare(`SELECT banned_until FROM "user" WHERE user_id = ? LIMIT 1`)
+    .bind(userId)
+    .first();
+  if (!row?.banned_until) return false;
+  const until = new Date(String(row.banned_until).replace(' ', 'T') + 'Z');
+  return until > new Date();
+}
+
 export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: CORS(request) });
 }
@@ -60,6 +70,10 @@ export async function onRequestPost({ env, request }) {
       return json({ message: "room_id, sender_id, content 필요" }, 400, request);
     }
 
+    if (await isBanned(env, Number(sender_id))) {
+      return json({ message: "차단된 계정입니다. 메시지를 보낼 수 없어요." }, 403, request);
+    }
+
     const result = await env.D1_DB
       .prepare(`INSERT INTO chat_message (room_id, sender_id, content) VALUES (?, ?, ?)`)
       .bind(Number(room_id), Number(sender_id), content.trim())
@@ -99,11 +113,12 @@ export async function onRequestPost({ env, request }) {
               : partiesRow.mentor_user_id;
 
           await env.D1_DB
-            .prepare(`INSERT INTO notification (user_id, message, mentoring_id) VALUES (?, ?, ?)`)
+            .prepare(`INSERT INTO notification (user_id, message, mentoring_id, link_url) VALUES (?, ?, ?, ?)`)
             .bind(
               receiver_id,
               `${partiesRow.sender_nickname}님이 메시지를 보냈어요: "${content.trim().slice(0, 30)}${content.trim().length > 30 ? '...' : ''}"`,
-              roomRow.mentoring_id
+              roomRow.mentoring_id,
+              `/chat?mentoring_id=${roomRow.mentoring_id}`
             )
             .run();
         }

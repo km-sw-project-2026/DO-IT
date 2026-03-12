@@ -5,6 +5,16 @@ function json(data, status = 200) {
   });
 }
 
+async function isBanned(env, userId) {
+  const row = await env.D1_DB
+    .prepare(`SELECT banned_until FROM "user" WHERE user_id = ? LIMIT 1`)
+    .bind(userId)
+    .first();
+  if (!row?.banned_until) return false;
+  const until = new Date(String(row.banned_until).replace(' ', 'T') + 'Z');
+  return until > new Date();
+}
+
 function getPostId(params) {
   const n = Number(params?.id);
   return Number.isFinite(n) && n > 0 ? n : null;
@@ -79,6 +89,9 @@ export async function onRequestPost({ env, params, request }) {
   }
 
   try {
+    if (await isBanned(env, userId)) {
+      return json({ message: "차단된 계정입니다. 댓글을 작성할 수 없어요." }, 403);
+    }
     // ✅ parentId가 있으면: "해당 부모댓글이 같은 post에 존재하는지" 확인
     if (parentId !== null) {
       const parent = await env.D1_DB.prepare(

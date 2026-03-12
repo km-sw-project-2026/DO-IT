@@ -48,7 +48,7 @@ export async function onRequestPost({ env, request }) {
 
     // 2. user 존재 확인
     const userRow = await env.D1_DB
-      .prepare("SELECT user_id FROM user WHERE user_id = ?")
+      .prepare("SELECT user_id FROM \"user\" WHERE user_id = ?")
       .bind(Number(user_id))
       .first();
 
@@ -119,11 +119,12 @@ export async function onRequestPost({ env, request }) {
       const menteeNickname = menteeUserRow?.nickname || '멘티';
 
       await env.D1_DB
-        .prepare(`INSERT INTO notification (user_id, message, mentoring_id) VALUES (?, ?, ?)`)
+        .prepare(`INSERT INTO notification (user_id, message, mentoring_id, link_url) VALUES (?, ?, ?, ?)`)
         .bind(
           mentorUserRow.user_id,
           `${menteeNickname} 님이 멘토링을 신청했어요! 확인해 주세요.`,
-          newMentoringId
+          newMentoringId,
+          '/mypage'
         )
         .run();
     } catch { /* 알림 오류는 신청 성공에 영향 없음 */ }
