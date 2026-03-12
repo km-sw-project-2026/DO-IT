@@ -50,9 +50,8 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 50%;
-  overflow: hidden;
   color: #FFB400;
+  clip-path: inset(0 50% 0 0);
 }
 
 /* 라벨 (숫자 + 카운트) */

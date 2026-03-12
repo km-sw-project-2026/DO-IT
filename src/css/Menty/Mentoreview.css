@@ -64,7 +64,7 @@
     color: #FFB400;
 }
 
-/* 반쪽 별: 글자색은 회색으로 두고 왼쪽 50%만 노란색 클립 */
+/* 반쪽 별: 글자색은 회색으로 두고 왼쪽 50%만 노란색 clip */
 .star.half {
     color: #ddd;
 }
@@ -73,9 +73,8 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 50%;
-    overflow: hidden;
     color: #FFB400;
+    clip-path: inset(0 50% 0 0);
 }
 
 
