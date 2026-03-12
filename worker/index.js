@@ -7,13 +7,13 @@ import * as postById from "../functions/api/post/[id].js";
 import * as comments from "../functions/api/post/[id]/comments.js";
 
 // ✅ 회원가입 API
-import * as signup from "../functions/api/auth/signup.js";
+import * as signup from "../functions/api/signup.js";
 
 // ✅ 아이디 중복 확인 API
-import * as idCheck from "../functions/api/auth/id-ckack.js";
+import * as idCheck from "../functions/api/id-check.js";
 
 // ✅ 로그인 API
-import * as login from "../functions/api/auth/login.js";
+import * as login from "../functions/api/login.js";
 
 import * as report from "../functions/api/report/index.js";
 import * as adminReports from "../functions/api/admin/reports.js";
