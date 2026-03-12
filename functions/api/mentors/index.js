@@ -17,8 +17,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/mentors?page=1&size=6
  * mentor 테이블 기반 목록 + 리뷰 평균 조회
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     const page = Math.max(1, Number(url.searchParams.get("page") || "1"));
     const size = Math.min(50, Math.max(1, Number(url.searchParams.get("size") || "6")));
     const sort = url.searchParams.get("sort") || "recent"; // "rating" | "review" | "recent"

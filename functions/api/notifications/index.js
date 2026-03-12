@@ -17,8 +17,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/notifications?user_id=xxx
  * 내 알림 목록 (최근 30개)
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     const user_id = Number(url.searchParams.get("user_id"));
     if (!user_id) return json({ message: "user_id 필요" }, 400, request);
 

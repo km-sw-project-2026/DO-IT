@@ -17,8 +17,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/reviews?mentor_id=xxx&page=1&size=5
  * 특정 멘토의 리뷰 목록 + 평균 별점
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     let mentor_id = Number(url.searchParams.get("mentor_id"));
     const user_id = Number(url.searchParams.get("user_id"));
     const page = Math.max(1, Number(url.searchParams.get("page")) || 1);

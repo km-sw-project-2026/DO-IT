@@ -17,8 +17,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/mentor-profile?user_id=xxx
  * 내 멘토 프로필 조회
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     const user_id = url.searchParams.get("user_id");
     if (!user_id) return json({ message: "user_id 필요" }, 400, request);
 

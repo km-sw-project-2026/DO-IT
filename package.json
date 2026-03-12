@@ -8,7 +8,7 @@
 		"build": "vite build",
 		"lint": "eslint .",
 		"preview": "npm run build && vite preview",
-		"deploy": "npm run build && wrangler deploy",
+		"deploy": "npm run build && wrangler deploy --config dist/do_it/wrangler.json",
 		"schema:generate": "npx wrangler d1 export doit --remote --output=./database.sql",
 		"schema:apply": "wrangler d1 execute doit --file=./database.sql"
 	},

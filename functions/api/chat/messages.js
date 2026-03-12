@@ -15,8 +15,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/chat/messages?room_id=xxx&after=0
  * 메시지 목록 조회 (after: 마지막으로 받은 message_id, 폴링용)
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     const room_id = Number(url.searchParams.get("room_id"));
     const after = Number(url.searchParams.get("after") || 0);
     if (!room_id) return json({ message: "room_id 필요" }, 400, request);

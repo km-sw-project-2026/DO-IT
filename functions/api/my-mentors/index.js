@@ -17,8 +17,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/my-mentors?user_id=xxx
  * 내가 멘토링을 받은 멘토 목록 조회 (중복 제거)
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     const user_id = Number(url.searchParams.get("user_id"));
     if (!user_id) return json({ message: "user_id 필요" }, 400, request);
 

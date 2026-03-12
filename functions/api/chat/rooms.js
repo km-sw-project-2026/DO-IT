@@ -15,8 +15,9 @@ export async function onRequestOptions({ request }) {
  * GET /api/chat/rooms?user_id=xxx
  * 내가 참여 중인 채팅방 목록
  */
-export async function onRequestGet({ env, url, request }) {
+export async function onRequestGet({ env, url: _url, request }) {
   try {
+    const url = _url ?? new URL(request.url);
     const user_id = Number(url.searchParams.get("user_id"));
     if (!user_id) return json({ message: "user_id 필요" }, 400, request);
 
