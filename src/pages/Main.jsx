@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
 import {
@@ -15,6 +15,7 @@ import { clearRecentOpenedDoc, getRecentOpenedDoc, setRecentOpenedDoc } from "..
 import { formatRepositoryDateShort } from "../utils/repositoryDate";
 
 function Main() {
+  const navigate = useNavigate();
   const me = getCurrentUser();
   const userId = me?.user_id;
   const [recentOpenedDoc, setRecentOpenedDocState] = useState(() => getRecentOpenedDoc());
@@ -417,7 +418,7 @@ function Main() {
                 <img src="/images/icon/Plus.png" alt="" />
               </Link>
             </div>
-          </Link>
+          </div>
         </div>
       </section>
 
@@ -437,7 +438,7 @@ function Main() {
             <div className="mm-actions">
               <button
                 className="mm-btn mm-btn--primary"
-                onClick={openMentorModal}
+                onClick={() => navigate("/mentorpage")}
               >
                 멘토 서비스
               </button>

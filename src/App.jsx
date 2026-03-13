@@ -25,7 +25,6 @@ import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
 import RepositoryTrashFolder from './components/RepositoryTrashFolder.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
-import MypageMentor from './components/MypageMentor.jsx';
 import Bookmark from './components/Bookmark.jsx';
 import DocEditor from "./components/DocEditor";
 import DocViewer from "./components/DocViewer";
