@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
 import {
@@ -17,6 +17,7 @@ import { formatRepositoryDateShort } from "../utils/repositoryDate";
 function Main() {
   const me = getCurrentUser();
   const userId = me?.user_id;
+  const navigate = useNavigate();
   const [recentOpenedDoc, setRecentOpenedDocState] = useState(() => getRecentOpenedDoc());
   const [folders, setFolders] = useState([]);
   const [docs, setDocs] = useState([]);
@@ -249,6 +250,10 @@ function Main() {
     link.click();
   };
 
+  const openMentorModal = () => {
+    navigate("/mentologin");
+  };
+
   useEffect(() => {
     if (visibleDocs.length > 0 && checkedDocs.length === visibleDocs.length) {
       setIsAllChecked(true);
@@ -417,7 +422,7 @@ function Main() {
                 <img src="/images/icon/Plus.png" alt="" />
               </Link>
             </div>
-          </Link>
+          </div>
         </div>
       </section>
 

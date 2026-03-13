@@ -25,7 +25,6 @@ import MypageRepositoryDelete from './components/MypageRepositoryDelete.jsx';
 import RepositoryTrashFolder from './components/RepositoryTrashFolder.jsx';
 import MRFI from './components/MRFI.jsx';
 import MRSDB from './components/MRSDB.jsx';
-import MypageMentor from './components/MypageMentor.jsx';
 import Bookmark from './components/Bookmark.jsx';
 import DocEditor from "./components/DocEditor";
 import DocViewer from "./components/DocViewer";
@@ -42,6 +41,10 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path='/mypagementy' element={<MypageMenty />} />
         <Route path='/mypagementor' element={<MypageMentor />} />
+        <Route path='/mentypage' element={<Mentypage />} />
+        <Route path='/mentoring/:id' element={<Mentoring />} />
+        <Route path='/mentoreview' element={<Mentoreview />} />
+        <Route path='/mentologin' element={<Mentologin />} />
         <Route path='/mypagerepository' element={<MypageRepository />} />
         <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete />} />
         <Route path='/mrfi' element={<MRFI />} />
