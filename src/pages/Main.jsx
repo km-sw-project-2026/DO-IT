@@ -438,7 +438,7 @@ function Main() {
             <div className="mm-actions">
               <button
                 className="mm-btn mm-btn--primary"
-                onClick={() => navigate("/mentorpage")}
+                onClick={() => navigate("/mentologin")}
               >
                 멘토 서비스
               </button>

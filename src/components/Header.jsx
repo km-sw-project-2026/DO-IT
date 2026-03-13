@@ -100,7 +100,7 @@ function Header() {
             </Link>
 
             <Link to="/calendar"><li>캘린더</li></Link>
-            <Link to="/mypage">
+            <Link to="/mypagedata">
             <li>마이페이지</li>
             </Link>
 

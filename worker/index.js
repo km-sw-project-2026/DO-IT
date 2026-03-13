@@ -403,6 +403,8 @@ export default {
 
 
     if (path === "/api/profile") {
+      if (request.method === "OPTIONS") return profile.onRequestOptions({ request });
+      
       if (request.method === "GET") return profile.onRequestGet({ env, request });
       if (request.method === "PUT") return profile.onRequestPut({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
@@ -413,62 +415,88 @@ export default {
     }
     const mMentorById = path.match(/^\/api\/mentor\/([^/]+)\/?$/);
     if (mMentorById) {
+      if (request.method === "OPTIONS") return mentorById.onRequestOptions({ request });
+      
       if (request.method === "GET") return mentorById.onRequestGet({ env, request, params: { id: mMentorById[1]} });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/mentoring/apply") {
+      if (request.method === "OPTIONS") return mentoringApply.onRequestOptions({ request });
+      
       if (request.method === "POST") return mentoringApply.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/mentors") {
+      if (request.method === "OPTIONS") return mentors.onRequestOptions({ request });
+      
       if (request.method === "GET") return mentors.onRequestGet({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/mentor-application") {
+      if (request.method === "OPTIONS") return mentorApplication.onRequestOptions({ request });
+      
       if (request.method === "POST") return mentorApplication.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/admin/mentor-applications") {
+      if (request.method === "OPTIONS") return adminMentorApplications.onRequestOptions({ request });
+      
       if (request.method === "GET") return adminMentorApplications.onRequestGet({ env, request });
       if (request.method === "POST") return adminMentorApplications.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/admin/mentor-role") {
+      if (request.method === "OPTIONS") return adminMentorRole.onRequestOptions({ request });
+      
       if (request.method === "POST") return adminMentorRole.onRequestPost({ env, request });
       
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/mentor-profile") {
+      if (request.method === "OPTIONS") return mentorProfile.onRequestOptions({ request });
+      
       if (request.method === "GET") return mentorProfile.onRequestGet({ env, request });
       if (request.method === "PUT") return mentorProfile.onRequestPut({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/my-mentors") {
+      if (request.method === "OPTIONS") return myMentors.onRequestOptions({ request });
+      
       if (request.method === "GET") return myMentors.onRequestGet({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/mentor-requests") {
+      if (request.method === "OPTIONS") return mentorRequests.onRequestOptions({ request });
+      
       if (request.method === "GET") return mentorRequests.onRequestGet({ env, request });
       if (request.method === "POST") return mentorRequests.onRequestPost({ env, request });
       if (request.method === "DELETE") return mentorRequests.onRequestDelete({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/notifications") {
+      if (request.method === "OPTIONS") return notifications.onRequestOptions({ request });
+      
       if (request.method === "GET") return notifications.onRequestGet({ env, request });
       if (request.method === "POST") return notifications.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/chat/rooms") {
+      if (request.method === "OPTIONS") return chatRooms.onRequestOptions({ request });
+      
       if (request.method === "GET") return chatRooms.onRequestGet({ env, request });
       if (request.method === "POST") return chatRooms.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/chat/messages") {
+      if (request.method === "OPTIONS") return chatMessages.onRequestOptions({ request });
+      
       if (request.method === "GET") return chatMessages.onRequestGet({ env, request });
       if (request.method === "POST") return chatMessages.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/reviews") {
+      if (request.method === "OPTIONS") return reviews.onRequestOptions({ request });
+      
       if (request.method === "GET") return reviews.onRequestGet({ env, request });
       if (request.method === "POST") return reviews.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });

@@ -162,7 +162,7 @@ function MypageMenty() {
     const viewMode = sessionStorage.getItem('viewMode')
         || (isMentor || me?.role === 'ADMIN' ? 'mentor' : 'mentee');
     if (viewMode === 'mentor' && (isMentor || me?.role === 'ADMIN')) {
-        return <Navigate to="/mypageMentor" replace />;
+        return <Navigate to="/mypagementor" replace />;
     }
 
     return (
@@ -186,7 +186,7 @@ function MypageMenty() {
                         </div>
                             <div className="change-button-mentee">
                                 {canToggle ? (
-                                    <button onClick={() => { sessionStorage.setItem('viewMode', 'mentor'); navigate('/mypageMentor'); }}>멘티</button>
+                                    <button onClick={() => { sessionStorage.setItem('viewMode', 'mentor'); navigate('/mypagementor'); }}>멘티</button>
                                 ) : (
                                     <button className="toggle-disabled" type="button" disabled title="멘토 권한이 있어야 전환 가능합니다">✕</button>
                                 )}

@@ -2,6 +2,7 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Main from './pages/Main.jsx';
+import Chat from './pages/Chat.jsx';
 import Login from './pages/Login.jsx';
 import MemberInput from './pages/MemberInput.jsx';
 import { MainLayout } from './components/MainLayout.jsx';
@@ -15,6 +16,7 @@ import Mypagedata from './components/Mypagedata.jsx';
 import MypageMentor from './components/MypageMentor.jsx';
 import Mentypage from './components/Menty/Mentypage.jsx';
 import Mentoring from './components/Menty/Mentoring.jsx';
+import Mentopage from './components/Menty/Mentopage.jsx';
 import Mentoreview from './components/Menty/Mentoreview.jsx';
 import Mentologin from './components/Menty/Mentologin.jsx';
 import ProfileSetting from './components/ProfileSetting.jsx';
@@ -39,7 +41,19 @@ function App() {
         <Route path="/post/new" element={<PostCreate />} />
         <Route path="/post/:id" element={<Post />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path='/chat' element={<Chat />} />
         <Route path='/mypagementy' element={<MypageMenty />} />
+        <Route path='/mypageposts' element={<Mypageposts />} />
+        <Route path='/calendar' element={<Calendar />} />
+        <Route path='/profilesetting' element={<ProfileSetting />} />
+        <Route path='/mentoreview' element={<Mentoreview />} />
+        <Route path='/mentoring' element={<Mentoring />} />
+        <Route path='/mentopage' element={<Mentopage />} />
+        <Route path='/mentopage/:id' element={<Mentopage />} />
+        <Route path='/mentoring/:id' element={<Mentoring />} />
+        <Route path='/mentologin' element={<Mentologin />} />
+        <Route path='/mentypage' element={<Mentypage />} />
+        <Route path='/mypagedata' element={<Mypagedata />} />
         <Route path='/mypagementor' element={<MypageMentor />} />
         <Route path='/mypagerepository' element={<MypageRepository />} />
         <Route path='/mypagerepositorydelete' element={<MypageRepositoryDelete />} />
