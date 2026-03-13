@@ -1,0 +1,218 @@
+.doc-editor {
+  min-height: 100vh;
+  background: #f4f6f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+}
+
+/* 상단 영역 */
+.doc-status-bar {
+  width: 900px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.doc-status-bar .doc-status {
+  background: #4caf50;
+  color: white;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.doc-top {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.doc-title {
+  flex: 1;
+  min-width: 240px;
+  height: 44px;
+  border: 1px solid #d7dde4;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 18px;
+  background: white;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.doc-actions button,
+.doc-toolbar button,
+.doc-toolbar select {
+  height: 38px;
+  border: 1px solid #d7dde4;
+  background: white;
+  border-radius: 8px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.doc-actions button:hover,
+.doc-toolbar button:hover,
+.doc-toolbar select:hover {
+  background: #f0f3f7;
+}
+
+.doc-actions .ghost {
+  background: #f9fafb;
+}
+
+/* 툴바 */
+.doc-toolbar {
+  width: 900px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.doc-toolbar button.active {
+  background: #e8f0fe;
+  border-color: #4285f4;
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+.sep {
+  width: 1px;
+  height: 28px;
+  background: #d7dde4;
+  margin: 0 4px;
+}
+
+.toolbar-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.toolbar-inline select {
+  height: 38px;
+  border: 1px solid #d7dde4;
+  background: white;
+  border-radius: 8px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.toolbar-inline input[type="color"] {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d7dde4;
+  border-radius: 8px;
+  background: white;
+  padding: 2px;
+  cursor: pointer;
+}
+
+/* 글 작성 영역 */
+.doc-paper {
+  width: 900px;
+  min-height: 1100px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 40px 50px;
+  box-sizing: border-box;
+  line-height: 1.8;
+  outline: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.doc-paper:focus {
+  border-color: #8ab4f8;
+}
+
+.doc-paper.is-template {
+  color: #b8c0cc;
+}
+
+.doc-paper.is-template h1,
+.doc-paper.is-template p {
+  color: #b8c0cc;
+}
+
+.doc-paper h1,
+.doc-paper h2,
+.doc-paper h3 {
+  margin: 16px 0 10px;
+}
+
+.doc-paper p {
+  margin: 10px 0;
+}
+
+.doc-paper ul,
+.doc-paper ol {
+  margin: 10px 0;
+  padding-left: 24px;
+}
+
+.doc-paper ul {
+  list-style: disc;
+}
+
+.doc-paper ol {
+  list-style: decimal;
+}
+
+.doc-paper li {
+  margin: 6px 0;
+  list-style: inherit;
+}
+
+.doc-paper img {
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.doc-paper table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.doc-paper td,
+.doc-paper th {
+  border: 1px solid #cfd8dc;
+  padding: 8px;
+}
+
+/* 하단 */
+.doc-footer {
+  width: 900px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.doc-paper .fs-12 { font-size: 12px; }
+.doc-paper .fs-14 { font-size: 14px; }
+.doc-paper .fs-16 { font-size: 16px; }
+.doc-paper .fs-18 { font-size: 18px; }
+.doc-paper .fs-24 { font-size: 24px; }
+.doc-paper .fs-32 { font-size: 32px; }

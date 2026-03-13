@@ -1,5 +1,5 @@
 import "../css/MypageMenty.css";
-import Mypagedata from "./Mypagedata";
+import MypageRepositorySummary from "./MypageRepositorySummary.jsx";
 import MypageCommunity from "./MypageCommunity";
 import { ProfileSetting } from "./ProfileSetting.jsx";
 import { Link, useNavigate, Navigate } from "react-router-dom";
@@ -217,19 +217,7 @@ function MypageMenty() {
                     </div>
                     <div className="mypagementy-data">
                         <h2 className="mypagementy-contents-title">내 자료함</h2>
-                        <div className="mypagementy-data-box">
-                            <div className="mypagementy-data-contents">
-                                <div className="mypagementy-data-title">
-                                    <h2>자료함</h2>
-                                </div>
-                                <div className="mypagementy-data-main">
-                                    <Mypagedata />
-                                    <Mypagedata />
-                                    <Mypagedata />
-                                    <Mypagedata />
-                                </div>
-                            </div>
-                        </div>
+                        <MypageRepositorySummary />
                     </div>
                 </div>
             </div>

@@ -36,6 +36,22 @@ import * as chatMessages from "../functions/api/chat/messages.js";
 import * as reviews from "../functions/api/reviews/index.js";
 import * as upload from "../functions/api/upload.js";
 
+import * as repoFolders from "../functions/api/repository/folders/index.js";
+import * as repoFoldersById from "../functions/api/repository/folders/[id].js";
+import * as repoFiles from "../functions/api/repository/files/index.js";
+import * as repoFilesById from "../functions/api/repository/files/[id].js";
+import * as repoNotes from "../functions/api/repository/notes/index.js";
+import * as repoNotesById from "../functions/api/repository/notes/[id].js";
+import * as repoTrash from "../functions/api/repository/trash/index.js";
+import * as repoTrashFolderById from "../functions/api/repository/trash/folders/[id].js";
+import * as repoTrashFolderRestore from "../functions/api/repository/trash/folders/[id]/restore.js";
+import * as repoTrashFolderPurge from "../functions/api/repository/trash/folders/[id]/purge.js";
+import * as repoTrashFileRestore from "../functions/api/repository/trash/files/[id]/restore.js";
+import * as repoTrashFilePurge from "../functions/api/repository/trash/files/[id]/purge.js";
+import * as repoTrashNoteById from "../functions/api/repository/trash/notes/[id].js";
+import * as repoTrashNoteRestore from "../functions/api/repository/trash/notes/[id]/restore.js";
+import * as repoTrashNotePurge from "../functions/api/repository/trash/notes/[id]/purge.js";
+
 
 
 export default {
@@ -205,12 +221,11 @@ export default {
     }
 
     // ---------------------------
-    // /api/profile (프로필 조회/수정)
+    // /api/repository/folders (폴더 목록/생성)
     // ---------------------------
-    if (path === "/api/profile") {
-      if (request.method === "OPTIONS") return profile.onRequestOptions({ request });
-      if (request.method === "GET") return profile.onRequestGet({ request, env, url });
-      if (request.method === "PUT") return profile.onRequestPut({ request, env });
+    if (path === "/api/repository/folders") {
+      if (request.method === "GET") return repoFolders.onRequestGet({ env, request, url });
+      if (request.method === "POST") return repoFolders.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -218,12 +233,14 @@ export default {
     }
 
     // ---------------------------
-    // /me/mentor-status (멘토 권한/토글 가능 여부)
+    // /api/repository/folders/:id (폴더 수정/삭제)
     // ---------------------------
-    if (path === "/me/mentor-status") {
-      if (request.method === "GET") {
-        return mentorStatus.onRequestGet({ env, request });
-      }
+    const mFolderById = path.match(/^\/api\/repository\/folders\/(\d+)\/?$/);
+    if (mFolderById) {
+      const id = mFolderById[1];
+      const params = { id };
+      if (request.method === "PATCH") return repoFoldersById.onRequestPatch({ env, request, params });
+      if (request.method === "DELETE") return repoFoldersById.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -231,13 +248,10 @@ export default {
     }
 
     // ---------------------------
-    // /api/mentor/:id (멘토 프로필 상세 조회)
+    // /api/repository/files (파일 목록)
     // ---------------------------
-    const mMentor = path.match(/^\/api\/mentor\/(\d+)\/?$/);
-    if (mMentor) {
-      const params = { id: mMentor[1] };
-      if (request.method === "OPTIONS") return mentorById.onRequestOptions({ request });
-      if (request.method === "GET") return mentorById.onRequestGet({ env, params, request });
+    if (path === "/api/repository/files") {
+      if (request.method === "GET") return repoFiles.onRequestGet({ env, request, url });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -245,11 +259,14 @@ export default {
     }
 
     // ---------------------------
-    // /api/mentoring/apply (멘토링 신청)
+    // /api/repository/files/:id (파일 수정/삭제)
     // ---------------------------
-    if (path === "/api/mentoring/apply") {
-      if (request.method === "OPTIONS") return mentoringApply.onRequestOptions({ request });
-      if (request.method === "POST") return mentoringApply.onRequestPost({ env, request });
+    const mFileById = path.match(/^\/api\/repository\/files\/(\d+)\/?$/);
+    if (mFileById) {
+      const id = mFileById[1];
+      const params = { id };
+      if (request.method === "PATCH") return repoFilesById.onRequestPatch({ env, request, params });
+      if (request.method === "DELETE") return repoFilesById.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -257,11 +274,11 @@ export default {
     }
 
     // ---------------------------
-    // /api/mentors (멘토 목록)
+    // /api/repository/notes (노트 목록/생성)
     // ---------------------------
-    if (path === "/api/mentors") {
-      if (request.method === "OPTIONS") return mentors.onRequestOptions({ request });
-      if (request.method === "GET") return mentors.onRequestGet({ env, url, request });
+    if (path === "/api/repository/notes") {
+      if (request.method === "GET") return repoNotes.onRequestGet({ env, request, url });
+      if (request.method === "POST") return repoNotes.onRequestPost({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -269,13 +286,15 @@ export default {
     }
 
     // ---------------------------
-    // /api/mentor-requests (멘토에게 온 신청 목록/수락거절/종료)
+    // /api/repository/notes/:id (노트 조회/수정/삭제)
     // ---------------------------
-    if (path === "/api/mentor-requests") {
-      if (request.method === "OPTIONS") return mentorRequests.onRequestOptions({ request });
-      if (request.method === "GET") return mentorRequests.onRequestGet({ env, url, request });
-      if (request.method === "POST") return mentorRequests.onRequestPost({ env, request });
-      if (request.method === "DELETE") return mentorRequests.onRequestDelete({ env, request });
+    const mNoteById = path.match(/^\/api\/repository\/notes\/(\d+)\/?$/);
+    if (mNoteById) {
+      const id = mNoteById[1];
+      const params = { id };
+      if (request.method === "GET") return repoNotesById.onRequestGet({ env, request, params });
+      if (request.method === "PUT") return repoNotesById.onRequestPut({ env, request, params });
+      if (request.method === "DELETE") return repoNotesById.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
@@ -283,134 +302,104 @@ export default {
     }
 
     // ---------------------------
-    // /api/notifications (알림 목록/읽음 처리)
+    // /api/repository/trash (휴지통)
     // ---------------------------
-    if (path === "/api/notifications") {
-      if (request.method === "OPTIONS") return notifications.onRequestOptions({ request });
-      if (request.method === "GET") return notifications.onRequestGet({ env, url, request });
-      if (request.method === "POST") return notifications.onRequestPost({ env, request });
+    if (path === "/api/repository/trash") {
+      if (request.method === "GET") return repoTrash.onRequestGet({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/chat/rooms (채팅방 목록/생성)
-    // ---------------------------
-    if (path === "/api/chat/rooms") {
-      if (request.method === "OPTIONS") return chatRooms.onRequestOptions({ request });
-      if (request.method === "GET") return chatRooms.onRequestGet({ env, url, request });
-      if (request.method === "POST") return chatRooms.onRequestPost({ env, request });
-      if (request.method === "DELETE") return chatRooms.onRequestDelete({ env, request });
+    const mTrashFolderById = path.match(/^\/api\/repository\/trash\/folders\/(\d+)\/?$/);
+    if (mTrashFolderById) {
+      const id = mTrashFolderById[1];
+      const params = { id };
+      if (request.method === "GET") return repoTrashFolderById.onRequestGet({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/chat/messages (메시지 조회/전송/수정/삭제)
-    // ---------------------------
-    if (path === "/api/chat/messages") {
-      if (request.method === "OPTIONS") return chatMessages.onRequestOptions({ request });
-      if (request.method === "GET") return chatMessages.onRequestGet({ env, url, request });
-      if (request.method === "POST") return chatMessages.onRequestPost({ env, request });
-      if (request.method === "PUT") return chatMessages.onRequestPut({ env, request });
-      if (request.method === "DELETE") return chatMessages.onRequestDelete({ env, request });
+    const mTrashFolderRestore = path.match(/^\/api\/repository\/trash\/folders\/(\d+)\/restore\/?$/);
+    if (mTrashFolderRestore) {
+      const id = mTrashFolderRestore[1];
+      const params = { id };
+      if (request.method === "POST") return repoTrashFolderRestore.onRequestPost({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/my-mentors (내가 받은 멘토 목록)
-    // ---------------------------
-    if (path === "/api/my-mentors") {
-      if (request.method === "OPTIONS") return myMentors.onRequestOptions({ request });
-      if (request.method === "GET") return myMentors.onRequestGet({ env, url, request });
+    const mTrashFolderPurge = path.match(/^\/api\/repository\/trash\/folders\/(\d+)\/purge\/?$/);
+    if (mTrashFolderPurge) {
+      const id = mTrashFolderPurge[1];
+      const params = { id };
+      if (request.method === "DELETE") return repoTrashFolderPurge.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/mentor-profile (멘토 프로필 조회/수정)
-    // ---------------------------
-    if (path === "/api/mentor-profile") {
-      if (request.method === "OPTIONS") return mentorProfile.onRequestOptions({ request });
-      if (request.method === "GET") return mentorProfile.onRequestGet({ env, url, request });
-      if (request.method === "PUT") return mentorProfile.onRequestPut({ env, request });
+    const mTrashFileRestore = path.match(/^\/api\/repository\/trash\/files\/(\d+)\/restore\/?$/);
+    if (mTrashFileRestore) {
+      const id = mTrashFileRestore[1];
+      const params = { id };
+      if (request.method === "POST") return repoTrashFileRestore.onRequestPost({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/mentor-application (멘토 지원)
-    // ---------------------------
-    if (path === "/api/mentor-application") {
-      if (request.method === "OPTIONS") return mentorApplication.onRequestOptions({ request });
-      if (request.method === "POST") return mentorApplication.onRequestPost({ env, request });
+    const mTrashFilePurge = path.match(/^\/api\/repository\/trash\/files\/(\d+)\/purge\/?$/);
+    if (mTrashFilePurge) {
+      const id = mTrashFilePurge[1];
+      const params = { id };
+      if (request.method === "DELETE") return repoTrashFilePurge.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/admin/mentor-applications (멘토 지원 목록/승인거절)
-    // ---------------------------
-    if (path === "/api/admin/mentor-applications") {
-      if (request.method === "OPTIONS") return adminMentorApplications.onRequestOptions({ request });
-      if (request.method === "GET") return adminMentorApplications.onRequestGet({ env, request });
-      if (request.method === "POST") return adminMentorApplications.onRequestPost({ env, request });
+    const mTrashNoteById = path.match(/^\/api\/repository\/trash\/notes\/(\d+)\/?$/);
+    if (mTrashNoteById) {
+      const id = mTrashNoteById[1];
+      const params = { id };
+      if (request.method === "GET") return repoTrashNoteById.onRequestGet({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/admin/mentor-role (멘토 권한 부여/박탈)
-    // ---------------------------
-    if (path === "/api/admin/mentor-role") {
-      if (request.method === "OPTIONS") return adminMentorRole.onRequestOptions({ request });
-      if (request.method === "POST") return adminMentorRole.onRequestPost({ env, request });
+    const mTrashNoteRestore = path.match(/^\/api\/repository\/trash\/notes\/(\d+)\/restore\/?$/);
+    if (mTrashNoteRestore) {
+      const id = mTrashNoteRestore[1];
+      const params = { id };
+      if (request.method === "POST") return repoTrashNoteRestore.onRequestPost({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-
-    // ---------------------------
-    // /api/reviews (리뷰 등록/조회)
-    // ---------------------------
-    if (path === "/api/reviews") {
-      if (request.method === "OPTIONS") return reviews.onRequestOptions({ request });
-      if (request.method === "GET") return reviews.onRequestGet({ env, url, request });
-      if (request.method === "POST") return reviews.onRequestPost({ env, request });
+    const mTrashNotePurge = path.match(/^\/api\/repository\/trash\/notes\/(\d+)\/purge\/?$/);
+    if (mTrashNotePurge) {
+      const id = mTrashNotePurge[1];
+      const params = { id };
+      if (request.method === "DELETE") return repoTrashNotePurge.onRequestDelete({ env, request, params });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },
       });
     }
 
-    // ---------------------------
-    // /api/upload (파일 업로드)
-    // ---------------------------
-    if (path === "/api/upload") {
-      if (request.method === "OPTIONS") return upload.onRequestOptions({ request });
-      if (request.method === "POST") return upload.onRequestPost({ request, env });
-      return new Response(JSON.stringify({ message: "method not allowed" }), {
-        status: 405,
-        headers: { "content-type": "application/json" },
-      });
-    }
 
     return new Response(null, { status: 404 });
   },

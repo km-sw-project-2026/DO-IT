@@ -190,6 +190,17 @@
 .mypagementy-data {
     width: 45%;
 }
+
+.mypage-data-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.mypage-data-box {
+    display: block;
+}
+
 .mypagementy-data-contents {
     background: #FFFFFF;
     box-shadow: 0px 0px 6px 0 rgba(0, 0, 0, 50%);
@@ -227,81 +238,4 @@
 .mypagementy-data-main {
     height: 250px;
     padding: 10px;
-}
-
-/* ===== 반응형 ===== */
-@media (max-width: 1200px) {
-  .mypagementy-header-inner {
-    width: 100%;
-    padding: 0 16px;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 768px) {
-  .mypagementy-header {
-    padding: 24px 20px;
-    height: auto;
-    margin-top: 0;
-  }
-
-  .mypagementy-user-profile {
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-    min-height: 80px;
-  }
-
-  .mypagementy-user-profile img {
-    width: 80px;
-    height: 80px;
-  }
-
-  .mypagementy-user-name h2 {
-    font-size: 20px;
-  }
-
-  .mypagementy-user-name p {
-    font-size: 16px;
-  }
-
-  .mypagementy-contents-inner {
-    flex-direction: column;
-    padding: 20px 16px;
-    gap: 20px;
-  }
-
-  .mypagementy-community,
-  .mypagementy-data {
-    width: 100%;
-  }
-
-  .mypagementy-contents-inner .mypagementy-contents-title {
-    font-size: 22px;
-    padding: 0 16px;
-  }
-
-  .menty-explanation p {
-    height: auto;
-    min-height: 80px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mypagementy-user-profile {
-    border-radius: 20px;
-  }
-
-  .mypagementy-user-name h2 {
-    font-size: 18px;
-  }
-
-  .mypagementy-user-name p {
-    font-size: 14px;
-  }
-
-  .mypagementy-community-title h2,
-  .mypagementy-data-title h2 {
-    font-size: 18px;
-  }
 }

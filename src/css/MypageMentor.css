@@ -193,6 +193,17 @@
 .mypage-data {
     width: 40%;
 }
+
+.mypage-data-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.mypage-data-box {
+    display: block;
+}
+
 .mypage-data-contents {
     background: #FFFFFF;
     box-shadow: 0px 0px 6px 0 rgba(0, 0, 0, 50%);

@@ -194,6 +194,40 @@ main {
   gap: 26px;
 }
 
+.folder-grid-empty {
+  width: min(1100px, 92%);
+  min-height: 290px;
+  margin: 0 auto;
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px;
+  text-align: center;
+}
+
+.folder-grid-empty img {
+  width: 120px;
+  opacity: 0.75;
+}
+
+.folder-grid-empty p {
+  font-size: 24px;
+  font-weight: 800;
+  color: #16364c;
+}
+
+.folder-grid-empty span {
+  max-width: 620px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(22, 54, 76, 0.82);
+}
+
 /* 폴더 카드 */
 .folder-card {
   width: 370px;
@@ -488,182 +522,179 @@ main {
   color: #fff;
 }
 
-/* ============================================================
-   메인 페이지 반응형
-============================================================ */
+/* ======================
+   Main 페이지 파일 리스트
+ ====================== */
 
-/* 태블릿 (768px) */
-@media (max-width: 768px) {
-  /* 히어로 섹션 */
-  .main-page {
-    height: auto;
-    min-height: 400px;
-    background-size: cover;
-    background-position: center top;
-    padding-bottom: 40px;
-  }
-
-  .main-page-contents {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 92%;
-    margin: 0 auto;
-    padding-top: 60px;
-  }
-
-  .main-page-contents img {
-    width: 80%;
-    max-width: 320px;
-  }
-
-  .main-page-contents h1 {
-    font-size: 22px;
-    line-height: 1.5;
-  }
-
-  .main-page-contents p {
-    font-size: 13px;
-    margin-top: 20px;
-  }
-
-  /* 자료함 헤더 */
-  .main-page-mypage-header {
-    flex-wrap: wrap;
-    padding: 16px 20px;
-    gap: 12px;
-  }
-
-  .main-page-mypage-header h2 {
-    font-size: 20px;
-  }
-
-  .main-page-mypage-header button {
-    width: 160px;
-    height: 50px;
-    font-size: 18px;
-  }
-
-  .mypage-emoji {
-    width: 80px;
-    height: 80px;
-  }
-
-  /* 폴더 카드 */
-  .folder-card {
-    width: 100%;
-    height: 200px;
-  }
-
-  .folder-card img {
-    width: 140px;
-  }
-
-  .folder-card p {
-    font-size: 22px;
-  }
-
-  /* 커뮤니티 섹션 */
-  .main-page-community {
-    height: auto;
-    padding-bottom: 30px;
-  }
-
-  /* 멘토멘티 */
-  .mm-title {
-    font-size: 22px;
-  }
-
-  .mm-btn {
-    height: 50px;
-    min-width: 160px;
-    font-size: 14px;
-  }
+.main-page-file-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 16px 0;
 }
 
-/* 모바일 (480px) */
-@media (max-width: 480px) {
-  .main-page-contents {
-    padding-top: 40px;
-    width: 95%;
-  }
+.main-page-file-actions span {
+  font-weight: 600;
+  color: #333;
+}
 
-  .main-page-contents img {
-    width: 70%;
-    max-width: 260px;
-  }
+.main-page-file-actions-buttons {
+  display: flex;
+  gap: 8px;
+}
 
-  .main-page-contents h1 {
-    font-size: 18px;
-  }
+.main-page-file-actions-buttons button {
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
 
-  .main-page-contents p {
-    font-size: 12px;
-    margin-top: 14px;
-  }
+.main-page-file-actions-buttons button:first-child {
+  background: #65BAED;
+  color: #fff;
+}
 
-  .main-page-mypage-header {
-    padding: 14px 16px;
-  }
+.main-page-file-actions-buttons button:nth-child(2) {
+  background: #ff6b6b;
+  color: #fff;
+}
 
-  .main-page-mypage-header h2 {
-    font-size: 18px;
-  }
+.main-page-file-actions-buttons button:last-child {
+  background: #ddd;
+  color: #333;
+}
 
-  .main-page-mypage-header button {
-    width: 130px;
-    height: 42px;
-    font-size: 15px;
-  }
+.main-page-file-list {
+  width: min(1100px, 92%);
+  margin: 28px auto 36px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px 22px;
+  box-shadow: 0 12px 30px rgba(49, 97, 130, 0.12);
+}
 
-  .mypage-emoji {
-    display: none;
-  }
+.main-page-preview-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
 
-  .folder-area {
-    padding: 24px 0 40px;
-  }
+.main-page-preview-header h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #18384d;
+}
 
-  .folder-card {
-    height: 160px;
-  }
+.main-page-preview-header span {
+  font-size: 14px;
+  color: #5f7889;
+}
 
-  .folder-card img {
-    width: 100px;
-  }
+.main-page-file-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+}
 
-  .folder-card p {
-    font-size: 18px;
-  }
+.main-page-file-select {
+  width: 40px;
+  flex-shrink: 0;
+}
 
-  .recent-wrap h3 {
-    font-size: 16px;
-  }
+.main-page-file-name-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  .mm-hero {
-    margin-top: 40px;
-    padding-top: 30px;
-  }
+.main-page-file-date-col {
+  width: 100px;
+  text-align: right;
+  color: #888;
+  font-size: 13px;
+}
 
-  .mm-title {
-    font-size: 20px;
-  }
+.main-page-file-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.15s;
+}
 
-  .mm-btn {
-    height: 46px;
-    font-size: 14px;
-  }
+.main-page-file-item:hover {
+  background: #f9f9f9;
+}
 
-  /* 멘토 모달 */
-  .mentor-modal {
-    padding: 40px 20px;
-  }
+.main-page-file-item.checked {
+  background: #e8f4fc;
+}
 
-  .mentor-modal p {
-    font-size: 16px;
-  }
+.main-page-file-item-featured {
+  background: linear-gradient(90deg, rgba(101, 186, 237, 0.12), rgba(255, 255, 255, 0.9));
+}
 
-  .mentor-modal h2 {
-    font-size: 20px;
-  }
+.main-page-file-featured-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #dff2ff;
+  color: #2074ad;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.main-page-file-featured-name span {
+  font-weight: 700;
+}
+
+.main-page-file-item a {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.main-page-file-open {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.main-page-file-item a img {
+  width: 20px;
+  height: 20px;
+}
+
+.main-page-file-item a span {
+  font-size: 14px;
+  color: #333;
+}
+
+.main-page-file-item a:hover span {
+  color: #65BAED;
+}
+
+.main-page-file-empty {
+  padding: 30px;
+  text-align: center;
+  color: #999;
 }
