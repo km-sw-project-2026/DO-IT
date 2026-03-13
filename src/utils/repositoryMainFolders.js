@@ -1,4 +1,5 @@
 const LS_MAIN_FOLDER_IDS = "doit_repository_main_folder_ids_v1";
+const MAIN_FOLDERS_CHANGED_EVENT = "repository-main-folders-changed";
 
 function normalizeIds(ids) {
   return Array.from(
@@ -21,7 +22,26 @@ export function getMainFolderIds() {
 export function setMainFolderIds(ids) {
   const nextIds = normalizeIds(ids);
   localStorage.setItem(LS_MAIN_FOLDER_IDS, JSON.stringify(nextIds));
+  window.dispatchEvent(new CustomEvent(MAIN_FOLDERS_CHANGED_EVENT, { detail: nextIds }));
   return nextIds;
+}
+
+export function subscribeMainFolderIds(callback) {
+  if (typeof callback !== "function") {
+    return () => {};
+  }
+
+  const handleChange = () => {
+    callback(getMainFolderIds());
+  };
+
+  window.addEventListener("storage", handleChange);
+  window.addEventListener(MAIN_FOLDERS_CHANGED_EVENT, handleChange);
+
+  return () => {
+    window.removeEventListener("storage", handleChange);
+    window.removeEventListener(MAIN_FOLDERS_CHANGED_EVENT, handleChange);
+  };
 }
 
 export function toggleMainFolderIds(ids, folderId) {

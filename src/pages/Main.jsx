@@ -10,7 +10,7 @@ import {
   apiMoveFile,
   apiMoveNote,
 } from "../api/repository";
-import { getMainFolderIds } from "../utils/repositoryMainFolders";
+import { getMainFolderIds, subscribeMainFolderIds } from "../utils/repositoryMainFolders";
 import { clearRecentOpenedDoc, getRecentOpenedDoc, setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
 import { formatRepositoryDateShort } from "../utils/repositoryDate";
 
@@ -83,13 +83,19 @@ function Main() {
   }, [userId]);
 
   useEffect(() => {
-    const onStorage = () => {
+    const unsubscribe = subscribeMainFolderIds(() => {
       setMainFolderIds(getMainFolderIds());
+    });
+
+    const onStorage = () => {
       setRecentOpenedDocState(getRecentOpenedDoc());
     };
 
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   const rootFolders = useMemo(
@@ -104,13 +110,9 @@ function Main() {
   );
 
   const visibleFolders = useMemo(() => {
-    if (mainFolderIds.length > 0) {
-      return mainFolderIds
-        .map((folderId) => rootFolders.find((folder) => folder.id === folderId))
-        .filter(Boolean);
-    }
-
-    return rootFolders.slice(0, 3);
+    return mainFolderIds
+      .map((folderId) => rootFolders.find((folder) => folder.id === folderId))
+      .filter(Boolean);
   }, [mainFolderIds, rootFolders]);
 
   const visibleDocs = useMemo(
