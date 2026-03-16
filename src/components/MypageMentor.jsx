@@ -188,7 +188,7 @@ export default function MypageMentor() {
                         </div>
                         <div className="change-button-mentor">
                             {canToggle ? (
-                                <button onClick={() => { sessionStorage.setItem('viewMode', 'mentee'); navigate('/mypage'); }}>멘토</button>
+                                <button onClick={() => { sessionStorage.setItem('viewMode', 'mentee'); navigate('/mypagementy'); }}>멘토</button>
                             ) : (
                                 <button className="toggle-disabled" type="button" disabled title="멘토 전용 페이지입니다">✓</button>
                             )}
