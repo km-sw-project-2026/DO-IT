@@ -24,9 +24,10 @@ export async function onRequestOptions({ request }) {
 }
 
 // GET /api/profile?user_id=123
-export async function onRequestGet({ request, env, url }) {
+export async function onRequestGet({ request, env }) {
   try {
     const headers = corsHeaders(request);
+    const url = new URL(request.url);
     const userId = url.searchParams.get("user_id");
     if (!userId) return json({ message: "user_id가 필요합니다." }, 400, headers);
 
