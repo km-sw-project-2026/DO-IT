@@ -34,7 +34,7 @@ export async function onRequestGet({ env, url: _url, request }) {
     // 내가 멘토링 받은 멘토 목록 (중복 제거)
     const rows = await env.D1_DB
       .prepare(`
-        SELECT DISTINCT
+        SELECT
           m.mentor_id,
           u.user_id,
           u.nickname,
@@ -43,7 +43,8 @@ export async function onRequestGet({ env, url: _url, request }) {
         JOIN mentor m ON m.mentor_id = mt.mentor_id
         JOIN "user" u ON u.user_id = m.user_id
         WHERE mt.mentee_id = ? AND mt.status IN ('ACCEPTED', 'ENDED')
-        ORDER BY mt.mentoring_at DESC
+        GROUP BY m.mentor_id, u.user_id, u.nickname, u.profile_image
+        ORDER BY MAX(mt.mentoring_at) DESC
       `)
       .bind(menteeRow.mentee_id)
       .all();
