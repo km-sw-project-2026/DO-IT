@@ -42,7 +42,7 @@ export async function onRequestGet({ env, url: _url, request }) {
         FROM mentoring mt
         JOIN mentor m ON m.mentor_id = mt.mentor_id
         JOIN "user" u ON u.user_id = m.user_id
-        WHERE mt.mentee_id = ?
+        WHERE mt.mentee_id = ? AND mt.status IN ('ACCEPTED', 'ENDED')
         ORDER BY mt.mentoring_at DESC
       `)
       .bind(menteeRow.mentee_id)
