@@ -20,8 +20,7 @@ function MemberInput() {
   const [idAvailable, setIdAvailable] = useState(false);
 
   // ✅ 약관 동의
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
 
@@ -80,7 +79,7 @@ function MemberInput() {
     if (pw1 !== pw2) return alert("비밀번호가 서로 다릅니다.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))
       return alert("이메일 형식이 올바르지 않습니다.");
-    if (!agreeTerms || !agreePrivacy)
+    if (!agree)
       return alert("이용약관 및 개인정보처리방침에 동의해주세요.");
 
     try {
@@ -205,27 +204,15 @@ function MemberInput() {
           <label className="terms-agree-row">
             <input
               type="checkbox"
-              checked={agreeTerms}
-              onChange={(e) => setAgreeTerms(e.target.checked)}
+              checked={agree}
+              onChange={(e) => setAgree(e.target.checked)}
             />
             <span>
-              <button type="button" className="terms-link" onClick={() => setShowTerms(true)}>
+              <button type="button" className="terms-link" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>
                 이용약관
-              </button>
-              에 동의합니다. (필수)
-            </span>
-          </label>
-          <label className="terms-agree-row">
-            <input
-              type="checkbox"
-              checked={agreePrivacy}
-              onChange={(e) => setAgreePrivacy(e.target.checked)}
-            />
-            <span>
-              <button type="button" className="terms-link" onClick={() => setShowPrivacy(true)}>
+              </button> 및 <button type="button" className="terms-link" onClick={(e) => { e.preventDefault(); setShowPrivacy(true); }}>
                 개인정보처리방침
-              </button>
-              에 동의합니다. (필수)
+              </button>에 동의합니다. (필수)
             </span>
           </label>
         </div>

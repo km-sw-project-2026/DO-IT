@@ -95,7 +95,7 @@
   transform: translateX(-50%);
 }
 
-.member-input-bg button {
+.member-input-bg .confirm button {
   width: 638px;
   height: 80px;
   background: #009DFF;
