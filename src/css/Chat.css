@@ -221,6 +221,12 @@
     padding: 0 2px;
 }
 
+.chat-attach-btn > img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
 .chat-input {
     flex: 1;
     border: none;

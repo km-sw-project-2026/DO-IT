@@ -145,8 +145,17 @@ function Header() {
                             key={n.notification_id}
                             className={`notif-item${n.is_read === 0 ? " unread" : ""}${(n.link_url || n.mentoring_id) ? " clickable" : ""}`}
                             onClick={() => {
-                              const dest = n.link_url
+                              let dest = n.link_url
                                 || (n.mentoring_id ? `/chat?mentoring_id=${n.mentoring_id}` : null);
+                              
+                              if (dest === '/mypage') {
+                                if (n.message && n.message.includes("신청했어요!")) {
+                                  dest = "/mentopage";
+                                } else {
+                                  dest = "/mypagementy";
+                                }
+                              }
+
                               if (dest) {
                                 setShowNotif(false);
                                 navigate(dest);

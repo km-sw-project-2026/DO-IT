@@ -124,7 +124,7 @@ export async function onRequestPost({ env, request }) {
           mentorUserRow.user_id,
           `${menteeNickname} 님이 멘토링을 신청했어요! 확인해 주세요.`,
           newMentoringId,
-          '/mypage'
+          '/mentopage'
         )
         .run();
     } catch { /* 알림 오류는 신청 성공에 영향 없음 */ }
