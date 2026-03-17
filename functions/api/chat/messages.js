@@ -32,8 +32,27 @@ export async function onRequestGet({ env, url: _url, request }) {
     const after = Number(url.searchParams.get("after") || 0);
     if (!room_id) return json({ message: "room_id 필요" }, 400, request);
 
-    const rows = await env.D1_DB
-      .prepare(`
+    let query, bindParams;
+    if (after === 0) {
+      query = `
+        SELECT * FROM (
+          SELECT
+            cm.message_id,
+            cm.sender_id,
+            cm.content,
+            cm.created_at,
+            u.nickname,
+            u.profile_image
+          FROM chat_message cm
+          JOIN "user" u ON u.user_id = cm.sender_id
+          WHERE cm.room_id = ?
+          ORDER BY cm.message_id DESC
+          LIMIT 100
+        ) ORDER BY message_id ASC
+      `;
+      bindParams = [room_id];
+    } else {
+      query = `
         SELECT
           cm.message_id,
           cm.sender_id,
@@ -47,8 +66,13 @@ export async function onRequestGet({ env, url: _url, request }) {
           AND cm.message_id > ?
         ORDER BY cm.message_id ASC
         LIMIT 100
-      `)
-      .bind(room_id, after)
+      `;
+      bindParams = [room_id, after];
+    }
+
+    const rows = await env.D1_DB
+      .prepare(query)
+      .bind(...bindParams)
       .all();
 
     return json({ messages: rows.results ?? [] }, 200, request);
