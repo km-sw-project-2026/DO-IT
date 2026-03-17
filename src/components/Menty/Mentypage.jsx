@@ -86,17 +86,17 @@ function Mentypage() {
           </h1>
 
           <div className="Menty-buttons-group">
-            <div className="Menty-button">
+            <div className="Menty-button" onClick={() => requireLogin(() => navigate("/mentologin"))}>
               <img src="/images/mentee/men_apply.png" alt="1" />
-              <button onClick={() => requireLogin(() => navigate("/mentologin"))}>멘토 지원하기</button>
+              <button>멘토 지원하기</button>
             </div>
-            <div className="Menty-button">
+            <div className="Menty-button" onClick={() => requireLogin(() => setShowModal(true))}>
               <img src="/images/mentee/men_review.png" alt="2" />
-              <button onClick={() => requireLogin(() => setShowModal(true))}>후기 남기기</button>
+              <button>후기 남기기</button>
             </div>
-            <div className="Menty-button">
+            <div className="Menty-button" onClick={() => requireLogin(() => setShowChatModal(true))}>
               <img src="/images/mentee/men_chat.png" alt="3" className="chat-img" />
-              <button onClick={() => requireLogin(() => setShowChatModal(true))}>
+              <button>
                 나의 채팅 기록
               </button>
             </div>

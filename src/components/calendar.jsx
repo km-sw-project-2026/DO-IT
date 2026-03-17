@@ -420,13 +420,13 @@ export default function Calendar() {
               className="add-input"
               placeholder="할 일을 입력해주세요"
               value={draftTitle}
-              onChange={(e) => setDraftTitle(e.target.value)}
+              maxLength={50} onChange={(e) => setDraftTitle(e.target.value.slice(0, 50))}
             />
             <input
               className="add-input sub"
               placeholder="(선택) 세부 내용"
               value={draftDesc}
-              onChange={(e) => setDraftDesc(e.target.value)}
+              maxLength={50} onChange={(e) => setDraftDesc(e.target.value.slice(0, 50))}
             />
 
             {/* ✅ 카테고리 칩: plan이 로컬에 남아있어도 안 보이게 필터 */}
@@ -465,7 +465,7 @@ export default function Calendar() {
                   className="cat-add-name"
                   placeholder="카테고리 이름"
                   value={newCatName}
-                  onChange={(e) => setNewCatName(e.target.value)}
+                  maxLength={10} onChange={(e) => setNewCatName(e.target.value.slice(0, 10))}
                 />
                 <div className="cat-add-color">
                   <span>색상</span>
@@ -488,7 +488,7 @@ export default function Calendar() {
                         className="cat-edit-name"
                         value={c.name}
                         disabled={c.locked}
-                        onChange={(e) => updateCategory(c.id, { name: e.target.value })}
+                        maxLength={10} onChange={(e) => updateCategory(c.id, { name: e.target.value.slice(0, 10) })}
                       />
                       <input
                         type="color"

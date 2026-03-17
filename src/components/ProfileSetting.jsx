@@ -97,11 +97,11 @@ export const ProfileSetting = ({ openModal, setOpenModal }) => {
                             </div>
                             <div className="nickname">
                                 <h3>이름</h3>
-                                <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+                                <input type="text" value={nickname} maxLength={15} onChange={(e) => setNickname(e.target.value.slice(0, 15))} />
                             </div>
                             <div className="information">
                                 <h3>정보</h3>
-                                <textarea name="information" id="information" value={bio} onChange={(e) => setBio(e.target.value)}></textarea>
+                                <textarea name="information" id="information" value={bio} maxLength={200} onChange={(e) => setBio(e.target.value.slice(0, 200))}></textarea>
                             </div>
                         </div>
                     </div>
