@@ -422,7 +422,7 @@ function Chat() {
                         title="파일 첨부"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={!activeRoom || sending}
-                    >📎</button>
+                    ><img src="/images/icon/link.png" alt="파일 첨부" /></button>
                     <input
                         className="chat-input"
                         type="text"
