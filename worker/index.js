@@ -36,6 +36,11 @@ import * as chatMessages from "../functions/api/chat/messages.js";
 import * as reviews from "../functions/api/reviews/index.js";
 import * as upload from "../functions/api/upload.js";
 
+import * as calendarCategories from "../functions/api/calendar/categories.js";
+import * as calendarCategoriesById from "../functions/api/calendar/categories/[id].js";
+import * as calendarEvents from "../functions/api/calendar/events.js";
+import * as calendarEventsById from "../functions/api/calendar/events/[id].js";
+
 import * as repoFolders from "../functions/api/repository/folders/index.js";
 import * as repoFoldersById from "../functions/api/repository/folders/[id].js";
 import * as repoFiles from "../functions/api/repository/files/index.js";
@@ -504,6 +509,40 @@ export default {
     if (path === "/api/upload") {
       if (request.method === "OPTIONS") return upload.onRequestOptions({ request });
       if (request.method === "POST") return upload.onRequestPost({ env, request });
+      return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
+    }
+
+    // ---------------------------
+    // Calendar APIs
+    // ---------------------------
+    const CORS_HEADERS_CALENDAR = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, x-user-id", "Access-Control-Allow-Credentials": "true" };
+    
+    if (path === "/api/calendar/categories") {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS_CALENDAR });
+      if (request.method === "GET") return calendarCategories.onRequestGet({ request, env });
+      if (request.method === "POST") return calendarCategories.onRequestPost({ request, env });
+      return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
+    }
+
+    const matchCategoriesById = path.match(/^\/api\/calendar\/categories\/([^/]+)\/?$/);
+    if (matchCategoriesById) {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS_CALENDAR });
+      if (request.method === "PUT") return calendarCategoriesById.onRequestPut({ request, env, params: { id: matchCategoriesById[1] } });
+      if (request.method === "DELETE") return calendarCategoriesById.onRequestDelete({ request, env, params: { id: matchCategoriesById[1] } });
+      return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
+    }
+
+    if (path === "/api/calendar/events") {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS_CALENDAR });
+      if (request.method === "GET") return calendarEvents.onRequestGet({ request, env });
+      if (request.method === "POST") return calendarEvents.onRequestPost({ request, env });
+      return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
+    }
+
+    const matchEventsById = path.match(/^\/api\/calendar\/events\/([^/]+)\/?$/);
+    if (matchEventsById) {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS_HEADERS_CALENDAR });
+      if (request.method === "DELETE") return calendarEventsById.onRequestDelete({ request, env, params: { id: matchEventsById[1] } });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
 
