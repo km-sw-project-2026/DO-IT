@@ -119,8 +119,15 @@ function Chat() {
             if (sendingRef.current) return; // 전송 중이면 스킵 (중복 방지)
             const newMsgs = await fetchMessages(activeRoom.room_id, lastMsgId.current);
             if (newMsgs.length > 0) {
-                setMessages((prev) => [...prev, ...newMsgs]);
-                lastMsgId.current = newMsgs[newMsgs.length - 1].message_id;
+                setMessages((prev) => {
+                    const existingIds = new Set(prev.map(m => m.message_id));
+                    const filtered = newMsgs.filter(m => !existingIds.has(m.message_id));
+                    return [...prev, ...filtered];
+                });
+                const maxId = Math.max(...newMsgs.map(m => m.message_id));
+                if (maxId > lastMsgId.current) {
+                    lastMsgId.current = maxId;
+                }
             }
         }, 3000);
 
@@ -156,7 +163,10 @@ function Chat() {
                     nickname: me?.nickname || "나",
                     profile_image: me?.profile_image || "/images/profile.jpg",
                 };
-                setMessages((prev) => [...prev, tempMsg]);
+                setMessages((prev) => {
+                    if (prev.some(m => m.message_id === tempMsg.message_id)) return prev;
+                    return [...prev, tempMsg];
+                });
             }
         } catch { /* ignore */ } finally {
             sendingRef.current = false;
@@ -201,14 +211,18 @@ function Chat() {
                     const data = await res.json();
                     if (data.message_id) lastMsgId.current = data.message_id; // 폴링 기준점 먼저 업데이트
                     const now = new Date().toISOString();
-                    setMessages((prev) => [...prev, {
+                    const tempMsg = {
                         message_id: data.message_id ?? Date.now(),
                         sender_id: myId,
                         content,
                         created_at: now,
                         nickname: me?.nickname || "나",
                         profile_image: me?.profile_image || "/images/profile.jpg",
-                    }]);
+                    };
+                    setMessages((prev) => {
+                        if (prev.some(m => m.message_id === tempMsg.message_id)) return prev;
+                        return [...prev, tempMsg];
+                    });
                 }
             } catch { /* ignore */ } finally {
                 if (mountedRef.current) {
