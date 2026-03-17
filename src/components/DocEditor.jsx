@@ -37,6 +37,7 @@ export default function DocEditor() {
   const [status, setStatus] = useState("");
   const [isTemplate, setIsTemplate] = useState(true);
   const [currentFolderId, setCurrentFolderId] = useState(targetFolderId);
+  const saveReqRef = useRef(false);
 
   const [fontSize, setFontSize] = useState("16");
   const [textColor, setTextColor] = useState("#111111");
@@ -445,7 +446,7 @@ export default function DocEditor() {
   };
 
   const save = async () => {
-    if (!editorRef.current) return;
+    if (!editorRef.current || saveReqRef.current) return;
 
     const me = getCurrentUser();
     if (!me?.user_id) {
@@ -453,6 +454,7 @@ export default function DocEditor() {
       return;
     }
 
+    saveReqRef.current = true;
     const now = new Date().toISOString();
     cleanupEditorMarkup();
     const html = editorRef.current.innerHTML;
@@ -526,6 +528,8 @@ export default function DocEditor() {
     } catch (e) {
       console.error("保存 실패:", e);
       showStatus("저장 실패");
+    } finally {
+      saveReqRef.current = false;
     }
   };
 

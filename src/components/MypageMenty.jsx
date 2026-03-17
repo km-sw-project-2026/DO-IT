@@ -205,10 +205,12 @@ function MypageMenty() {
                         <div className="mypagementy-community-contents">
                             <div className="mypagementy-community-title">
                                 <h2>커뮤니티</h2>
+                                <Link to="/mypageposts">
                                 <button>
                                     <p>더보기</p>
                                     <img src='/images/icon/Plus.png' alt='' />
                                 </button>
+                                </Link>
                             </div>
                             <div className="mypagementy-community-main">
                                 <MypageCommunityList />

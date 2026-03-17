@@ -1,7 +1,7 @@
 import "../css/MypageRepository.css";
 import { data } from "../js/MypageRepository.js";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { getCurrentUser } from "../utils/auth";
 import { getMainFolderIds, setMainFolderIds, toggleMainFolderIds } from "../utils/repositoryMainFolders";
 import { setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
@@ -176,9 +176,13 @@ function MypageRepository() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
+  const isAddingRef = useRef(false);
+
   const addFolder = async () => {
     const name = newFolderName.trim();
-    if (!name || !userId) return;
+    if (!name || !userId || isAddingRef.current) return;
+    
+    isAddingRef.current = true;
 
     try {
       const res = await apiCreateFolder(userId, name, null);
@@ -196,6 +200,8 @@ function MypageRepository() {
     } catch (e) {
       console.warn("Failed to create folder:", e);
       alert("폴더 생성에 실패했습니다.");
+    } finally {
+      isAddingRef.current = false;
     }
 
     setNewFolderName("");

@@ -1,6 +1,8 @@
 import "../../css/Menty/Mentologin.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TermsModal from "../TermsModal";
+import PrivacyModal from "../PrivacyModal";
 
 function Mentologin() {
     const navigate = useNavigate();
@@ -16,6 +18,10 @@ function Mentologin() {
     const [agree, setAgree] = useState(false);
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
+    
+    // 모달 상태 추가
+    const [showTerms, setShowTerms] = useState(false);
+    const [showPrivacy, setShowPrivacy] = useState(false);
 
     const currentUser = (() => {
         try { return JSON.parse(sessionStorage.getItem("user") || localStorage.getItem("user") || "null"); }
@@ -161,7 +167,17 @@ function Mentologin() {
                             onChange={(e) => { setAgree(e.target.checked); setErrors((p) => ({ ...p, agree: "" })); }}
                         />
                         <label htmlFor="agree">
-                            <span>이용약관</span> 및 <span>개인정보 처리방침</span>에 동의합니다
+                            <span 
+                                onClick={(e) => { e.preventDefault(); setShowTerms(true); }}
+                                style={{ cursor: "pointer", textDecoration: "underline" }}
+                            >
+                                이용약관
+                            </span> 및 <span 
+                                onClick={(e) => { e.preventDefault(); setShowPrivacy(true); }}
+                                style={{ cursor: "pointer", textDecoration: "underline" }}
+                            >
+                                개인정보 처리방침
+                            </span>에 동의합니다
                         </label>
                     </div>
                     {errors.agree && <p className="Mentologin-error">{errors.agree}</p>}
@@ -176,6 +192,10 @@ function Mentologin() {
 
                 </div>
             </div>
+
+            {/* 모달 */}
+            {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+            {showPrivacy && <PrivacyModal onClose={() => setShowPrivacy(false)} />}
         </section>
     );
 }
