@@ -13,11 +13,22 @@ import {
 import { getMainFolderIds, subscribeMainFolderIds } from "../utils/repositoryMainFolders";
 import { clearRecentOpenedDoc, getRecentOpenedDoc, setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
 import { formatRepositoryDateShort } from "../utils/repositoryDate";
+import RecentCommunity from "../components/recentcommunity";
+import MainCalenderPreview from "../components/MainCalenderPreview";
 
 function Main() {
   const navigate = useNavigate();
   const me = getCurrentUser();
   const userId = me?.user_id;
+  const [showMentorModal, setShowMentorModal] = useState(false);
+
+  const openMentorModal = () => setShowMentorModal(true);
+  const closeMentorModal = () => setShowMentorModal(false);
+  const goMentorApply = () => {
+    setShowMentorModal(false);
+    navigate("/mentologin");
+  };
+
   const [recentOpenedDoc, setRecentOpenedDocState] = useState(() => getRecentOpenedDoc());
   const [folders, setFolders] = useState([]);
   const [docs, setDocs] = useState([]);
@@ -418,9 +429,12 @@ function Main() {
                 <img src="/images/icon/Plus.png" alt="" />
               </Link>
             </div>
+            <RecentCommunity />
           </div>
         </div>
       </section>
+
+      <MainCalenderPreview />
 
       <section className="mm-hero">
         <div className="mm-inner">
@@ -438,7 +452,7 @@ function Main() {
             <div className="mm-actions">
               <button
                 className="mm-btn mm-btn--primary"
-                onClick={() => navigate("/mentologin")}
+                onClick={openMentorModal}
               >
                 멘토 서비스
               </button>
@@ -477,6 +491,27 @@ function Main() {
           <p>© 2026 DO:IT. All rights reserved.</p>
         </div>
       </footer>
+
+      {showMentorModal && (
+        <div className="mentor-modal-overlay" onClick={closeMentorModal}>
+          <div
+            className="mentor-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p>회원님은 현재 멘토가 아닙니다.</p>
+            <h2>멘토를 지원하시겠습니까?</h2>
+
+            <div className="mentor-modal-buttons">
+              <button className="yes" onClick={goMentorApply}>
+                예
+              </button>
+              <button className="no" onClick={closeMentorModal}>
+                아니요
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -99,8 +99,8 @@ export async function onRequestPost({ env, request }) {
     if (!mentor_id || !user_id || !rating || !review_content?.trim()) {
       return json({ message: "필수 항목 누락" }, 400, request);
     }
-    if (rating < 1 || rating > 5) {
-      return json({ message: "별점은 1~5여야 합니다" }, 400, request);
+    if (rating < 0.5 || rating > 5) {
+      return json({ message: "별점은 0.5~5여야 합니다" }, 400, request);
     }
     if (review_content.trim().length > 300) {
       return json({ message: "후기는 300자 이내로 작성해주세요" }, 400, request);
