@@ -97,7 +97,7 @@ export const ProfileSetting = ({ openModal, setOpenModal }) => {
                             </div>
                             <div className="nickname">
                                 <h3>이름</h3>
-                                <input type="text" value={nickname} maxLength={15} onChange={(e) => setNickname(e.target.value.slice(0, 15))} />
+                                <input type="text" value={nickname} disabled style={{ backgroundColor: "#f0f0f0", color: "#666" }} title="닉네임은 변경할 수 없습니다." />
                             </div>
                             <div className="information">
                                 <h3>정보</h3>

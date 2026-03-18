@@ -497,6 +497,8 @@ export default {
       
       if (request.method === "GET") return chatMessages.onRequestGet({ env, request });
       if (request.method === "POST") return chatMessages.onRequestPost({ env, request });
+      if (request.method === "PUT") return chatMessages.onRequestPut({ env, request });
+      if (request.method === "DELETE") return chatMessages.onRequestDelete({ env, request });
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
     if (path === "/api/reviews") {

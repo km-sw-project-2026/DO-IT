@@ -45,7 +45,9 @@ export async function onRequestGet({ request, env }) {
     return json({ user: row }, 200, headers);
   } catch (e) {
     console.error(e);
-    return json({ message: "서버 오류" }, 500);
+    const headers = corsHeaders(request);
+    return json({ message: `서버 오류: ${e.message}` }, 500, headers);
+    return json({ message: `서버 오류: ${e.message}` }, 500, headers);
   }
 }
 
@@ -62,7 +64,7 @@ export async function onRequestPut({ request, env }) {
     // 닉네임 업데이트(선택)
     if (typeof body.nickname === "string") {
       await env.D1_DB.prepare(
-        `UPDATE "user" SET nickname = ?, updated_at = datetime('now') WHERE user_id = ?`
+        `UPDATE "user" SET nickname = ? WHERE user_id = ?`
       )
         .bind(body.nickname, userId)
         .run();
@@ -78,7 +80,7 @@ export async function onRequestPut({ request, env }) {
 
       if (exists) {
         await env.D1_DB.prepare(
-          `UPDATE user_profile SET bio = ?, updated_at = datetime('now') WHERE user_id = ?`
+          `UPDATE user_profile SET bio = ? WHERE user_id = ?`
         )
           .bind(body.bio, userId)
           .run();
