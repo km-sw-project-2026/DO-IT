@@ -29,6 +29,35 @@ function Main() {
     navigate("/mentologin");
   };
 
+  const openMentorService = async () => {
+    const currentUser = getCurrentUser();
+
+    if (!currentUser) {
+      alert("로그인 후 이용할 수 있습니다.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/me/mentor-status?user_id=${currentUser.user_id}`);
+      if (!res.ok) throw new Error("Failed to load mentor status");
+
+      const data = await res.json();
+      const isMentor = data?.isMentor || currentUser.role === "MENTOR" || currentUser.role === "ADMIN";
+
+      if (isMentor) {
+        navigate("/mypagementor");
+        return;
+      }
+    } catch {
+      if (currentUser.role === "MENTOR" || currentUser.role === "ADMIN") {
+        navigate("/mypagementor");
+        return;
+      }
+    }
+
+    openMentorModal();
+  };
+
   const [recentOpenedDoc, setRecentOpenedDocState] = useState(() => getRecentOpenedDoc());
   const [folders, setFolders] = useState([]);
   const [docs, setDocs] = useState([]);
@@ -452,7 +481,7 @@ function Main() {
             <div className="mm-actions">
               <button
                 className="mm-btn mm-btn--primary"
-                onClick={openMentorModal}
+                onClick={openMentorService}
               >
                 멘토 서비스
               </button>
