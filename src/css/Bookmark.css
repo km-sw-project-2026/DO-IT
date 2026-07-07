@@ -1,10 +1,13 @@
 .Bookmark {
   width: 100%;
+  min-width: 0;
 }
 
 .Bookmark-inner {
   width: 100%;
-  padding: 0 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 40px);
 }
 
 .Bookmark-header {
@@ -13,6 +16,8 @@
   padding: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 40px;
   border-bottom: 1px solid #c4c4c4;
   margin-bottom: 10px;
 }
@@ -20,13 +25,16 @@
 .Bookmark-header .search {
   display: flex;
   align-items: center;
-  margin-left: 40px;
+  flex: 1;
+  max-width: 934px;
+  min-width: 0;
 }
 
 .Bookmark-title {
-  margin-left: 220px;
   display: flex;
+  align-items: center;
   gap: 30px;
+  flex-shrink: 0;
 }
 
 .Bookmark-title h2 {
@@ -36,7 +44,8 @@
 }
 
 .Bookmark-title img {
-  width: 30%;
+  width: 90px;
+  flex-shrink: 0;
 }
 
 .Bookmark-header .search input:focus {
@@ -44,7 +53,8 @@
 }
 
 .Bookmark-header .search input {
-  width: 722px;
+  width: 100%;
+  min-width: 0;
   height: 62px;
   border: 3px solid #3fb5ff;
   border-radius: 4px 0 0 4px;
@@ -85,11 +95,13 @@
 
 .Bookmark-contents {
   display: flex;
+  gap: 15px;
   padding: 0 20px;
+  min-width: 0;
 }
 
 .Bookmark-inventory {
-  margin-right: 15px;
+  flex: 0 0 200px;
 }
 
 .Bookmark-inventory button {
@@ -155,14 +167,17 @@
 
 .Bookmark-collection {
   width: 100%;
+  min-width: 0;
 }
 
 .Bookmark-main {
   width: 100%;
+  min-width: 0;
 }
 
 .Bookmark-file-bottom {
   width: 100%;
+  min-width: 0;
 }
 
 .Bookmark-bottom {
@@ -188,12 +203,13 @@
 ========================= */
 
 .Bookmark-file-list {
-  width: 1300px;
+  width: 100%;
+  min-width: 0;
 }
 
 .Bookmark-file-name {
   display: grid;
-  grid-template-columns: 1fr 220px 220px;
+  grid-template-columns: minmax(0, 1fr) 180px 220px;
   align-items: center;
   column-gap: 16px;
   border-bottom: 1px solid #c4c4c4;
@@ -206,7 +222,7 @@
 
 .Bookmark-file-suggestion {
   display: grid;
-  grid-template-columns: 1fr 220px 220px;
+  grid-template-columns: minmax(0, 1fr) 180px 220px;
   align-items: center;
   column-gap: 16px;
   padding: 12px 40px;
@@ -270,6 +286,7 @@
   border: none;
   cursor: pointer;
   padding: 4px;
+  flex-shrink: 0;
 }
 
 .Bookmark-download img {
@@ -364,4 +381,203 @@
 .mr-add img {
   width: 18px;
   height: 18px;
+}
+
+@media (max-width: 1200px) {
+  .Bookmark-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .Bookmark-header .search {
+    width: 100%;
+    max-width: none;
+  }
+
+  .Bookmark-title h2 {
+    font-size: 30px;
+  }
+
+  .Bookmark-title img {
+    width: 72px;
+  }
+
+  .Bookmark-file-name,
+  .Bookmark-file-suggestion {
+    grid-template-columns: minmax(0, 1fr) 150px 180px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .Bookmark-file-actions {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .Bookmark-inner {
+    padding: 0 16px;
+  }
+
+  .Bookmark-header {
+    padding: 18px 0;
+  }
+
+  .Bookmark-contents {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .Bookmark-inventory {
+    flex: none;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0 10px;
+  }
+
+  .Bookmark-inventory a {
+    flex: 0 0 auto;
+  }
+
+  .Bookmark-inventory button {
+    width: auto;
+    min-width: 120px;
+    height: 44px;
+    padding: 0 14px;
+    justify-content: center;
+    border: 1px solid #e5e5e5;
+    border-radius: 9px;
+  }
+
+  .Bookmark-bottom {
+    margin-bottom: 14px;
+  }
+
+  .Bookmark-file-name {
+    display: none;
+  }
+
+  .Bookmark-file-suggestion {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title actions"
+      "date actions";
+    row-gap: 6px;
+    column-gap: 12px;
+    padding: 14px 8px;
+  }
+
+  .Bookmark-file-gather {
+    grid-area: title;
+  }
+
+  .Bookmark-date {
+    grid-area: date;
+    font-size: 13px;
+    color: #777;
+  }
+
+  .Bookmark-file-actions {
+    grid-area: actions;
+    align-self: center;
+    gap: 8px;
+  }
+
+  .Bookmark-file-gather img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .Bookmark-download img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .Bookmark-pan img,
+  .Bookmark-star img {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+@media (max-width: 640px) {
+  .Bookmark-title {
+    gap: 14px;
+  }
+
+  .Bookmark-title h2 {
+    font-size: 26px;
+  }
+
+  .Bookmark-title img {
+    width: 56px;
+  }
+
+  .Bookmark-header .search {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .Bookmark-header .search input {
+    flex: 1 1 calc(100% - 62px);
+    height: 52px;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .Bookmark-header .search button {
+    width: 54px;
+    height: 52px;
+  }
+
+  .Bookmark-sort-select {
+    order: 3;
+    flex: 1 0 100%;
+    height: 44px;
+    border: 2px solid #3fb5ff;
+    border-radius: 4px;
+  }
+}
+
+@media (max-width: 520px) {
+  .Bookmark-inner {
+    padding: 0 12px;
+  }
+
+  .Bookmark-title h2 {
+    font-size: 24px;
+  }
+
+  .Bookmark-inventory button {
+    min-width: 104px;
+    font-size: 14px;
+  }
+
+  .Bookmark-file-suggestion {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "date"
+      "actions";
+  }
+
+  .Bookmark-file-actions {
+    justify-content: flex-start;
+  }
+
+  .Bookmark-menu {
+    left: 0;
+    right: auto;
+  }
+
+  .Bookmark-file-empty {
+    padding: 18px 8px;
+    text-align: center;
+  }
+
+  .Bookmark-file-empty p {
+    padding-left: 0;
+  }
 }
