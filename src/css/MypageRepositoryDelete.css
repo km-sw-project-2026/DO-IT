@@ -279,12 +279,40 @@
     padding: 6px 10px;
   }
 
-  .mypagerepositorydelete-file-name,
+  .mypagerepositorydelete-file-name {
+    display: none;
+  }
+
   .mypagerepositorydelete-file-suggestion {
-    grid-template-columns: minmax(0, 1fr) 96px 62px 72px;
-    column-gap: 8px;
-    padding-left: 6px;
-    padding-right: 6px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title actions"
+      "date actions"
+      "type actions";
+    row-gap: 5px;
+    column-gap: 10px;
+    padding: 14px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #edf1f5;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .mypagerepositorydelete-file-gather {
+    grid-area: title;
+  }
+
+  .mypagerepositorydelete-file-suggestion .mr-date {
+    grid-area: date;
+  }
+
+  .mypagerepositorydelete-file-suggestion .mr-type {
+    grid-area: type;
+  }
+
+  .mypagerepositorydelete-file-img-gather {
+    grid-area: actions;
+    align-self: center;
   }
 
   .mypagerepositorydelete-file-name p,
@@ -292,10 +320,12 @@
   .mr-date,
   .mr-type {
     font-size: 12px;
+    line-height: 1.35;
   }
 
   .mypagerepositorydelete-file-gather {
     gap: 6px;
+    min-width: 0;
   }
 
   .mypagerepositorydelete-file-gather input[type="checkbox"] {
@@ -380,19 +410,17 @@
     height: 14px;
   }
 
-  .mypagerepositorydelete-file-name,
   .mypagerepositorydelete-file-suggestion {
-    grid-template-columns: minmax(0, 1fr) 58px 42px 46px;
-    column-gap: 5px;
-    padding-left: 2px;
-    padding-right: 2px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 8px;
+    padding: 12px 10px;
   }
 
   .mypagerepositorydelete-file-name p,
   .mypagerepositorydelete-file-gather p,
   .mr-date,
   .mr-type {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .trash-select-all span {
@@ -406,17 +434,17 @@
   }
 
   .mypagerepositorydelete-file-gather img {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
   }
 
   .mypagerepositorydelete-file-img-gather {
-    gap: 3px;
+    gap: 5px;
   }
 
   .mypagerepositorydelete-restore img {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   .mypagerepositorydelete-ooo span {
@@ -671,35 +699,120 @@
   margin-left: 10px;
   width: 120px;
 }
-.mypagerepositorydelete-contents {
-  display: flex;
-  padding: 0 20px;
+
+/* 모바일 최종 정리: 휴지통도 자료함 홈처럼 카드형 목록으로 표시 */
+@media (max-width: 768px) {
+  .mypagerepositorydelete-contents {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .mypagerepositorydelete-inventory {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .mypagerepositorydelete-inventory::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mypagerepositorydelete-inventory button {
+    width: auto;
+    min-width: 96px;
+    height: 38px;
+    flex-shrink: 0;
+    gap: 6px;
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 1.2;
+    border-radius: 8px;
+    background: #f7f7f7;
+  }
+
+  .mypagerepositorydelete-file-name {
+    display: none;
+  }
+
+  .mypagerepositorydelete-file-suggestion {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title actions"
+      "date actions"
+      "type actions";
+    row-gap: 5px;
+    column-gap: 10px;
+    padding: 14px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #edf1f5;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .mypagerepositorydelete-file-gather {
+    grid-area: title;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .mypagerepositorydelete-file-gather a {
+    min-width: 0;
+  }
+
+  .mypagerepositorydelete-file-suggestion .mr-date {
+    grid-area: date;
+  }
+
+  .mypagerepositorydelete-file-suggestion .mr-type {
+    grid-area: type;
+  }
+
+  .mypagerepositorydelete-file-img-gather {
+    grid-area: actions;
+    align-self: center;
+    gap: 7px;
+  }
+
+  .mypagerepositorydelete-file-gather p,
+  .mr-date,
+  .mr-type {
+    font-size: 12px;
+    line-height: 1.35;
+    word-break: keep-all;
+  }
+
+  .folder-menu,
+  .file-menu-like-folder {
+    left: auto;
+    right: 0;
+    margin-left: 0;
+    width: 112px;
+  }
 }
 
-.mypagerepositorydelete-inventory {
-  margin-right: 15px;
-}
+@media (max-width: 480px) {
+  .mypagerepositorydelete-file-suggestion {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px 10px;
+    column-gap: 8px;
+  }
 
-.mypagerepositorydelete-inventory button {
-  width: 200px;
-  height: 50px;
-  display: flex;
-  line-height: 25px;
-  align-items: center;
-  padding-left: 15px;
-  font-size: 16px;
-  gap: 10px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
+  .mypagerepositorydelete-file-gather p,
+  .mr-date,
+  .mr-type {
+    font-size: 12px;
+  }
 
-.mypagerepositorydelete-inventory button:hover {
-  background: #f3f3f3;
-  border-radius: 9px;
-}
+  .mypagerepositorydelete-file-gather img {
+    width: 24px;
+    height: 24px;
+  }
 
-.mypagerepositorydelete-inventory button img {
-  width: 20px;
-  height: 20px;
+  .mypagerepositorydelete-restore img {
+    width: 18px;
+    height: 18px;
+  }
 }

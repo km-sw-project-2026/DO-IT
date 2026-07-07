@@ -216,3 +216,146 @@
 .doc-paper .fs-18 { font-size: 18px; }
 .doc-paper .fs-24 { font-size: 24px; }
 .doc-paper .fs-32 { font-size: 32px; }
+
+/* ===== 반응형 ===== */
+@media (max-width: 960px) {
+  .doc-editor {
+    align-items: stretch;
+    padding: 22px 16px 40px;
+  }
+
+  .doc-status-bar,
+  .doc-top,
+  .doc-toolbar,
+  .doc-paper,
+  .doc-footer {
+    width: 100%;
+  }
+
+  .doc-status-bar {
+    height: 30px;
+  }
+
+  .doc-top {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .doc-title {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .doc-actions {
+    width: 100%;
+  }
+
+  .doc-actions button {
+    flex: 1;
+    min-width: 96px;
+  }
+
+  .doc-toolbar {
+    gap: 6px;
+    overflow-x: auto;
+  }
+
+  .doc-paper {
+    min-height: 720px;
+    padding: 30px 28px;
+  }
+}
+
+@media (max-width: 560px) {
+  .doc-editor {
+    padding: 14px 10px 28px;
+    background: #f6fbff;
+  }
+
+  .doc-status-bar {
+    margin-bottom: 4px;
+  }
+
+  .doc-status-bar .doc-status {
+    padding: 4px 12px;
+    font-size: 12px;
+  }
+
+  .doc-title {
+    height: 40px;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+
+  .doc-actions {
+    gap: 6px;
+  }
+
+  .doc-actions button,
+  .doc-toolbar button,
+  .doc-toolbar select {
+    height: 34px;
+    padding: 0 9px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+
+  .doc-toolbar {
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 7px;
+    border-radius: 8px;
+    scrollbar-width: none;
+  }
+
+  .doc-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toolbar-inline {
+    flex: 0 0 auto;
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .toolbar-inline select {
+    height: 34px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .toolbar-inline input[type="color"] {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sep {
+    flex: 0 0 1px;
+    height: 24px;
+    margin: 0 2px;
+  }
+
+  .doc-paper {
+    min-height: calc(100vh - 230px);
+    padding: 22px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .doc-paper h1 {
+    font-size: 24px;
+  }
+
+  .doc-paper h2 {
+    font-size: 20px;
+  }
+
+  .doc-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    color: #66737d;
+    font-size: 12px;
+  }
+}

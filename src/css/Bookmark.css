@@ -467,7 +467,11 @@
       "date actions";
     row-gap: 6px;
     column-gap: 12px;
-    padding: 14px 8px;
+    padding: 14px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #edf1f5;
+    border-radius: 10px;
+    background: #fff;
   }
 
   .Bookmark-file-gather {
@@ -583,38 +587,39 @@
   }
 
   .Bookmark-file-suggestion {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "title"
-      "date"
-      "actions";
-    padding: 10px 4px;
+      "title actions"
+      "date actions";
+    padding: 12px 10px;
+    column-gap: 8px;
   }
 
   .Bookmark-file-actions {
-    justify-content: flex-start;
-    gap: 6px;
+    justify-content: flex-end;
+    gap: 5px;
   }
 
   .Bookmark-file-link p,
   .Bookmark-date {
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.35;
   }
 
   .Bookmark-file-gather img {
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
   }
 
   .Bookmark-download img {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
   }
 
   .Bookmark-pan img,
   .Bookmark-star img {
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
   }
 
   .Bookmark-menu {
