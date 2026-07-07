@@ -885,25 +885,26 @@ main {
 
 @media (max-width: 600px) {
   .main-page {
-    min-height: 560px;
+    min-height: 480px;
     background-position: 63% top;
   }
 
   .main-page-contents {
-    padding: 60px 16px 32px;
+    padding: 44px 14px 26px;
   }
 
   .main-page-contents img {
-    width: min(360px, 86vw);
+    width: min(270px, 70vw);
   }
 
   .main-page-contents h1 {
-    font-size: 22px;
+    font-size: 17px;
+    line-height: 1.45;
   }
 
   .main-page-contents p {
-    margin-top: 62px;
-    font-size: 13px;
+    margin-top: 42px;
+    font-size: 11px;
   }
 
   .mypage-title {
@@ -912,7 +913,19 @@ main {
   }
 
   .main-page-mypage-header h2 {
-    font-size: 22px;
+    font-size: 18px;
+  }
+
+  .mypage-emoji {
+    width: 58px;
+    height: 58px;
+  }
+
+  .main-page-mypage-header button {
+    max-width: 220px;
+    height: 42px;
+    padding: 8px 12px;
+    font-size: 15px;
   }
 
   .folder-grid-empty {
@@ -925,11 +938,16 @@ main {
   }
 
   .folder-card {
-    min-height: 190px;
+    min-height: 150px;
+    padding: 16px;
   }
 
   .folder-card p {
-    font-size: 22px;
+    font-size: 17px;
+  }
+
+  .folder-card img {
+    width: min(150px, 42vw);
   }
 
   .recent-card {
@@ -961,8 +979,8 @@ main {
 
   .mm-btn {
     width: 100%;
-    height: 54px;
-    font-size: 16px;
+    height: 42px;
+    font-size: 13px;
   }
 
   .mm-stars {

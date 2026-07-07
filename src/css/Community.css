@@ -250,33 +250,38 @@
 
 @media (max-width: 600px) {
   .Community-header {
-    padding: 16px 16px 18px;
-    margin: 18px 0 14px;
+    padding: 12px 16px 14px;
+    margin: 14px 0 10px;
   }
 
   .Community-header .search input {
-    height: 44px;
-    font-size: 14px;
+    height: 38px;
+    border-width: 2px;
+    font-size: 12px;
   }
 
   .Community-header .search button {
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .Community-header .search button img {
+    width: 24px;
   }
 
   .Community-main {
-    padding: 0 10px;
+    padding: 0 8px;
   }
 
   .Community-main-title-content {
     display: grid;
     grid-template-columns: minmax(74px, 1fr) 210px;
-    gap: 8px;
-    padding: 8px 12px;
+    gap: 6px;
+    padding: 6px 10px;
   }
 
   .Community-main-title h2 {
-    font-size: 14px;
+    font-size: 12px;
     width: auto;
     text-align: left;
     white-space: nowrap;
@@ -287,12 +292,14 @@
   }
 
   .Community-main-title .Community-title-content span {
-    font-size: 12px;
+    font-size: 11px;
     white-space: nowrap;
   }
 
   .notice-section {
-    padding: 10px;
+    margin: 8px 0 10px;
+    padding: 8px;
+    border-radius: 10px;
   }
 
   .notice-section-head {
@@ -303,20 +310,31 @@
 
   .notice-row {
     gap: 8px;
-    padding: 10px 8px;
+    padding: 8px 7px;
+    border-radius: 10px;
+  }
+
+  .notice-title {
+    font-size: 12px;
+  }
+
+  .notice-sub {
+    font-size: 10px;
   }
 
   .badge-notice {
-    min-width: 38px;
-    padding: 3px 7px;
-    font-size: 11px;
+    min-width: 34px;
+    height: 22px;
+    padding: 2px 6px;
+    font-size: 10px;
     margin-left: 4px;
+    margin-top: 8px;
   }
 
   .Community-footer .page-number button {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
     margin: 0 2px;
   }
 
@@ -325,8 +343,12 @@
   }
 
   .Community-footer .write-button {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     right: 12px;
+  }
+
+  .Community-footer .write-button img {
+    width: 22px;
   }
 }

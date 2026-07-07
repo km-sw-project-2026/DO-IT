@@ -249,32 +249,47 @@ nav ul li a {
 
 @media (max-width: 480px) {
   .header-inner {
+    min-height: 54px;
     padding: 0 10px;
+    gap: 4px 10px;
+  }
+
+  .logo {
+    width: 96px;
+  }
+
+  .logo img {
+    width: 84px;
   }
 
   .project-header .user .login,
   .project-header .user .new-user,
   .project-header .logout-btn {
-    font-size: 12px;
-    padding: 4px 7px;
+    font-size: 11px;
+    padding: 3px 7px;
   }
 
   nav ul {
-    gap: 14px;
+    gap: 12px;
   }
 
   nav ul li {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .logout-btn {
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: 11px;
+    padding: 3px 7px;
   }
 
   .user-avatar {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .notif-bell img {
+    width: 21px;
+    height: 21px;
   }
 
   .notif-dropdown {

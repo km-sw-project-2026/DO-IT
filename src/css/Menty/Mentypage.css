@@ -260,45 +260,57 @@
 @media (max-width: 480px) {
     .Mento-box {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        padding: 0 10px;
+        gap: 8px;
+        padding: 0 8px;
     }
 
     .filter-button {
-        margin: 12px 0 12px 12px;
-        font-size: 0.82rem;
-        padding: 6px 12px;
+        margin: 10px 0 10px 10px;
+        padding: 5px 10px;
+        border-radius: 7px;
+        font-size: 0.75rem;
+    }
+
+    .filter-button-inner {
+        min-width: 110px;
+    }
+
+    .filter-button-inner ul li {
+        padding: 6px 10px;
+        font-size: 0.74rem;
     }
 
     .Menty-buttons-group {
         width: 100%;
-        gap: 8px;
+        gap: 6px;
     }
 
     .Menty-button {
-        flex: 1 1 100%;
-        padding: 12px 14px;
+        flex: 1 1 calc(33.33% - 6px);
+        padding: 8px 6px;
         min-width: 0;
+        border-radius: 12px;
+        gap: 6px;
     }
 
     .Menty-button img {
-        width: 42px;
-        height: 42px;
+        width: 30px;
+        height: 30px;
     }
 
     .Menty-button img.chat-img {
-        width: 36px;
-        height: 36px;
-        margin: 3px 0;
+        width: 26px;
+        height: 26px;
+        margin: 2px 0;
     }
 
     .Menty-button button {
-        font-size: 0.78rem;
+        font-size: 0.68rem;
     }
 
     .page-number button {
-        width: 30px;
-        height: 30px;
-        font-size: 0.8rem;
+        width: 26px;
+        height: 26px;
+        font-size: 0.72rem;
     }
 }

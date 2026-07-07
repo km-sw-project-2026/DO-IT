@@ -340,15 +340,15 @@
 @media (max-width: 480px) {
   .mypagementy-user-profile {
     align-items: flex-start;
-    border-radius: 18px;
+    border-radius: 14px;
     flex-wrap: wrap;
-    padding: 12px;
+    padding: 8px;
   }
 
   .mypagementy-user-profile img {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
   }
 
   .mypagementy-user-name {
@@ -362,14 +362,14 @@
   }
 
   .change-button-mentee {
-    width: 116px;
-    height: 46px;
+    width: 92px;
+    height: 36px;
   }
 
   .change-button-mentee button {
-    width: 72px;
-    height: 46px;
-    font-size: 18px;
+    width: 58px;
+    height: 36px;
+    font-size: 14px;
   }
 
   .mypagementy-community-title,
@@ -379,17 +379,17 @@
 
   .mypagementy-community-title h2,
   .mypagementy-data-title h2 {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .mypagementy-community-title button,
   .mypagementy-data-title button {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .mypagementy-community-title button img,
   .mypagementy-data-title button img {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
   }
 }

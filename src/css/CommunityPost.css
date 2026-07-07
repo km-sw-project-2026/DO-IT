@@ -59,26 +59,31 @@
     display: grid;
     grid-template-columns: minmax(74px, 1fr) 210px;
     align-items: start;
-    padding: 8px 12px;
-    gap: 4px 8px;
+    padding: 6px 10px;
+    gap: 3px 6px;
   }
 
   .Community-post-content h4 {
     width: 100%;
     text-align: left;
-    font-size: 14px;
+    font-size: 12px;
     min-width: 0;
     word-break: keep-all;
   }
 
   .Community-post-content .Community-content {
     width: 100%;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .post-writer {
     grid-column: 1 / 2;
-    font-size: 12px;
+    font-size: 10px;
+  }
+
+  .badge-admin {
+    padding: 1px 5px;
+    font-size: 9px;
   }
 }
 

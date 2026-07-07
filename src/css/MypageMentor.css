@@ -448,15 +448,15 @@
 @media (max-width: 480px) {
   .mypage-user-profile {
     align-items: flex-start;
-    border-radius: 18px;
+    border-radius: 14px;
     flex-wrap: wrap;
-    padding: 12px;
+    padding: 8px;
   }
 
   .mypage-user-profile > img {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
   }
 
   .mypage-user-name {
@@ -465,11 +465,11 @@
   }
 
   .mypage-user-name h2 {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .mypage-user-name p {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .mypage-community-title h2,
@@ -488,14 +488,14 @@
   }
 
   .change-button-mentor {
-    width: 116px;
-    height: 46px;
+    width: 92px;
+    height: 36px;
   }
 
   .change-button-mentor button {
-    width: 72px;
-    height: 46px;
-    font-size: 18px;
+    width: 58px;
+    height: 36px;
+    font-size: 14px;
   }
 
   .mypage-community-title,
@@ -505,7 +505,7 @@
 
   .mypage-community-title button img,
   .mypage-data-title button img {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
   }
 }
