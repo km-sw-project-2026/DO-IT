@@ -56,20 +56,38 @@
 /* ===== 반응형 ===== */
 @media (max-width: 600px) {
   .Community-post-content {
+    display: grid;
+    grid-template-columns: minmax(74px, 1fr) 210px;
+    align-items: start;
     padding: 8px 12px;
-    flex-wrap: wrap;
-    gap: 4px;
+    gap: 4px 8px;
   }
 
   .Community-post-content h4 {
     width: 100%;
     text-align: left;
     font-size: 14px;
+    min-width: 0;
+    word-break: keep-all;
   }
 
   .Community-post-content .Community-content {
     width: 100%;
     font-size: 12px;
   }
+
+  .post-writer {
+    grid-column: 1 / 2;
+    font-size: 12px;
+  }
 }
 
+@media (max-width: 390px) {
+  .Community-post-content {
+    grid-template-columns: minmax(70px, 1fr) 185px;
+  }
+
+  .Community-post-content .Community-content {
+    font-size: 11px;
+  }
+}

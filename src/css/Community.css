@@ -4,12 +4,20 @@
   margin: 30px 0 20px;
 }
 
+.Community-header .search {
+  display: inline-flex;
+  align-items: center;
+  max-width: 574px;
+  width: min(100%, 574px);
+}
+
 .Community-header .search input:focus {
   outline: none;
 }
 
 .Community-header .search input {
-  width: 522px;
+  width: 100%;
+  min-width: 0;
   height: 52px;
   border: 3px solid #3FB5FF;
   border-radius: 4px 0px 0px 4px;
@@ -22,8 +30,8 @@
   background: #3FB5FF;
   width: 52px;
   height: 52px;
-  position: absolute;
   border-radius: 0px 4px 4px 0px;
+  flex-shrink: 0;
 }
 
 .Community-header .search button img {
@@ -235,18 +243,18 @@
     width: 100%;
   }
 
-  .Community-header .search input {
-    width: min(522px, calc(100vw - 120px));
+  .Community-header .search {
+    width: min(100%, 574px);
   }
 }
 
 @media (max-width: 600px) {
   .Community-header {
-    padding: 12px;
+    padding: 16px 16px 18px;
+    margin: 18px 0 14px;
   }
 
   .Community-header .search input {
-    width: calc(100vw - 100px);
     height: 44px;
     font-size: 14px;
   }
@@ -256,18 +264,53 @@
     height: 44px;
   }
 
-  .Community-main-title h2 {
-    font-size: 14px;
-    width: auto;
-    flex: 1;
-  }
-
-  .Community-main-title .Community-title-content span {
-    font-size: 13px;
+  .Community-main {
+    padding: 0 10px;
   }
 
   .Community-main-title-content {
+    display: grid;
+    grid-template-columns: minmax(74px, 1fr) 210px;
+    gap: 8px;
     padding: 8px 12px;
+  }
+
+  .Community-main-title h2 {
+    font-size: 14px;
+    width: auto;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .Community-main-title .Community-title-content {
+    width: 100%;
+  }
+
+  .Community-main-title .Community-title-content span {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .notice-section {
+    padding: 10px;
+  }
+
+  .notice-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .notice-row {
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  .badge-notice {
+    min-width: 38px;
+    padding: 3px 7px;
+    font-size: 11px;
+    margin-left: 4px;
   }
 
   .Community-footer .page-number button {
