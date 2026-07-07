@@ -60,13 +60,17 @@ button {
   border: 0;
 }
 
+img {
+  max-width: 100%;
+}
+
 /* ========================================== */
 main {
   width: 100%;
 }
 
 .main-page {
-  background: url(../public/images/mainbg.png) no-repeat;
+  background: url("/images/mainbg.png") no-repeat;
   background-size: 100% 820px;
   width: 100%;
   height: 820px;
@@ -281,7 +285,7 @@ main {
 .main-page-community {
   width: 100%;
   height: 441px;
-  background: #fff url("/public/images/mainpagebg.png") no-repeat top;
+  background: #fff url("/images/mainpagebg.png") no-repeat top;
   background-size: 100% 441px;
 }
 .recent-wrap { 
@@ -704,4 +708,264 @@ main {
   padding: 30px;
   text-align: center;
   color: #999;
+}
+
+/* ======================
+   Main responsive polish
+====================== */
+
+@media (max-width: 1200px) {
+  .main-page {
+    min-height: 680px;
+    height: auto;
+    background-size: cover;
+    background-position: center top;
+  }
+
+  .main-page-contents {
+    width: min(680px, 86vw);
+    top: 120px;
+    left: 7vw;
+  }
+
+  .main-page-contents img {
+    width: min(460px, 72vw);
+  }
+
+  .main-page-contents p {
+    margin-top: 120px;
+  }
+
+  .folder-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .folder-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-page {
+    min-height: 620px;
+    display: flex;
+    align-items: flex-start;
+    background-size: cover;
+    background-position: 58% top;
+  }
+
+  .main-page-contents {
+    position: static;
+    width: 100%;
+    padding: 86px 24px 40px;
+  }
+
+  .main-page-contents h1 {
+    max-width: 620px;
+    font-size: 28px;
+    line-height: 1.45;
+  }
+
+  .main-page-contents p {
+    max-width: 420px;
+    margin-top: 90px;
+    line-height: 1.7;
+  }
+
+  .main-page-contents img {
+    width: min(420px, 80vw);
+    height: auto;
+  }
+
+  .main-page-mypage-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px 24px;
+  }
+
+  .main-page-mypage-header button {
+    width: 100%;
+    max-width: 320px;
+    height: 56px;
+    font-size: 20px;
+  }
+
+  .folder-area {
+    padding: 28px 0 44px;
+  }
+
+  .folder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .folder-card {
+    height: auto;
+    min-height: 230px;
+    padding: 24px;
+  }
+
+  .folder-card img {
+    width: min(240px, 58vw);
+  }
+
+  .main-page-community {
+    height: auto;
+    min-height: 420px;
+    background-size: cover;
+  }
+
+  .main-page-preview-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .main-page-file-list {
+    padding: 16px;
+  }
+
+  .main-page-file-header {
+    display: none;
+  }
+
+  .main-page-file-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding: 12px 4px;
+  }
+
+  .main-page-file-name-col {
+    min-width: 0;
+  }
+
+  .main-page-file-name-col span,
+  .main-page-file-item a span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .main-page-file-date-col {
+    width: auto;
+    margin-left: 40px;
+    text-align: left;
+  }
+
+  .mm-hero {
+    margin-top: 40px;
+    padding-top: 36px;
+  }
+
+  .mm-inner {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mm-right {
+    justify-content: center;
+    order: -1;
+  }
+
+  .mm-illust {
+    width: min(620px, 100%);
+    max-height: 420px;
+    object-fit: contain;
+  }
+
+  .mm-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .mm-btn {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-page {
+    min-height: 560px;
+    background-position: 63% top;
+  }
+
+  .main-page-contents {
+    padding: 60px 16px 32px;
+  }
+
+  .main-page-contents img {
+    width: min(360px, 86vw);
+  }
+
+  .main-page-contents h1 {
+    font-size: 22px;
+  }
+
+  .main-page-contents p {
+    margin-top: 62px;
+    font-size: 13px;
+  }
+
+  .mypage-title {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .main-page-mypage-header h2 {
+    font-size: 22px;
+  }
+
+  .folder-grid-empty {
+    min-height: 240px;
+    padding: 24px 16px;
+  }
+
+  .folder-grid-empty p {
+    font-size: 18px;
+  }
+
+  .folder-card {
+    min-height: 190px;
+  }
+
+  .folder-card p {
+    font-size: 22px;
+  }
+
+  .recent-card {
+    border-radius: 12px;
+    padding: 14px 12px 8px;
+  }
+
+  .recent-list li {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .main-page-file-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .main-page-file-actions-buttons {
+    width: 100%;
+  }
+
+  .main-page-file-actions-buttons button {
+    flex: 1;
+  }
+
+  .mm-actions {
+    flex-direction: column;
+  }
+
+  .mm-btn {
+    width: 100%;
+    height: 54px;
+    font-size: 16px;
+  }
+
+  .mm-stars {
+    height: 180px;
+  }
 }

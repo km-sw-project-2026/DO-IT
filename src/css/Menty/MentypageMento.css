@@ -213,7 +213,7 @@
 /* 카드더미 */
 .MentypageMento-card {
   width: 100%;
-  max-width: 320px;
+  max-width: none;
   min-height: 180px;
   background: #fff;
   border-radius: 18px;
@@ -226,7 +226,8 @@
 
 /* Link wrapper for mentor card */
 .MentypageMento-card-link {
-    display: inline-block;
+    display: block;
+    width: 100%;
     text-decoration: none;
     color: inherit;
 }
@@ -237,8 +238,8 @@
 }
 
 .MentypageMento-profile img {
-  width: 64px;
-  height: 64px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   object-fit: cover;
   background: #ddd;
@@ -246,6 +247,7 @@
 
 .MentypageMento-info {
   flex: 1;
+  min-width: 0;
 }
 
 .MentypageMento-info h3 {
@@ -319,6 +321,26 @@
     .score {
         font-size: 13px;
     }
+
+    .MentypageMento-card {
+        padding: 18px;
+        gap: 14px;
+    }
+
+    .MentypageMento-profile img {
+        width: 64px;
+        height: 64px;
+    }
+
+    .MentypageMento-info h3 {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .MentypageMento-info .job,
+    .MentypageMento-info .company {
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -351,5 +373,20 @@
 
     .score {
         font-size: 12px;
+    }
+
+    .MentypageMento-card {
+        align-items: center;
+        min-height: 0;
+        padding: 16px;
+    }
+
+    .MentypageMento-profile img {
+        width: 72px;
+        height: 72px;
+    }
+
+    .MentypageMento-info h3 {
+        font-size: 20px;
     }
 }

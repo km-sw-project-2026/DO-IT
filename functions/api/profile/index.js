@@ -47,7 +47,6 @@ export async function onRequestGet({ request, env }) {
     console.error(e);
     const headers = corsHeaders(request);
     return json({ message: `서버 오류: ${e.message}` }, 500, headers);
-    return json({ message: `서버 오류: ${e.message}` }, 500, headers);
   }
 }
 

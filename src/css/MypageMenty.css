@@ -1,33 +1,38 @@
 .mypagementy-header {
     width: 100%;
-    height: 350px;
+    min-height: 350px;
     /* border: 1px solid black; */
     margin-top: 50px;
-    padding: 35px 90px;
+    padding: 35px clamp(16px, 5vw, 90px);
     background: linear-gradient(90deg, #AEBCFF, #C7EFC2 100%);
 }
 .profile-button {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
 }
 .mypagementy-user-profile {
-    width: 650px;
-    height: 100px;
+    width: min(650px, 100%);
+    min-height: 100px;
     background: #FFFFFF;
     /* border: 1px solid black; */
     display: flex;
+    align-items: center;
     border-radius: 50px;
+    overflow: hidden;
 }
 
 .mypagementy-user-profile img {
     width: 100px;
     height: 100px;
     border-radius: 50px;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .mypagementy-header-inner {
-    width: 1550px;
+    width: min(1550px, 100%);
     /* border: 1px solid #000; */
     margin: 0 auto;
 }
@@ -115,7 +120,7 @@
 
 .menty-explanation p {
     width: 100%;
-    height: 120px;
+    min-height: 120px;
     padding: 10px 20px;
     border-radius: 10px;
     background: #FFFFFF;
@@ -131,13 +136,15 @@
 
 .mypagementy-contents-inner {
     display: flex;
-    padding: 35px 45px;
+    padding: 35px clamp(16px, 3vw, 45px);
     gap: 30px;
+    min-width: 0;
 }
 
 /* ======================================================== */
 .mypagementy-community {
     width: 55%;
+    min-width: 0;
 }
 
 .mypagementy-contents-inner .mypagementy-contents-title {
@@ -182,13 +189,15 @@
 }
 
 .mypagementy-community-main {
-    height: 250px;
+    min-height: 250px;
     padding: 10px;
+    overflow: hidden;
 }
 
 /* ============================================= */
 .mypagementy-data {
     width: 45%;
+    min-width: 0;
 }
 
 .mypage-data-link {
@@ -236,6 +245,151 @@
 }
 
 .mypagementy-data-main {
-    height: 250px;
+    min-height: 250px;
     padding: 10px;
+}
+
+@media (max-width: 1200px) {
+  .mypagementy-header {
+    height: auto;
+    min-height: 0;
+  }
+
+  .mypagementy-contents-inner {
+    gap: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mypagementy-header {
+    margin-top: 0;
+    padding: 24px 16px;
+  }
+
+  .profile-button {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mypagementy-user-profile {
+    width: 100%;
+    border-radius: 24px;
+  }
+
+  .mypagementy-user-profile img {
+    width: 84px;
+    height: 84px;
+    border-radius: 24px;
+  }
+
+  .mypagementy-user-name {
+    min-width: 0;
+    padding: 12px 16px;
+  }
+
+  .mypagementy-user-name h2 {
+    font-size: 22px;
+  }
+
+  .mypagementy-user-name p,
+  .mypagementy-user-name p span {
+    font-size: 18px;
+  }
+
+  .menty-setting {
+    width: auto;
+    padding-right: 14px;
+    flex-shrink: 0;
+  }
+
+  .setting p {
+    display: none;
+  }
+
+  .change-button-mentee {
+    align-self: flex-end;
+  }
+
+  .menty-explanation p {
+    min-height: 96px;
+    height: auto;
+  }
+
+  .mypagementy-contents-inner {
+    flex-direction: column;
+    padding: 24px 16px;
+  }
+
+  .mypagementy-community,
+  .mypagementy-data {
+    width: 100%;
+  }
+
+  .mypagementy-contents-inner .mypagementy-contents-title {
+    padding: 0 8px;
+    font-size: 22px;
+  }
+
+  .mypagementy-community-main,
+  .mypagementy-data-main {
+    min-height: 0;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .mypagementy-user-profile {
+    align-items: flex-start;
+    border-radius: 18px;
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .mypagementy-user-profile img {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+  }
+
+  .mypagementy-user-name {
+    flex: 1;
+    padding: 4px 8px;
+  }
+
+  .menty-setting {
+    margin-left: 0;
+    padding-right: 0;
+  }
+
+  .change-button-mentee {
+    width: 116px;
+    height: 46px;
+  }
+
+  .change-button-mentee button {
+    width: 72px;
+    height: 46px;
+    font-size: 18px;
+  }
+
+  .mypagementy-community-title,
+  .mypagementy-data-title {
+    padding: 0 12px;
+  }
+
+  .mypagementy-community-title h2,
+  .mypagementy-data-title h2 {
+    font-size: 18px;
+  }
+
+  .mypagementy-community-title button,
+  .mypagementy-data-title button {
+    font-size: 14px;
+  }
+
+  .mypagementy-community-title button img,
+  .mypagementy-data-title button img {
+    width: 32px;
+    height: 32px;
+  }
 }

@@ -10,6 +10,7 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 0 50px;
+  gap: 20px;
 }
 
 .logo {
@@ -29,6 +30,7 @@ nav {
 nav ul {
   display: flex;
   justify-content: space-between;
+  gap: 18px;
 }
 
 nav ul li {
@@ -42,6 +44,7 @@ nav ul li a {
 .user {
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
 }
 .project-header .user .login, .project-header .user .new-user, .project-header .logout-btn {
   font-size: 16px;
@@ -196,8 +199,15 @@ nav ul li a {
 
 /* ===== 반응형 ===== */
 @media (max-width: 768px) {
+  header {
+    height: auto;
+  }
+
   .header-inner {
+    min-height: 70px;
     padding: 0 16px;
+    flex-wrap: wrap;
+    gap: 8px 14px;
   }
 
   .logo {
@@ -209,12 +219,22 @@ nav ul li a {
   }
 
   nav {
-    width: auto;
+    order: 3;
+    width: 100%;
     height: auto;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  nav ul {
+    justify-content: flex-start;
+    gap: 18px;
+    min-width: max-content;
   }
 
   nav ul li {
     font-size: 14px;
+    white-space: nowrap;
   }
 
   .user-nickname {
@@ -232,8 +252,15 @@ nav ul li a {
     padding: 0 10px;
   }
 
+  .project-header .user .login,
+  .project-header .user .new-user,
+  .project-header .logout-btn {
+    font-size: 12px;
+    padding: 4px 7px;
+  }
+
   nav ul {
-    gap: 8px;
+    gap: 14px;
   }
 
   nav ul li {
@@ -255,4 +282,3 @@ nav ul li a {
     right: -40px;
   }
 }
-

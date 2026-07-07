@@ -7,7 +7,7 @@ import {
   createCalendarEvent,
   deleteCalendarEvent,
 } from "../api/calendar";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "../css/calendar.css";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -85,27 +85,35 @@ export default function Calendar() {
   const [newCatName, setNewCatName] = useState("");
   const [newCatColor, setNewCatColor] = useState("#9CA3AF");
 
-  async function loadCategories() {
-    const data = await fetchCalendarCategories();
-    const cats = (data.categories || []).map((c) => ({
-      id: c.category_id,
-      name: c.name,
-      color: c.color_code,
-      locked: Boolean(c.locked),
-    }));
+  const loadCategories = useCallback(async () => {
+    try {
+      const data = await fetchCalendarCategories();
+      const cats = (data.categories || []).map((c) => ({
+        id: c.category_id,
+        name: c.name,
+        color: c.color_code,
+        locked: Boolean(c.locked),
+      }));
 
-    setCategories(cats);
+      setCategories(cats);
 
-    if (!selectedCategoryId && cats.length > 0) {
-      setSelectedCategoryId(cats[0].id);
+      setSelectedCategoryId((prev) => prev ?? cats[0]?.id ?? null);
+    } catch (e) {
+      console.warn("Failed to load calendar categories:", e);
+      setCategories([]);
     }
-  }
+  }, []);
 
-  async function loadMonthEvents(date) {
-    const month = toMonthKey(date);
-    const data = await fetchCalendarEventsByMonth(month);
-    setEventsByDate(buildEventsByDateFromRows(data.events || []));
-  }
+  const loadMonthEvents = useCallback(async (date) => {
+    try {
+      const month = toMonthKey(date);
+      const data = await fetchCalendarEventsByMonth(month);
+      setEventsByDate(buildEventsByDateFromRows(data.events || []));
+    } catch (e) {
+      console.warn("Failed to load calendar events:", e);
+      setEventsByDate({});
+    }
+  }, []);
 
   const today = useMemo(() => new Date(), []);
   const monthStart = useMemo(
@@ -116,11 +124,11 @@ export default function Calendar() {
   // ✅ 로컬 저장 불러오기 (+ plan이 저장되어 있어도 자동으로 제거)
   useEffect(() => {
     loadCategories();
-  }, []);
+  }, [loadCategories]);
 
   useEffect(() => {
     loadMonthEvents(viewDate);
-  }, [viewDate]);
+  }, [loadMonthEvents, viewDate]);
 
   const gridStart = useMemo(() => {
     const d = new Date(monthStart);

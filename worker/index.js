@@ -548,6 +548,10 @@ export default {
       return new Response(JSON.stringify({ message: "method not allowed" }), { status: 405 });
     }
 
+    if (env.ASSETS) {
+      return env.ASSETS.fetch(request);
+    }
+
     return new Response(null, { status: 404 });
   },
 };
