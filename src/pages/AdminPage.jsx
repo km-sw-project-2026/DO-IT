@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, isAdmin } from "../utils/auth";
+import "../css/AdminPage.css";
 
 export default function AdminPage() {
     const navigate = useNavigate();
@@ -219,296 +220,314 @@ export default function AdminPage() {
     };
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>관리자 페이지</h2>
-
-            {/* 신고 토스트 알림 */}
-            {newReportToast && (
-                <div style={{
-                    position: "fixed", top: 20, right: 20, zIndex: 9999,
-                    background: "#c62828", color: "#fff",
-                    padding: "14px 20px", borderRadius: 10,
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
-                    fontSize: 15, fontWeight: 600,
-                    display: "flex", alignItems: "center", gap: 10,
-                }}>
-                    <span>🚨</span>
-                    <span>새 신고 {newReportToast.count}건이 접수됐습니다!</span>
-                    <button
-                        onClick={() => setNewReportToast(null)}
-                        style={{ marginLeft: 8, background: "none", border: "none", color: "#fff", fontSize: 16, cursor: "pointer", lineHeight: 1 }}
-                    >✕</button>
-                </div>
-            )}
-
-            {/* ── 신고 목록 ── */}
-            <section style={{ marginTop: 24 }}>
-                <h3 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                    신고 목록
-                    {reports.length > 0 && (
-                        <span style={{
-                            background: "#c62828", color: "#fff",
-                            borderRadius: 99, fontSize: 12, fontWeight: 700,
-                            padding: "2px 9px", lineHeight: "20px",
-                        }}>{reports.length}</span>
-                    )}
-                </h3>
-                {/* 탭 */}
-                <div style={{ display: "flex", gap: 0, marginBottom: 12, borderBottom: "2px solid #eee" }}>
-                    {[
-                        { key: "OPEN", label: "미처리" },
-                        { key: "DONE", label: "처리 완료" },
-                    ].map(({ key, label }) => (
-                        <button
-                            key={key}
-                            onClick={() => {
-                                setReportTab(key);
-                                if (key === "DONE") loadDoneReports();
-                                else loadReports();
-                            }}
-                            style={{
-                                padding: "8px 20px",
-                                background: "none", border: "none",
-                                borderBottom: reportTab === key ? "2px solid #c62828" : "2px solid transparent",
-                                marginBottom: -2,
-                                fontWeight: reportTab === key ? 700 : 400,
-                                color: reportTab === key ? "#c62828" : "#555",
-                                cursor: "pointer", fontSize: 14,
-                            }}
-                        >{label}</button>
-                    ))}
-                    <button
-                        onClick={() => reportTab === "OPEN" ? loadReports() : loadDoneReports()}
-                        style={{ marginLeft: "auto", padding: "4px 12px", fontSize: 13 }}
-                    >새로고침</button>
-                </div>
-
-                {/* 미처리 목록 */}
-                {reportTab === "OPEN" && (
-                    reports.length === 0 ? (
-                        <p style={{ marginTop: 12 }}>신고가 없습니다.</p>
-                    ) : (
-                        <div style={{ marginTop: 4, display: "grid", gap: 10 }}>
-                            {reports.map((r) => (
-                                <div key={r.report_id} style={{ border: "1px solid #ddd", padding: 12, borderRadius: 6 }}>
-                                    <div>
-                                        <b>#{r.report_id}</b> [{r.report_type}] {r.report_content}
-                                    </div>
-                                    <div style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>
-                                        신고자: {r.reporter_nick ?? r.reporter_id} / 대상: <b>{r.reported_nick ?? r.reported_id}</b> (user_id: {r.reported_id})
-                                    </div>
-                                    <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                        <button onClick={() => resolveReport(r.report_id)}
-                                            style={{ padding: "4px 12px" }}>
-                                            처리 완료
-                                        </button>
-                                        <span style={{ fontSize: 13, color: "#555" }}>차단:</span>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            value={reportBanDays[r.report_id] ?? 7}
-                                            onChange={(e) => setReportBanDays((prev) => ({ ...prev, [r.report_id]: Number(e.target.value) }))}
-                                            style={{ width: 56, padding: "3px 6px", border: "1px solid #ccc", borderRadius: 4 }}
-                                        />
-                                        <span style={{ fontSize: 13, color: "#555" }}>일</span>
-                                        <button
-                                            onClick={() => banReportedUser(r.report_id, r.reported_id)}
-                                            style={{ padding: "4px 12px", background: "#c62828", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}>
-                                            차단
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+        <main className="admin-page">
+            <div className="admin-shell">
+                <section className="admin-hero">
+                    <div>
+                        <p className="admin-kicker">DO-IT 운영 관리</p>
+                        <h2>관리자 페이지</h2>
+                        <p className="admin-hero-copy">신고, 공지, 유저 권한과 멘토 지원서를 한 곳에서 관리합니다.</p>
+                    </div>
+                    <div className="admin-summary">
+                        <div>
+                            <span>{reports.length}</span>
+                            <p>미처리 신고</p>
                         </div>
-                    )
-                )}
-
-                {/* 처리 완료 목록 */}
-                {reportTab === "DONE" && (
-                    doneLoading ? (
-                        <p style={{ marginTop: 12 }}>불러오는 중...</p>
-                    ) : doneReports.length === 0 ? (
-                        <p style={{ marginTop: 12 }}>처리된 신고가 없습니다.</p>
-                    ) : (
-                        <div style={{ marginTop: 4, display: "grid", gap: 10 }}>
-                            {doneReports.map((r) => (
-                                <div key={r.report_id} style={{ border: "1px solid #ddd", padding: 12, borderRadius: 6, background: "#fafafa", opacity: 0.85 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                        <div>
-                                            <b>#{r.report_id}</b> [{r.report_type}] {r.report_content}
-                                        </div>
-                                        <span style={{ fontSize: 11, background: "#4caf50", color: "#fff", borderRadius: 4, padding: "2px 7px", whiteSpace: "nowrap" }}>처리완료</span>
-                                    </div>
-                                    <div style={{ fontSize: 13, opacity: 0.75, marginTop: 4 }}>
-                                        신고자: {r.reporter_nick ?? r.reporter_id} / 대상: <b>{r.reported_nick ?? r.reported_id}</b> (user_id: {r.reported_id})
-                                    </div>
-                                    <div style={{ fontSize: 12, color: "#aaa", marginTop: 4 }}>
-                                        신고일: {r.created_at?.slice(0, 16)}
-                                    </div>
-                                    {/* 처리된 신고대상에 추가 차단도 가능 */}
-                                    <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                        <span style={{ fontSize: 13, color: "#555" }}>추가 차단:</span>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            value={reportBanDays[r.report_id] ?? 7}
-                                            onChange={(e) => setReportBanDays((prev) => ({ ...prev, [r.report_id]: Number(e.target.value) }))}
-                                            style={{ width: 56, padding: "3px 6px", border: "1px solid #ccc", borderRadius: 4 }}
-                                        />
-                                        <span style={{ fontSize: 13, color: "#555" }}>일</span>
-                                        <button
-                                            onClick={() => banReportedUser(r.report_id, r.reported_id)}
-                                            style={{ padding: "4px 12px", background: "#c62828", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}>
-                                            차단
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                        <div>
+                            <span>{applications.length}</span>
+                            <p>현재 지원서</p>
                         </div>
-                    )
-                )}
-            </section>
+                    </div>
+                </section>
 
-            {/* ── 공지 설정 ── */}
-            <section style={{ marginTop: 24 }}>
-                <h3>공지(상단 고정)</h3>
-                <input
-                    placeholder="post_id"
-                    value={noticePostId}
-                    onChange={(e) => setNoticePostId(e.target.value)}
-                />
-                <button onClick={() => setNotice(1)}>공지로 설정</button>
-                <button onClick={() => setNotice(0)}>공지 해제</button>
-            </section>
-
-            {/* ── 유저 차단 ── */}
-            <section style={{ marginTop: 24 }}>
-                <h3>유저 차단</h3>
-                <input
-                    placeholder="target user_id"
-                    value={banUserId}
-                    onChange={(e) => setBanUserId(e.target.value)}
-                />
-                <input
-                    type="number"
-                    value={banDays}
-                    onChange={(e) => setBanDays(Number(e.target.value))}
-                    style={{ width: 80, marginLeft: 8 }}
-                />
-                <span>일</span>
-                <div style={{ marginTop: 8 }}>
-                    <button onClick={banUser}>차단</button>
-                    <button onClick={unbanUser} style={{ marginLeft: 8 }}>차단 해제</button>
-                </div>
-            </section>
-
-            {/* ── 강제 삭제 ── */}
-            <section style={{ marginTop: 24 }}>
-                <h3>강제 삭제</h3>
-                <p style={{ fontSize: 13, opacity: 0.8 }}>
-                    서버에서 ADMIN이면 삭제 허용으로 수정했기 때문에,
-                    관리자는 게시글/댓글 삭제를 같은 API로 실행할 수 있어요.
-                </p>
-            </section>
-
-            {/* ── 멘토 지원서 관리 ── */}
-            <section style={{ marginTop: 32, borderTop: "2px solid #009DFF", paddingTop: 24 }}>
-                <h3>📋 멘토 지원서 관리</h3>
-                <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
-                    {["PENDING", "APPROVED", "REJECTED"].map((s) => (
-                        <button
-                            key={s}
-                            onClick={() => loadApplications(s)}
-                            style={{
-                                padding: "6px 14px",
-                                background: appStatus === s ? "#009DFF" : "#eee",
-                                color: appStatus === s ? "#fff" : "#333",
-                                border: "none",
-                                borderRadius: 6,
-                                cursor: "pointer",
-                                fontWeight: appStatus === s ? 700 : 400,
-                            }}
-                        >
-                            {s === "PENDING" ? "심사 중" : s === "APPROVED" ? "승인됨" : "거절됨"}
+                {newReportToast && (
+                    <div className="admin-toast">
+                        <span>새 신고 {newReportToast.count}건이 접수됐습니다.</span>
+                        <button type="button" onClick={() => setNewReportToast(null)} aria-label="알림 닫기">
+                            닫기
                         </button>
-                    ))}
-                    <button onClick={() => loadApplications(appStatus)} style={{ padding: "6px 14px" }}>
-                        새로고침
-                    </button>
-                </div>
-
-                {applications.length === 0 ? (
-                    <p>지원서가 없습니다.</p>
-                ) : (
-                    <div style={{ display: "grid", gap: 12 }}>
-                        {applications.map((a) => (
-                            <div
-                                key={a.mentor_apply_id}
-                                style={{ border: "1px solid #ddd", borderRadius: 8, padding: 16 }}
-                            >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                    <div>
-                                        <b>{a.contractor_name}</b>
-                                        <span style={{ marginLeft: 8, fontSize: 13, color: "#888" }}>
-                                            @{a.login_id} ({a.nickname}) · user_id: {a.user_id}
-                                        </span>
-                                    </div>
-                                    <span style={{ fontSize: 12, color: "#999" }}>{a.created_at?.slice(0, 10)}</span>
-                                </div>
-                                <div style={{ marginTop: 8, fontSize: 14, display: "grid", gap: 4 }}>
-                                    <div><b>연락처:</b> {a.contact}</div>
-                                    <div><b>소속:</b> {a.affiliation}</div>
-                                    <div><b>희망분야:</b> {a.hope_field}</div>
-                                    <div><b>자기소개:</b> {a.introduction}</div>
-                                    {a.related_url && <div><b>관련사이트:</b> <a href={a.related_url} target="_blank" rel="noreferrer">{a.related_url}</a></div>}
-                                </div>
-                                {a.status === "PENDING" && (
-                                    <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                                        <button
-                                            style={{ padding: "6px 16px", background: "#2e7d32", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-                                            onClick={() => handleApplication(a.mentor_apply_id, "APPROVE")}
-                                        >
-                                            ✔ 승인
-                                        </button>
-                                        <button
-                                            style={{ padding: "6px 16px", background: "#c62828", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-                                            onClick={() => handleApplication(a.mentor_apply_id, "REJECT")}
-                                        >
-                                            ✖ 거절
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
                     </div>
                 )}
-            </section>
 
-            {/* ── 멘토 권한 직접 부여/박탈 ── */}
-            <section style={{ marginTop: 32, borderTop: "2px solid #eee", paddingTop: 24 }}>
-                <h3>🎖 멘토 권한 직접 부여 / 박탈</h3>
-                <p style={{ fontSize: 13, color: "#888" }}>user_id(숫자) 또는 login_id(문자열) 입력</p>
-                <input
-                    placeholder="user_id 또는 login_id"
-                    value={mentorTarget}
-                    onChange={(e) => setMentorTarget(e.target.value)}
-                    style={{ padding: "6px 10px", width: 220 }}
-                />
-                <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                    <button
-                        style={{ padding: "6px 16px", background: "#2e7d32", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-                        onClick={() => handleMentorRole("GRANT")}
-                    >
-                        멘토 권한 부여
-                    </button>
-                    <button
-                        style={{ padding: "6px 16px", background: "#c62828", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-                        onClick={() => handleMentorRole("REVOKE")}
-                    >
-                        멘토 권한 박탈
-                    </button>
+                <section className="admin-card admin-reports">
+                    <div className="admin-section-head">
+                        <div>
+                            <p className="admin-section-label">Reports</p>
+                            <h3>신고 목록</h3>
+                        </div>
+                        {reports.length > 0 && <span className="admin-count">{reports.length}</span>}
+                    </div>
+
+                    <div className="admin-tabs">
+                        {[
+                            { key: "OPEN", label: "미처리" },
+                            { key: "DONE", label: "처리 완료" },
+                        ].map(({ key, label }) => (
+                            <button
+                                key={key}
+                                type="button"
+                                className={reportTab === key ? "is-active" : ""}
+                                onClick={() => {
+                                    setReportTab(key);
+                                    if (key === "DONE") loadDoneReports();
+                                    else loadReports();
+                                }}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                        <button
+                            type="button"
+                            className="admin-refresh"
+                            onClick={() => reportTab === "OPEN" ? loadReports() : loadDoneReports()}
+                        >
+                            새로고침
+                        </button>
+                    </div>
+
+                    {reportTab === "OPEN" && (
+                        reports.length === 0 ? (
+                            <p className="admin-empty">신고가 없습니다.</p>
+                        ) : (
+                            <div className="admin-list">
+                                {reports.map((r) => (
+                                    <article key={r.report_id} className="admin-list-item">
+                                        <div className="admin-item-main">
+                                            <b>#{r.report_id}</b>
+                                            <span>[{r.report_type}] {r.report_content}</span>
+                                        </div>
+                                        <p className="admin-muted">
+                                            신고자: {r.reporter_nick ?? r.reporter_id} / 대상: <b>{r.reported_nick ?? r.reported_id}</b> (user_id: {r.reported_id})
+                                        </p>
+                                        <div className="admin-actions">
+                                            <button type="button" className="admin-btn" onClick={() => resolveReport(r.report_id)}>
+                                                처리 완료
+                                            </button>
+                                            <label className="admin-inline-field">
+                                                <span>차단</span>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value={reportBanDays[r.report_id] ?? 7}
+                                                    onChange={(e) => setReportBanDays((prev) => ({ ...prev, [r.report_id]: Number(e.target.value) }))}
+                                                />
+                                                <span>일</span>
+                                            </label>
+                                            <button
+                                                type="button"
+                                                className="admin-btn danger"
+                                                onClick={() => banReportedUser(r.report_id, r.reported_id)}
+                                            >
+                                                차단
+                                            </button>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        )
+                    )}
+
+                    {reportTab === "DONE" && (
+                        doneLoading ? (
+                            <p className="admin-empty">불러오는 중...</p>
+                        ) : doneReports.length === 0 ? (
+                            <p className="admin-empty">처리된 신고가 없습니다.</p>
+                        ) : (
+                            <div className="admin-list">
+                                {doneReports.map((r) => (
+                                    <article key={r.report_id} className="admin-list-item is-done">
+                                        <div className="admin-item-top">
+                                            <div className="admin-item-main">
+                                                <b>#{r.report_id}</b>
+                                                <span>[{r.report_type}] {r.report_content}</span>
+                                            </div>
+                                            <span className="admin-status done">처리완료</span>
+                                        </div>
+                                        <p className="admin-muted">
+                                            신고자: {r.reporter_nick ?? r.reporter_id} / 대상: <b>{r.reported_nick ?? r.reported_id}</b> (user_id: {r.reported_id})
+                                        </p>
+                                        <p className="admin-subtle">신고일: {r.created_at?.slice(0, 16)}</p>
+                                        <div className="admin-actions">
+                                            <label className="admin-inline-field">
+                                                <span>추가 차단</span>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value={reportBanDays[r.report_id] ?? 7}
+                                                    onChange={(e) => setReportBanDays((prev) => ({ ...prev, [r.report_id]: Number(e.target.value) }))}
+                                                />
+                                                <span>일</span>
+                                            </label>
+                                            <button
+                                                type="button"
+                                                className="admin-btn danger"
+                                                onClick={() => banReportedUser(r.report_id, r.reported_id)}
+                                            >
+                                                차단
+                                            </button>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        )
+                    )}
+                </section>
+
+                <div className="admin-grid">
+                    <section className="admin-card">
+                        <div className="admin-section-head">
+                            <div>
+                                <p className="admin-section-label">Notice</p>
+                                <h3>공지 설정</h3>
+                            </div>
+                        </div>
+                        <div className="admin-form-row">
+                            <input
+                                placeholder="post_id"
+                                value={noticePostId}
+                                onChange={(e) => setNoticePostId(e.target.value)}
+                            />
+                            <button type="button" className="admin-btn primary" onClick={() => setNotice(1)}>공지로 설정</button>
+                            <button type="button" className="admin-btn" onClick={() => setNotice(0)}>공지 해제</button>
+                        </div>
+                    </section>
+
+                    <section className="admin-card">
+                        <div className="admin-section-head">
+                            <div>
+                                <p className="admin-section-label">User</p>
+                                <h3>유저 차단</h3>
+                            </div>
+                        </div>
+                        <div className="admin-form-row">
+                            <input
+                                placeholder="user_id 또는 login_id"
+                                value={banUserId}
+                                onChange={(e) => setBanUserId(e.target.value)}
+                            />
+                            <input
+                                className="admin-number"
+                                type="number"
+                                value={banDays}
+                                onChange={(e) => setBanDays(Number(e.target.value))}
+                            />
+                            <span className="admin-unit">일</span>
+                        </div>
+                        <div className="admin-actions">
+                            <button type="button" className="admin-btn danger" onClick={banUser}>차단</button>
+                            <button type="button" className="admin-btn" onClick={unbanUser}>차단 해제</button>
+                        </div>
+                    </section>
                 </div>
-            </section>
-        </div>
+
+                <section className="admin-card">
+                    <div className="admin-section-head">
+                        <div>
+                            <p className="admin-section-label">Delete</p>
+                            <h3>강제 삭제</h3>
+                        </div>
+                    </div>
+                    <p className="admin-note">
+                        관리자는 게시글과 댓글 상세 화면에서 기존 삭제 기능으로 콘텐츠를 정리할 수 있습니다.
+                    </p>
+                </section>
+
+                <section className="admin-card">
+                    <div className="admin-section-head">
+                        <div>
+                            <p className="admin-section-label">Mentor Applications</p>
+                            <h3>멘토 지원서 관리</h3>
+                        </div>
+                    </div>
+
+                    <div className="admin-tabs compact">
+                        {["PENDING", "APPROVED", "REJECTED"].map((s) => (
+                            <button
+                                key={s}
+                                type="button"
+                                className={appStatus === s ? "is-active" : ""}
+                                onClick={() => loadApplications(s)}
+                            >
+                                {s === "PENDING" ? "심사 중" : s === "APPROVED" ? "승인됨" : "거절됨"}
+                            </button>
+                        ))}
+                        <button type="button" className="admin-refresh" onClick={() => loadApplications(appStatus)}>
+                            새로고침
+                        </button>
+                    </div>
+
+                    {applications.length === 0 ? (
+                        <p className="admin-empty">지원서가 없습니다.</p>
+                    ) : (
+                        <div className="admin-list">
+                            {applications.map((a) => (
+                                <article key={a.mentor_apply_id} className="admin-list-item">
+                                    <div className="admin-item-top">
+                                        <div>
+                                            <div className="admin-applicant">{a.contractor_name}</div>
+                                            <p className="admin-muted">@{a.login_id} ({a.nickname}) / user_id: {a.user_id}</p>
+                                        </div>
+                                        <span className="admin-subtle">{a.created_at?.slice(0, 10)}</span>
+                                    </div>
+                                    <dl className="admin-detail-grid">
+                                        <div><dt>연락처</dt><dd>{a.contact}</dd></div>
+                                        <div><dt>소속</dt><dd>{a.affiliation}</dd></div>
+                                        <div><dt>희망분야</dt><dd>{a.hope_field}</dd></div>
+                                        <div className="wide"><dt>자기소개</dt><dd>{a.introduction}</dd></div>
+                                        {a.related_url && (
+                                            <div className="wide">
+                                                <dt>관련사이트</dt>
+                                                <dd><a href={a.related_url} target="_blank" rel="noreferrer">{a.related_url}</a></dd>
+                                            </div>
+                                        )}
+                                    </dl>
+                                    {a.status === "PENDING" && (
+                                        <div className="admin-actions">
+                                            <button
+                                                type="button"
+                                                className="admin-btn success"
+                                                onClick={() => handleApplication(a.mentor_apply_id, "APPROVE")}
+                                            >
+                                                승인
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="admin-btn danger"
+                                                onClick={() => handleApplication(a.mentor_apply_id, "REJECT")}
+                                            >
+                                                거절
+                                            </button>
+                                        </div>
+                                    )}
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                <section className="admin-card">
+                    <div className="admin-section-head">
+                        <div>
+                            <p className="admin-section-label">Mentor Role</p>
+                            <h3>멘토 권한 직접 부여 / 박탈</h3>
+                        </div>
+                    </div>
+                    <p className="admin-note">user_id 또는 login_id를 입력하세요.</p>
+                    <div className="admin-form-row">
+                        <input
+                            placeholder="user_id 또는 login_id"
+                            value={mentorTarget}
+                            onChange={(e) => setMentorTarget(e.target.value)}
+                        />
+                        <button type="button" className="admin-btn success" onClick={() => handleMentorRole("GRANT")}>
+                            멘토 권한 부여
+                        </button>
+                        <button type="button" className="admin-btn danger" onClick={() => handleMentorRole("REVOKE")}>
+                            멘토 권한 박탈
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
     );
 }

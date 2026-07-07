@@ -139,31 +139,66 @@
 @media (max-width: 480px) {
   .login-page {
     background: #92D5FF;
-    min-height: 100vh;
+    height: auto;
+    min-height: calc(100vh - 54px);
+    padding: 18px;
   }
 
   .login-page-content {
+    background: transparent;
     border-radius: 0;
     margin: 0;
     width: 100%;
     box-shadow: none;
-    min-height: 100vh;
+    min-height: 0;
+    padding-bottom: 0;
+    align-items: stretch;
   }
 
   .login-page-content h3 {
-    font-size: 24px;
-    padding: 24px;
-    margin-bottom: 10px;
+    font-size: 22px;
+    padding: 14px 0 24px;
+    margin-bottom: 0;
+  }
+
+  .login-page-contents {
+    padding: 0;
   }
 
   .login-page-content input {
-    height: 54px;
-    font-size: 16px;
-    margin-bottom: 16px;
+    height: 44px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    border-radius: 7px;
+  }
+
+  .login-page-content .login_bt {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .login-page-content .login_bt .keep-login {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+  }
+
+  .login-page-content .login_bt p {
+    font-size: 13px;
+  }
+
+  .login-page-content .confirm {
+    padding: 22px 0 0;
   }
 
   .login-page-content button {
-    height: 60px;
-    font-size: 18px;
+    height: 48px;
+    font-size: 16px;
+    border-radius: 7px;
+  }
+
+  .login-page-content .confirm .new-user {
+    font-size: 13px;
+    margin-top: 8px;
   }
 }

@@ -186,9 +186,16 @@
 }
 
 .page-number button.prev,
-.page-number button.next {
+.page-number button.next,
+.page-number button.prev-group,
+.page-number button.next-group {
     font-size: 1rem;
     color: #666;
+}
+
+.page-number button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* ---- 멘토 없을 때 빈 상태 ---- */

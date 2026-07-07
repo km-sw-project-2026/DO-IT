@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/Menty/Mentypage.css";
 import MentypageMento from "./MentypageMento.jsx";
@@ -65,6 +65,23 @@ function Mentypage() {
     setShowModal(false);
     navigate("/mentoreview", { state: { mentor } });
   };
+
+  const PAGE_GROUP_SIZE = 5;
+  const pageGroupStart = useMemo(
+    () => Math.floor((page - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE + 1,
+    [page]
+  );
+  const pageGroupEnd = Math.min(totalPages, pageGroupStart + PAGE_GROUP_SIZE - 1);
+  const visiblePageNumbers = useMemo(
+    () =>
+      Array.from(
+        { length: pageGroupEnd - pageGroupStart + 1 },
+        (_, i) => pageGroupStart + i
+      ),
+    [pageGroupEnd, pageGroupStart]
+  );
+  const hasPrevPageGroup = pageGroupStart > 1;
+  const hasNextPageGroup = pageGroupEnd < totalPages;
 
   // 상태 로딩 전 빈 화면 방지
   if (!statusLoaded) return null;
@@ -153,9 +170,18 @@ function Mentypage() {
       <footer className="Mentypage-footer">
         <div className="Mentypage-footer-content">
           <div className="page-number">
+            <button
+              className="prev-group"
+              type="button"
+              onClick={() => setPage(Math.max(1, pageGroupStart - PAGE_GROUP_SIZE))}
+              disabled={!hasPrevPageGroup}
+            >
+              {"<<"}
+            </button>
+
             <button className="prev" type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>{"<"}</button>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            {visiblePageNumbers.map((num) => (
               <button
                 key={num}
                 type="button"
@@ -167,6 +193,15 @@ function Mentypage() {
             ))}
 
             <button className="next" type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>{">"}</button>
+
+            <button
+              className="next-group"
+              type="button"
+              onClick={() => setPage(Math.min(totalPages, pageGroupStart + PAGE_GROUP_SIZE))}
+              disabled={!hasNextPageGroup}
+            >
+              {">>"}
+            </button>
           </div>
         </div>
       </footer>

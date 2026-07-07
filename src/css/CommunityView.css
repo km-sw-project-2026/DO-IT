@@ -437,12 +437,28 @@
 @media (max-width: 600px) {
   .Community-view-header .Community-view-title {
     font-size: 18px;
+    padding-bottom: 14px;
   }
 
   .Community-view-header .Community-view-info th,
   .Community-view-header .Community-view-info td {
-    font-size: 13px;
-    padding-left: 8px;
+    height: 52px;
+    font-size: 11px;
+    padding-left: 6px;
+    padding-right: 4px;
+    line-height: 1.35;
+    word-break: keep-all;
+  }
+
+  .Community-view-header .Community-view-info th {
+    width: 14%;
+    padding-left: 2px;
+    padding-right: 2px;
+    white-space: nowrap;
+  }
+
+  .Community-view-header .Community-view-info td {
+    width: 36%;
   }
 
   .Community-view-main .post-content {
@@ -467,5 +483,70 @@
   .post-action-buttons {
     flex-wrap: wrap;
     gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .Community-view-header,
+  .Community-view-main {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .Community-view-header .Community-view-title h2 {
+    font-size: 17px;
+    line-height: 1.3;
+  }
+
+  .Community-view-header .Community-view-info th,
+  .Community-view-header .Community-view-info td {
+    height: 44px;
+    font-size: 10px;
+    padding-left: 4px;
+    padding-right: 3px;
+    line-height: 1.3;
+  }
+
+  .Community-view-header .Community-view-info th {
+    width: 13%;
+    letter-spacing: -0.2px;
+  }
+
+  .Community-view-header .Community-view-info td {
+    width: 37%;
+  }
+
+  .Community-view-header .Community-view-info .file {
+    height: auto;
+    width: auto;
+  }
+
+  .badge-admin {
+    margin-right: 3px;
+    padding: 1px 5px;
+    font-size: 9px;
+  }
+
+  .post-file-link {
+    gap: 4px;
+    font-size: 10px;
+  }
+
+  .post-file-thumb {
+    width: 28px;
+    height: 28px;
+  }
+
+  .post-file-size {
+    font-size: 9px;
+  }
+
+  .Community-view-main {
+    padding-top: 28px;
+  }
+
+  .Community-view-main .post-content {
+    font-size: 12px;
+    line-height: 1.45;
   }
 }
