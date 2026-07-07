@@ -1,6 +1,6 @@
 header {
   width: 100%;
-  height: 70px;
+  height: 54px;
   background: #9FD9FD;
 }
 
@@ -9,20 +9,20 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 50px;
-  gap: 20px;
+  padding: 0 36px;
+  gap: 16px;
 }
 
 .logo {
-  width: 180px;
+  width: 140px;
 }
 
 .logo img {
-  width: 150px;
+  width: 112px;
 }
 
 nav {
-  height: 100px;
+  height: 54px;
   align-content: center;
   width: 45%;
 }
@@ -34,7 +34,7 @@ nav ul {
 }
 
 nav ul li {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
 }
 
@@ -47,10 +47,10 @@ nav ul li a {
   flex-shrink: 0;
 }
 .project-header .user .login, .project-header .user .new-user, .project-header .logout-btn {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   color: #2c2c2c;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: 5px;
   background: #ffff;
 }
@@ -204,18 +204,18 @@ nav ul li a {
   }
 
   .header-inner {
-    min-height: 70px;
+    min-height: 50px;
     padding: 0 16px;
     flex-wrap: wrap;
-    gap: 8px 14px;
+    gap: 4px 12px;
   }
 
   .logo {
-    width: 120px;
+    width: 104px;
   }
 
   .logo img {
-    width: 100px;
+    width: 86px;
   }
 
   nav {
@@ -223,7 +223,7 @@ nav ul li a {
     width: 100%;
     height: auto;
     overflow-x: auto;
-    padding-bottom: 8px;
+    padding-bottom: 5px;
   }
 
   nav ul {
@@ -233,7 +233,7 @@ nav ul li a {
   }
 
   nav ul li {
-    font-size: 14px;
+    font-size: 12px;
     white-space: nowrap;
   }
 

@@ -39,19 +39,6 @@ nav ul li {
 nav ul li a {
   color: #2c2c2c;
 }
-.user {
-  display: flex;
-  gap: 10px;
-}
-.project-login-header .user .login, .project-login-header .user .new-user {
-  font-size: 16px;
-  font-weight: bold;
-  color: #ffffff;
-  padding: 5px 10px;
-  border-radius: 5px;
-  background: #65BAED;
-}
-
 /* ===== 반응형 ===== */
 @media (max-width: 768px) {
   .login-header-inner {
@@ -84,10 +71,7 @@ nav ul li a {
     font-size: 12px;
   }
 
-  .project-login-header .user .login,
-  .project-login-header .user .new-user {
-    font-size: 13px;
-    padding: 4px 8px;
+  .project-login-header nav ul {
+    gap: 12px;
   }
 }
-

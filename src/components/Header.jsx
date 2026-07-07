@@ -116,14 +116,9 @@ function Header() {
         {/* ✅ 로그인 전/후 UI */}
         <div className="user">
           {!user ? (
-            <>
-              <Link to="/login" className="login">
-                로그인
-              </Link>
-              <Link to="/memberinput" className="new-user">
-                회원가입
-              </Link>
-            </>
+            <Link to="/login" className="login">
+              로그인
+            </Link>
           ) : (
             <div className="user-info">
               {/* 🔔 알림 벨 */}

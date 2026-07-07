@@ -164,11 +164,7 @@ export default function Calendar() {
     [categories]
   );
 
-  // ✅ 한 번 클릭: 선택만
-  const onClickDate = (d) => setSelectedDate(d);
-
-  // ✅ 더블클릭: "일정 확인(목록)" 팝업만 열기
-  const onDoubleClickDate = (d) => {
+  const openViewPopup = (d) => {
     setSelectedDate(d);
     setIsViewOpen(true);
 
@@ -176,6 +172,25 @@ export default function Calendar() {
     setIsAddOpen(false);
     setIsCatAddOpen(false);
     setIsCatEditOpen(false);
+  };
+
+  // ✅ 마우스: 한 번 클릭은 선택만, 터치: 한 번 터치로 일정 확인
+  const onClickDate = (d, event) => {
+    setSelectedDate(d);
+
+    if (event?.nativeEvent?.pointerType === "touch") {
+      openViewPopup(d);
+    }
+  };
+
+  // ✅ 더블클릭: "일정 확인(목록)" 팝업만 열기
+  const onDoubleClickDate = (d) => {
+    openViewPopup(d);
+  };
+
+  const onTouchDate = (d, event) => {
+    event.preventDefault();
+    openViewPopup(d);
   };
 
   // ✅ 일정 확인 팝업에서 + 누르면 "추가 팝업" 열기
@@ -334,9 +349,10 @@ export default function Calendar() {
                   dow === 0 ? "sun" : "",
                   dow === 6 ? "sat" : "",
                 ].join(" ")}
-                onClick={() => onClickDate(d)}
+                onClick={(e) => onClickDate(d, e)}
                 onDoubleClick={() => onDoubleClickDate(d)}
-                title="더블클릭: 일정 확인"
+                onTouchEnd={(e) => onTouchDate(d, e)}
+                title="더블클릭 또는 터치: 일정 확인"
               >
                 <div className="cal-date">{d.getDate()}</div>
 
@@ -358,7 +374,7 @@ export default function Calendar() {
         </div>
 
         <div className="cal-footer">
-          <span className="hint">한 번 클릭: 선택 / 두 번 클릭: 일정 확인</span>
+          <span className="hint">클릭: 선택 / 더블클릭 또는 터치: 일정 확인</span>
           {selectedDate && <span className="selected-text">선택됨: {selectedKey}</span>}
         </div>
       </div>

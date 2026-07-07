@@ -24,7 +24,7 @@ function Mentypage() {
   const [mentorsLoaded, setMentorsLoaded] = useState(false);
   const [sort, setSort] = useState("recent"); // "rating" | "review" | "recent"
   const [filterOpen, setFilterOpen] = useState(false);
-  const PAGE_SIZE = 6;
+  const PAGE_SIZE = 2;
 
   // ✅ 모든 hook을 조건부 return 전에 선언
   useEffect(() => {
@@ -44,13 +44,21 @@ function Mentypage() {
   useEffect(() => {
     setMentorsLoaded(false);
     fetch(`/api/mentors?page=${page}&size=${PAGE_SIZE}&sort=${sort}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("failed to fetch mentors");
+        return r.json();
+      })
       .then((data) => {
         setMentors(data.mentors || []);
         setTotalPages(data.totalPages ?? 1);
         setMentorsLoaded(true);
       })
-      .catch(() => setMentorsLoaded(true));
+      .catch((e) => {
+        console.warn("Failed to load mentors:", e);
+        setMentors([]);
+        setTotalPages(1);
+        setMentorsLoaded(true);
+      });
   }, [page, sort]);
 
   const handleSelectMentor = (mentor) => {

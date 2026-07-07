@@ -4,11 +4,11 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
+		"dev": "WRANGLER_LOG_PATH=/tmp/wrangler-logs vite",
+		"build": "WRANGLER_LOG_PATH=/tmp/wrangler-logs vite build",
 		"lint": "eslint .",
-		"preview": "npm run build && vite preview",
-		"deploy": "npm run build && wrangler deploy --config dist/do_it/wrangler.json",
+		"preview": "npm run build && WRANGLER_LOG_PATH=/tmp/wrangler-logs vite preview",
+		"deploy": "npm run build && WRANGLER_LOG_PATH=/tmp/wrangler-logs wrangler deploy --config dist/do_it/wrangler.json",
 		"schema:generate": "npx wrangler d1 export doit --remote --output=./database.sql",
 		"schema:apply": "wrangler d1 execute doit --file=./database.sql"
 	},
