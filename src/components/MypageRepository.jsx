@@ -8,14 +8,17 @@ import { setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
 import { getRecentCreatedDoc } from "../utils/repositoryRecentCreated";
 import { formatRepositoryDate } from "../utils/repositoryDate";
 import { sortRepositoryItems } from "../utils/repositorySort";
+import { getRepositoryMenuButtonClass } from "../utils/repositoryMenu";
 import { apiGetFolders, apiGetFiles, apiGetNotes, apiCreateFolder, apiGetTrash, apiRenameFolder, apiDeleteFolder, apiDeleteFile, apiDeleteNote, apiMoveFile, apiMoveNote, apiSetFileFavorite, apiSetNoteFavorite } from "../api/repository";
 const LS_FOLDERS = "doit_repository_folders_v1";
 const LS_DOCS = "doit_repository_docs_v1";
 
 function MypageRepositoryBtn({ btn }) {
+  const { pathname } = useLocation();
+
   return (
     <Link to={btn.to}>
-      <button className={`mypagerepository-${btn.class}`}>
+      <button className={getRepositoryMenuButtonClass(btn, pathname)}>
         <img src={btn.src} alt="" />
         <p>{btn.text}</p>
       </button>

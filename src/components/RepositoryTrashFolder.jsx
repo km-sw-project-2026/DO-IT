@@ -1,10 +1,11 @@
 import "../css/MRFI.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { data } from "../js/MypageRepository.js";
 import { getCurrentUser } from "../utils/auth";
 import { formatRepositoryDate } from "../utils/repositoryDate";
 import { sortRepositoryItems } from "../utils/repositorySort";
+import { getRepositoryMenuButtonClass } from "../utils/repositoryMenu";
 import {
   apiGetTrashFolder,
   apiPurgeTrashFile,
@@ -14,9 +15,11 @@ import {
 } from "../api/repository";
 
 function MypageRepositoryBtn({ btn }) {
+  const { pathname } = useLocation();
+
   return (
     <Link to={btn.to}>
-      <button className={`mypagerepository-${btn.class}`}>
+      <button className={getRepositoryMenuButtonClass(btn, pathname)}>
         <img src={btn.src} alt="" />
         <p>{btn.text}</p>
       </button>

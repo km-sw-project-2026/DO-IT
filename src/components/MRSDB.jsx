@@ -1,11 +1,14 @@
 import "../css/MRSDB.css";
 import { data } from "../js/mypageRepositoryData.js"
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { getRepositoryMenuButtonClass } from "../utils/repositoryMenu";
 
 function MypageRepositoryBtn({ btn }) {
+    const { pathname } = useLocation();
+
     return (
         <Link to={btn.to}>
-        <button className={`mypagerepository-${btn.class}`}>
+        <button className={getRepositoryMenuButtonClass(btn, pathname)}>
             <img src={btn.src} alt="" />
             <p>{btn.text}</p>
         </button>

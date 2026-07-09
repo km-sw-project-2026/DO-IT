@@ -1,17 +1,20 @@
 import "../css/Bookmark.css";
 import { data } from "../js/mypageRepositoryData.js";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "../utils/auth";
 import { setRecentOpenedDoc } from "../utils/repositoryRecentOpened";
 import { formatRepositoryDate } from "../utils/repositoryDate";
 import { sortRepositoryItems } from "../utils/repositorySort";
+import { getRepositoryMenuButtonClass } from "../utils/repositoryMenu";
 import { apiDeleteFile, apiDeleteNote, apiGetFiles, apiGetNotes, apiSetFileFavorite, apiSetNoteFavorite } from "../api/repository";
 
 function MypageRepositoryBtn({ btn }) {
+  const { pathname } = useLocation();
+
   return (
     <Link to={btn.to}>
-      <button className={`mypagerepository-${btn.class}`}>
+      <button className={getRepositoryMenuButtonClass(btn, pathname)}>
         <img src={btn.src} alt="" />
         <p>{btn.text}</p>
       </button>
