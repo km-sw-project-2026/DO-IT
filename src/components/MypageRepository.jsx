@@ -982,16 +982,23 @@ function MypageRepository() {
                                       textDecoration: "none",
                                       color: "inherit",
                                     }}
-                                  >
-                                    <button type="button" draggable={false}>
-                                      <img src="/images/icon/img.png" alt="" draggable={false} />
-                                    </button>
-                                    <p>{doc.title || "제목 없음"}</p>
-                                    {isRepositoryHome &&
-                                    recentCreatedDoc?.id &&
-                                    String(recentCreatedDoc.id) === String(doc.id) ? (
-                                      <span className="mypagerepository-file-badge is-new">신규</span>
-                                    ) : null}
+                                    >
+                                      <button type="button" draggable={false}>
+                                        <img src="/images/icon/img.png" alt="" draggable={false} />
+                                      </button>
+                                    <span className="mr-file-text">
+                                      <span className="mr-file-title-row">
+                                        <p>{doc.title || "제목 없음"}</p>
+                                        {isRepositoryHome &&
+                                        recentCreatedDoc?.id &&
+                                        String(recentCreatedDoc.id) === String(doc.id) ? (
+                                          <span className="mypagerepository-file-badge is-new">신규</span>
+                                        ) : null}
+                                      </span>
+                                      <span className="mr-date-mobile">
+                                        {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
+                                      </span>
+                                    </span>
                                   </Link>
                                 ) : (
                                   <button
@@ -1011,12 +1018,19 @@ function MypageRepository() {
                                     }}
                                   >
                                     <img src="/images/icon/img.png" alt="" draggable={false} />
-                                    <p>{doc.title || "제목 없음"}</p>
-                                    {isRepositoryHome &&
-                                    recentCreatedDoc?.id &&
-                                    String(recentCreatedDoc.id) === String(doc.id) ? (
-                                      <span className="mypagerepository-file-badge is-new">신규</span>
-                                    ) : null}
+                                    <span className="mr-file-text">
+                                      <span className="mr-file-title-row">
+                                        <p>{doc.title || "제목 없음"}</p>
+                                        {isRepositoryHome &&
+                                        recentCreatedDoc?.id &&
+                                        String(recentCreatedDoc.id) === String(doc.id) ? (
+                                          <span className="mypagerepository-file-badge is-new">신규</span>
+                                        ) : null}
+                                      </span>
+                                      <span className="mr-date-mobile">
+                                        {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
+                                      </span>
+                                    </span>
                                   </button>
                                 )}
                               </div>

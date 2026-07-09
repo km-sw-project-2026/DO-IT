@@ -437,6 +437,22 @@
   min-width: 0;
 }
 
+.mr-file-text {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mr-file-title-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mr-date-mobile {
+  display: none;
+}
+
 .mypagerepository-file-badge {
   flex-shrink: 0;
   margin-left: 10px;
@@ -915,9 +931,8 @@
   .mypagerepository-file-suggestion {
     grid-template-columns: 24px minmax(0, 1fr) auto;
     grid-template-areas:
-      "check title actions"
-      "check date actions";
-    row-gap: 6px;
+      "check title actions";
+    row-gap: 0;
     column-gap: 10px;
     padding: 14px 12px;
     margin-bottom: 8px;
@@ -941,10 +956,7 @@
 
   .mypagerepository-file-suggestion .mr-date {
     grid-area: date;
-    margin: 0 0 0 40px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none;
   }
 
   .mypagerepository-file-actions {
@@ -956,6 +968,7 @@
   .mypagerepository-file-gather button {
     gap: 6px !important;
     min-width: 0;
+    align-items: center;
   }
 
   .mypagerepository-file-gather > button,
@@ -971,15 +984,38 @@
   .mypagerepository-file-gather img {
     width: 34px;
     height: 34px;
+    flex-shrink: 0;
   }
 
   .mypagerepository-file-gather p,
   .mr-date,
-  .mr-select-all-label {
+  .mr-select-all-label,
+  .mr-date-mobile {
     font-size: 13px;
     line-height: 1.35;
     margin-top: 0;
     margin-bottom: 0;
+  }
+
+  .mr-file-text {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .mr-file-title-row {
+    width: 100%;
+    gap: 5px;
+  }
+
+  .mr-date-mobile {
+    display: block;
+    max-width: 100%;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mypagerepository-file-badge {
@@ -1109,10 +1145,6 @@
     grid-template-columns: 20px minmax(0, 1fr) auto;
     column-gap: 8px;
     padding: 12px 10px;
-  }
-
-  .mypagerepository-file-suggestion .mr-date {
-    margin-left: 36px;
   }
 
   .mypagerepository-file-gather img {
