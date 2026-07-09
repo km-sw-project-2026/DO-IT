@@ -576,6 +576,27 @@
   text-overflow: ellipsis;
 }
 
+.trash-file-link {
+  min-width: 0;
+}
+
+.trash-file-text {
+  display: flex;
+  min-width: 0;
+}
+
+.trash-file-title-row {
+  min-width: 0;
+}
+
+.trash-file-title-row p {
+  margin: 0;
+}
+
+.trash-file-meta {
+  display: none;
+}
+
 .mypagerepositorydelete-file-gather button {
   background: transparent;
   border: none;
@@ -663,6 +684,7 @@
 
 .mypagerepositorydelete-file-topbar .trash-empty-btn {
   margin-left: auto;
+  margin-right: clamp(8px, 2vw, 24px);
 }
 
 .trash-back-link {
@@ -759,11 +781,8 @@
 
   .mypagerepositorydelete-file-suggestion {
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "title actions"
-      "date actions"
-      "type actions";
-    row-gap: 5px;
+    grid-template-areas: "title actions";
+    align-items: center;
     column-gap: 10px;
     padding: 14px 12px;
     margin-bottom: 8px;
@@ -774,20 +793,54 @@
 
   .mypagerepositorydelete-file-gather {
     grid-area: title;
+    align-items: center;
     gap: 8px;
     min-width: 0;
+    overflow: hidden;
   }
 
   .mypagerepositorydelete-file-gather a {
+    flex: 1;
     min-width: 0;
+    gap: 8px !important;
   }
 
-  .mypagerepositorydelete-file-suggestion .mr-date {
-    grid-area: date;
-  }
-
+  .mypagerepositorydelete-file-suggestion .mr-date,
   .mypagerepositorydelete-file-suggestion .mr-type {
-    grid-area: type;
+    display: none;
+  }
+
+  .mypagerepositorydelete-file-gather input[type="checkbox"],
+  .mypagerepositorydelete-file-gather button {
+    flex-shrink: 0;
+  }
+
+  .trash-file-text {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .trash-file-title-row {
+    width: 100%;
+  }
+
+  .trash-file-title-row p {
+    max-width: 100%;
+    font-weight: 600;
+  }
+
+  .trash-file-meta {
+    display: block;
+    max-width: 100%;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mypagerepositorydelete-file-img-gather {
@@ -824,7 +877,8 @@
 
   .mypagerepositorydelete-file-suggestion .mr-date,
   .mypagerepositorydelete-file-suggestion .mr-type {
-    margin-left: 56px;
+    display: none;
+    margin-left: 0;
   }
 
   .mypagerepositorydelete-file-gather p,

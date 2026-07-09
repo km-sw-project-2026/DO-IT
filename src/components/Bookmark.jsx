@@ -260,7 +260,14 @@ function Bookmark() {
                                 <button type="button">
                                   <img src="/images/icon/img.png" alt="" />
                                 </button>
-                                <p>{doc.title || "제목 없음"}</p>
+                                <span className="Bookmark-file-text">
+                                  <span className="Bookmark-file-title-row">
+                                    <p>{doc.title || "제목 없음"}</p>
+                                  </span>
+                                  <span className="Bookmark-date-mobile">
+                                    {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
+                                  </span>
+                                </span>
                               </Link>
                             ) : (
                               <button
@@ -269,7 +276,14 @@ function Bookmark() {
                                 onClick={() => downloadDoc(doc)}
                               >
                                 <img src="/images/icon/img.png" alt="" />
-                                <p>{doc.title || "제목 없음"}</p>
+                                <span className="Bookmark-file-text">
+                                  <span className="Bookmark-file-title-row">
+                                    <p>{doc.title || "제목 없음"}</p>
+                                  </span>
+                                  <span className="Bookmark-date-mobile">
+                                    {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
+                                  </span>
+                                </span>
                               </button>
                             )}
                           </div>

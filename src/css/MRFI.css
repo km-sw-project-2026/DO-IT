@@ -311,6 +311,22 @@
   min-width: 0;
 }
 
+.mrfi-file-text {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mrfi-file-title-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mrfi-date-mobile {
+  display: none;
+}
+
 .mrfi-date {
   color: #2c2c2c;
 }
@@ -604,23 +620,75 @@
     font-size: 12px;
   }
 
-  .mrfi-file-name,
+  .mrfi-file-name {
+    display: none;
+  }
+
   .mrfi-file-suggestion {
-    grid-template-columns: minmax(0, 1fr) 96px 112px;
-    column-gap: 8px;
-    padding-left: 6px;
-    padding-right: 6px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title actions";
+    column-gap: 10px;
+    padding: 14px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #edf1f5;
+    border-radius: 10px;
+    background: #fff;
   }
 
   .mrfi-file-name p,
   .mrfi-file-gather p,
-  .mrfi-date {
+  .mrfi-date,
+  .mrfi-date-mobile {
     font-size: 12px;
+    line-height: 1.35;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .mrfi-file-gather,
   .mrfi-file-link {
     gap: 6px;
+    min-width: 0;
+  }
+
+  .mrfi-file-gather {
+    grid-area: title;
+    overflow: hidden;
+  }
+
+  .mrfi-file-link,
+  .mrfi-folder-link .mrfi-file-gather {
+    align-items: center;
+  }
+
+  .mrfi-file-text {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .mrfi-file-title-row {
+    width: 100%;
+  }
+
+  .mrfi-date {
+    display: none;
+  }
+
+  .mrfi-date-mobile {
+    display: block;
+    max-width: 100%;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mrfi-file-actions,
+  .mrfi-file-actions-placeholder {
+    grid-area: actions;
+    align-self: center;
   }
 
   .mrfi-file-gather img {
@@ -706,23 +774,22 @@
     height: 14px;
   }
 
-  .mrfi-file-name,
   .mrfi-file-suggestion {
-    grid-template-columns: minmax(0, 1fr) 62px 82px;
-    column-gap: 5px;
-    padding-left: 2px;
-    padding-right: 2px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 8px;
+    padding: 12px 10px;
   }
 
   .mrfi-file-name p,
   .mrfi-file-gather p,
-  .mrfi-date {
-    font-size: 10px;
+  .mrfi-date,
+  .mrfi-date-mobile {
+    font-size: 12px;
   }
 
   .mrfi-file-gather img {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
   }
 
   .mrfi-file-actions {

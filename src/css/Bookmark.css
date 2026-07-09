@@ -257,6 +257,22 @@
   text-overflow: ellipsis;
 }
 
+.Bookmark-file-text {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.Bookmark-file-title-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.Bookmark-date-mobile {
+  display: none;
+}
+
 .Bookmark-file-gather button {
   background: transparent;
   border: none;
@@ -468,10 +484,8 @@
 
   .Bookmark-file-suggestion {
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "title actions"
-      "date actions";
-    row-gap: 6px;
+    grid-template-areas: "title actions";
+    row-gap: 0;
     column-gap: 12px;
     padding: 14px 12px;
     margin-bottom: 8px;
@@ -482,12 +496,12 @@
 
   .Bookmark-file-gather {
     grid-area: title;
+    overflow: hidden;
   }
 
   .Bookmark-date {
     grid-area: date;
-    font-size: 13px;
-    color: #777;
+    display: none;
   }
 
   .Bookmark-file-actions {
@@ -499,6 +513,32 @@
   .Bookmark-file-gather img {
     width: 34px;
     height: 34px;
+    flex-shrink: 0;
+  }
+
+  .Bookmark-file-link {
+    align-items: center;
+    min-width: 0;
+  }
+
+  .Bookmark-file-text {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .Bookmark-file-title-row {
+    width: 100%;
+  }
+
+  .Bookmark-date-mobile {
+    display: block;
+    max-width: 100%;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .Bookmark-download img {
@@ -595,9 +635,7 @@
 
   .Bookmark-file-suggestion {
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "title actions"
-      "date actions";
+    grid-template-areas: "title actions";
     padding: 12px 10px;
     column-gap: 8px;
   }
@@ -608,7 +646,8 @@
   }
 
   .Bookmark-file-link p,
-  .Bookmark-date {
+  .Bookmark-date,
+  .Bookmark-date-mobile {
     font-size: 13px;
     line-height: 1.35;
   }

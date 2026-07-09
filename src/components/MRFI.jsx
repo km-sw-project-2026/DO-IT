@@ -359,7 +359,14 @@ function MRFI() {
                   >
                     <div className="mrfi-file-gather">
                       <img src="/images/icon/folder.png" alt="" />
-                      <p>{folder.name}</p>
+                      <span className="mrfi-file-text">
+                        <span className="mrfi-file-title-row">
+                          <p>{folder.name}</p>
+                        </span>
+                        <span className="mrfi-date-mobile">
+                          {formatRepositoryDate(folder.createdAt)}
+                        </span>
+                      </span>
                     </div>
                     <p className="mrfi-date">{formatRepositoryDate(folder.createdAt)}</p>
                     <span className="mrfi-file-actions-placeholder" />
@@ -372,7 +379,14 @@ function MRFI() {
                       {doc.docType === "note" ? (
                         <Link to={`/doc-view/${doc.id}`} className="mrfi-file-link">
                           <img src="/images/icon/img.png" alt="" />
-                          <p>{doc.title || "제목 없음"}</p>
+                          <span className="mrfi-file-text">
+                            <span className="mrfi-file-title-row">
+                              <p>{doc.title || "제목 없음"}</p>
+                            </span>
+                            <span className="mrfi-date-mobile">
+                              {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
+                            </span>
+                          </span>
                         </Link>
                       ) : (
                         <button
@@ -381,7 +395,14 @@ function MRFI() {
                           onClick={() => downloadDoc(doc)}
                         >
                           <img src="/images/icon/img.png" alt="" />
-                          <p>{doc.title || "제목 없음"}</p>
+                          <span className="mrfi-file-text">
+                            <span className="mrfi-file-title-row">
+                              <p>{doc.title || "제목 없음"}</p>
+                            </span>
+                            <span className="mrfi-date-mobile">
+                              {formatRepositoryDate(doc.updatedAt || doc.createdAt)}
+                            </span>
+                          </span>
                         </button>
                       )}
                     </div>

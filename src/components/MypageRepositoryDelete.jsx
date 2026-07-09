@@ -420,7 +420,14 @@ function MypageRepositoryDelete() {
                       <button type="button" onClick={(e) => e.preventDefault()}>
                         <img src="/images/icon/folder.png" alt="폴더" />
                       </button>
-                      <p>{folder.name}</p>
+                      <span className="trash-file-text">
+                        <span className="trash-file-title-row">
+                          <p>{folder.name}</p>
+                        </span>
+                        <span className="trash-file-meta">
+                          {formatRepositoryDate(folder.deletedAt || folder.createdAt)} · 폴더
+                        </span>
+                      </span>
                     </div>
 
                     <p className="mr-date">
@@ -486,6 +493,7 @@ function MypageRepositoryDelete() {
                       />
                       <Link
                         to={`/doc-view/${doc.id}`}
+                        className="trash-file-link"
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -497,7 +505,15 @@ function MypageRepositoryDelete() {
                         <button type="button">
                           <img src="/images/icon/img.png" alt="" />
                         </button>
-                        <p>{doc.title || "제목 없음"}</p>
+                        <span className="trash-file-text">
+                          <span className="trash-file-title-row">
+                            <p>{doc.title || "제목 없음"}</p>
+                          </span>
+                          <span className="trash-file-meta">
+                            {formatRepositoryDate(doc.updatedAt || doc.createdAt)} ·{" "}
+                            {doc.docType === "note" ? "문서" : "파일"}
+                          </span>
+                        </span>
                       </Link>
                     </div>
 
