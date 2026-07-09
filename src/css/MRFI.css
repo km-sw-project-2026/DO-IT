@@ -813,3 +813,163 @@
     line-height: 6px;
   }
 }
+
+/* 자료함 홈 화면과 같은 레이아웃 기준 */
+.mrfi {
+  min-width: 0;
+}
+
+.mrfi-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 40px);
+}
+
+.mrfi-header {
+  justify-content: center;
+  gap: 40px;
+}
+
+.mrfi-title {
+  margin-left: 0;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.mrfi-title img {
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.mrfi-header .search {
+  flex: 1;
+  max-width: 934px;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.mrfi-header .search input {
+  width: 100%;
+  min-width: 0;
+}
+
+.mrfi-contents {
+  gap: 15px;
+  min-width: 0;
+}
+
+.mrfi-inventory {
+  flex: 0 0 200px;
+  margin-right: 0;
+}
+
+.mrfi-inventory button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mrfi-contents-inner,
+.mrfi-file-list {
+  min-width: 0;
+}
+
+.mrfi-contents-inner {
+  padding: 0;
+}
+
+@media (max-width: 1200px) {
+  .mrfi-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding: 18px 0;
+  }
+
+  .mrfi-header .search {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .mrfi-inner {
+    padding: 0 16px;
+  }
+
+  .mrfi-contents {
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .mrfi-inventory {
+    flex: none;
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 4px 0 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .mrfi-inner {
+    padding: 0 10px;
+  }
+
+  .mrfi-header {
+    padding: 14px 0;
+  }
+
+  .mrfi-title {
+    gap: 14px;
+  }
+
+  .mrfi-title h2 {
+    font-size: 20px;
+  }
+
+  .mrfi-title img {
+    width: 56px;
+  }
+}
+
+/* 모바일 검색 영역 공통 정리 */
+@media (max-width: 640px) {
+  .mrfi-header .search {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 8px 0;
+    width: 100%;
+  }
+
+  .mrfi-header .search input {
+    grid-column: 1;
+    width: 100%;
+    height: 42px;
+    border-width: 2px;
+    border-right: 0;
+    border-radius: 4px 0 0 4px;
+    box-sizing: border-box;
+  }
+
+  .mrfi-header .search button {
+    grid-column: 2;
+    width: 44px;
+    height: 42px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .mrfi-sort-select {
+    grid-column: 1 / -1;
+    order: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: 42px;
+    border: 2px solid #3fb5ff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 13px;
+  }
+}
