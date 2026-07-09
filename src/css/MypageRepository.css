@@ -672,19 +672,18 @@
 /* ===== 반응형 ===== */
 @media (max-width: 1200px) {
   .mypagerepository-inner {
-    padding: 0 20px;
+    padding: 0 clamp(16px, 3vw, 40px);
   }
 
   .mypagerepository-header {
-    justify-content: space-between;
-    gap: 18px;
-    padding: 16px 8px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding: 18px 0;
   }
 
   .mypagerepository-title {
-    margin-left: 0;
     gap: 16px;
-    flex-shrink: 0;
   }
 
   .mypagerepository-title h2 {
@@ -692,14 +691,13 @@
   }
 
   .mypagerepository-title img {
-    width: 70px;
+    width: 72px;
     object-fit: contain;
   }
 
   .mypagerepository-header .search {
-    flex: 1;
-    min-width: 0;
-    margin-left: 0;
+    width: 100%;
+    max-width: none;
   }
 
   .mypagerepository-header .search input {
@@ -710,25 +708,23 @@
 
   .mypagerepository-file-name {
     grid-template-columns: 88px minmax(0, 1fr) 150px 180px;
-    padding: 0 20px 10px;
+    padding: 0 24px 10px;
   }
 
   .mypagerepository-file-suggestion {
     grid-template-columns: 28px minmax(0, 1fr) 150px 180px;
-    padding: 12px 20px;
+    padding: 12px 24px;
   }
 }
 
 @media (max-width: 768px) {
   .mypagerepository-inner {
-    padding: 0 12px;
+    padding: 0 16px;
   }
 
   .mypagerepository-header {
-    flex-direction: column;
-    align-items: stretch;
     margin-bottom: 8px;
-    padding: 14px 0;
+    padding: 18px 0;
   }
 
   .mypagerepository-title {
@@ -783,12 +779,14 @@
   }
 
   .mypagerepository-inventory {
+    flex: none;
+    width: 100%;
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     margin: 0 0 16px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding: 4px 0 10px;
     scrollbar-width: none;
   }
 
@@ -798,15 +796,16 @@
 
   .mypagerepository-inventory button {
     width: auto;
-    min-width: 96px;
-    height: 38px;
+    min-width: 120px;
+    height: 44px;
     flex-shrink: 0;
     justify-content: center;
-    gap: 6px;
-    padding: 0 10px;
+    gap: 8px;
+    padding: 0 14px;
     font-size: 12px;
     line-height: 1.2;
     text-align: center;
+    border: 1px solid #e5e5e5;
     border-radius: 8px;
     background: #f7f7f7;
   }
@@ -910,16 +909,40 @@
   }
 
   .mypagerepository-file-name {
-    grid-template-columns: 74px minmax(0, 1fr) 96px 112px;
-    column-gap: 8px;
-    padding: 0 6px 8px;
-    font-size: 12px;
+    display: none;
   }
 
   .mypagerepository-file-suggestion {
-    grid-template-columns: 24px minmax(0, 1fr) 96px 112px;
-    column-gap: 8px;
-    padding: 10px 6px;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "check title actions"
+      "check date actions";
+    row-gap: 6px;
+    column-gap: 10px;
+    padding: 14px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #edf1f5;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .mypagerepository-file-suggestion .mr-file-checkbox {
+    grid-area: check;
+    width: auto;
+    align-self: center;
+  }
+
+  .mypagerepository-file-gather {
+    grid-area: title;
+  }
+
+  .mypagerepository-file-suggestion .mr-date {
+    grid-area: date;
+  }
+
+  .mypagerepository-file-actions {
+    grid-area: actions;
+    align-self: center;
   }
 
   .mypagerepository-file-gather a,
@@ -928,14 +951,15 @@
   }
 
   .mypagerepository-file-gather img {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
   }
 
   .mypagerepository-file-gather p,
   .mr-date,
   .mr-select-all-label {
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.35;
   }
 
   .mypagerepository-file-badge {
@@ -945,7 +969,7 @@
   }
 
   .mypagerepository-file-actions {
-    gap: 6px;
+    gap: 8px;
   }
 
   .mypagerepository-file-actions button {
@@ -953,14 +977,14 @@
   }
 
   .mypagerepository-download img {
-    width: 21px;
-    height: 21px;
+    width: 26px;
+    height: 26px;
   }
 
   .mypagerepository-pan img,
   .mypagerepository-star img {
-    width: 19px;
-    height: 19px;
+    width: 23px;
+    height: 23px;
   }
 
   .folder-menu,
@@ -974,7 +998,7 @@
 
 @media (max-width: 480px) {
   .mypagerepository-inner {
-    padding: 0 8px;
+    padding: 0 10px;
   }
 
   .mypagerepository-title h2 {
@@ -982,28 +1006,39 @@
   }
 
   .mypagerepository-title img {
-    width: 42px;
+    width: 56px;
+  }
+
+  .mypagerepository-header .search {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .mypagerepository-header .search input,
-  .mr-sort-select,
   .mypagerepository-header .search button {
-    height: 38px;
+    height: 42px;
   }
 
   .mypagerepository-header .search input {
-    font-size: 12px;
+    flex: 1 1 calc(100% - 52px);
+    border-width: 2px;
+    font-size: 13px;
   }
 
   .mr-sort-select {
-    min-width: 76px;
-    max-width: 86px;
-    padding: 0 4px;
-    font-size: 10px;
+    order: 3;
+    flex: 1 0 100%;
+    min-width: 0;
+    max-width: none;
+    height: 38px;
+    border: 2px solid #3fb5ff;
+    border-radius: 4px;
+    padding: 0 8px;
+    font-size: 12px;
   }
 
   .mypagerepository-header .search button {
-    width: 38px;
+    width: 44px;
   }
 
   .mypagerepository-header .search button img {
@@ -1011,10 +1046,10 @@
   }
 
   .mypagerepository-inventory button {
-    min-width: 82px;
-    height: 34px;
+    min-width: 88px;
+    height: 36px;
     justify-content: center;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .mypagerepository-inventory button img {
@@ -1036,17 +1071,6 @@
     font-size: 11px;
   }
 
-  .mypagerepository-file-name {
-    grid-template-columns: 26px minmax(0, 1fr) 62px 82px;
-    column-gap: 5px;
-    padding: 0 2px 7px;
-  }
-
-  .mypagerepository-file-name p,
-  .mypagerepository-file-name span {
-    font-size: 10px;
-  }
-
   .mr-select-all-label {
     display: none;
   }
@@ -1062,34 +1086,35 @@
   }
 
   .mypagerepository-file-suggestion {
-    grid-template-columns: 20px minmax(0, 1fr) 62px 82px;
-    column-gap: 5px;
-    padding: 8px 2px;
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    column-gap: 8px;
+    padding: 12px 10px;
   }
 
   .mypagerepository-file-gather img {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
   }
 
   .mypagerepository-file-gather p,
   .mr-date {
-    font-size: 10px;
+    font-size: 13px;
+    line-height: 1.35;
   }
 
   .mypagerepository-file-actions {
-    gap: 3px;
+    gap: 5px;
   }
 
   .mypagerepository-download img {
-    width: 17px;
-    height: 17px;
+    width: 20px;
+    height: 20px;
   }
 
   .mypagerepository-pan img,
   .mypagerepository-star img {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   .mypagerepository-ooo span {
