@@ -15,31 +15,37 @@
   font-size: 16px;
   font-weight: normal;
   text-align: center;
+  min-width: 0;
 }
 
 .Community-post-content .Community-content {
-  width: 310px;
-  /* padding: 0 40px; */
+  width: 390px;
   display: flex;
   font-size: 14px;
 }
 
 .Community-post-content .Community-content span {
-  width: 33.33%;   /* 제목이랑 동일 */
+  width: 25%;
   text-align: center;
   display: block;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .post-title {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 16px;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .post-writer {
   font-size: 13px;
   color: #666;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 /* 관리자 뱃지 */
@@ -57,7 +63,7 @@
 @media (max-width: 600px) {
   .Community-post-content {
     display: grid;
-    grid-template-columns: minmax(74px, 1fr) 210px;
+    grid-template-columns: minmax(74px, 1fr) 248px;
     align-items: start;
     padding: 6px 10px;
     gap: 3px 6px;
@@ -77,8 +83,7 @@
   }
 
   .post-writer {
-    grid-column: 1 / 2;
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .badge-admin {
@@ -89,10 +94,12 @@
 
 @media (max-width: 390px) {
   .Community-post-content {
-    grid-template-columns: minmax(70px, 1fr) 185px;
+    grid-template-columns: minmax(70px, 1fr) 230px;
+    padding-left: 7px;
+    padding-right: 7px;
   }
 
   .Community-post-content .Community-content {
-    font-size: 11px;
+    font-size: 10px;
   }
 }

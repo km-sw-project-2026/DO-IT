@@ -20,13 +20,11 @@ function CommunityPost({ post }) {
           {post.title}
         </h4>
 
-        {/* ✅ 작성자 표시 */}
-        <div className="post-writer">
-          {post.author_nickname ?? "(알 수 없음)"}
-        </div>
-
         <div className="Community-content">
           <span className="view">{post.view_count || 0}</span>
+          <span className="post-writer">
+            {post.author_nickname ?? "(알 수 없음)"}
+          </span>
           <span className="date">{kstDate}</span>
           <span className="Comment">{post.comment_count || 0}</span>
         </div>

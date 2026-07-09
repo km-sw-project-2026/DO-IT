@@ -137,7 +137,6 @@
 
 .mypage-contents-inner {
     display: flex;
-    flex-wrap: wrap;
     padding: 35px clamp(16px, 3vw, 45px);
     gap: 30px;
     min-width: 0;
@@ -146,7 +145,6 @@
 /* ======================================================== */
 .mypage-community {
     width: 55%;
-    flex-shrink: 0;
     min-width: 0;
 }
 
@@ -199,7 +197,7 @@
 
 /* ============================================= */
 .mypage-data {
-    width: 40%;
+    width: 45%;
     min-width: 0;
 }
 
@@ -364,16 +362,18 @@
 
   .mypage-header-inner {
     width: 100%;
-    padding: 0 16px;
     box-sizing: border-box;
+  }
+
+  .mypage-contents-inner {
+    gap: 22px;
   }
 }
 
 @media (max-width: 768px) {
   .mypage-header {
-    padding: 24px 20px;
-    height: auto;
     margin-top: 0;
+    padding: 24px 16px;
   }
 
   .mypage-user-profile {
@@ -384,22 +384,28 @@
   }
 
   .mypage-user-profile > img {
-    width: 80px;
-    height: 80px;
+    width: 84px;
+    height: 84px;
+    border-radius: 24px;
+  }
+
+  .mypage-user-name {
+    min-width: 0;
+    padding: 12px 16px;
   }
 
   .mypage-user-name h2 {
-    font-size: 20px;
+    font-size: 22px;
   }
 
-  .mypage-user-name p {
-    font-size: 16px;
+  .mypage-user-name p,
+  .mypage-user-name p span {
+    font-size: 18px;
   }
 
   .mypage-contents-inner {
     flex-direction: column;
-    padding: 20px 16px;
-    gap: 20px;
+    padding: 24px 16px;
   }
 
   .mypage-community,
@@ -409,7 +415,7 @@
 
   .mypage-contents-inner .mypage-contents-title {
     font-size: 22px;
-    padding: 0 16px;
+    padding: 0 8px;
   }
 
   .pop-up-contents {
@@ -420,7 +426,7 @@
 
   .user-explanation p {
     height: auto;
-    min-height: 80px;
+    min-height: 96px;
   }
 
   .profile-button {
@@ -491,18 +497,19 @@
     font-size: 15px;
   }
 
-  .mypage-user-name p {
-    font-size: 12px;
+  .mypage-user-name p,
+  .mypage-user-name p span {
+    font-size: 13px;
   }
 
   .mypage-community-title h2,
   .mypage-data-title h2 {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .mypage-community-title button,
   .mypage-data-title button {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .user-setting {

@@ -64,14 +64,12 @@
 }
 
 .Community-main-title .Community-title-content {
-  width: 310px;
-  /* padding: 0 40px; */
+  width: 390px;
   display: flex;
 }
 
 .Community-main-title .Community-title-content span {
-  width: 33.33%;
-  /* 컬럼 동일하게 */
+  width: 25%;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
@@ -156,6 +154,7 @@
   border: 1px solid #9FD9FD;
   border-radius: 14px;
   background: linear-gradient(180deg, #aedaf5 0%, #e6f5fb 50%);
+  overflow: hidden;
 }
 
 .notice-section-head {
@@ -185,13 +184,15 @@
 
 .notice-row {
   position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 10px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px;
   border: 1px solid #9fd9fd8e;
   border-radius: 12px;
   background: #fff;
+  min-width: 0;
 }
 
 .notice-row::before {
@@ -218,12 +219,23 @@
   color: #2c2c2c;
   min-width: 44px;
   height: 26px;
-  margin-left: 6px;
-  margin-top: 10px;
+  margin-left: 4px;
+  margin-top: 0;
 }
 
 .notice-post {
-  flex: 1;
+  min-width: 0;
+}
+
+.notice-post .Community-post-content {
+  padding-left: 10px;
+  padding-right: 10px;
+  border-bottom: 0;
+  border-radius: 8px;
+}
+
+.notice-post .Community-post-content h4 {
+  text-align: left;
 }
 
 /* 일반 글 영역과 공지 영역 사이 구분감 */
@@ -275,7 +287,7 @@
 
   .Community-main-title-content {
     display: grid;
-    grid-template-columns: minmax(74px, 1fr) 210px;
+    grid-template-columns: minmax(74px, 1fr) 248px;
     gap: 6px;
     padding: 6px 10px;
   }
@@ -298,7 +310,7 @@
 
   .notice-section {
     margin: 8px 0 10px;
-    padding: 8px;
+    padding: 7px;
     border-radius: 10px;
   }
 
@@ -309,8 +321,9 @@
   }
 
   .notice-row {
-    gap: 8px;
-    padding: 8px 7px;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 6px;
+    padding: 7px 5px;
     border-radius: 10px;
   }
 
@@ -327,8 +340,18 @@
     height: 22px;
     padding: 2px 6px;
     font-size: 10px;
-    margin-left: 4px;
-    margin-top: 8px;
+    margin-left: 2px;
+  }
+
+  .notice-post .Community-post-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .notice-post .Community-post-content .Community-content {
+    width: 100%;
   }
 
   .Community-footer .page-number button {
@@ -350,5 +373,11 @@
 
   .Community-footer .write-button img {
     width: 22px;
+  }
+}
+
+@media (max-width: 390px) {
+  .Community-main-title-content {
+    grid-template-columns: minmax(70px, 1fr) 230px;
   }
 }

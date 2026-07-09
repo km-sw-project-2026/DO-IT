@@ -39,13 +39,13 @@
 }
 
 .doc-title {
-  flex: 1;
-  min-width: 240px;
-  height: 54px;
+  flex: 1 1 640px;
+  min-width: 320px;
+  height: 58px;
   border: 1px solid #d7dde4;
   border-radius: 10px;
   padding: 0 18px;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
   background: white;
   text-align: left;
@@ -55,6 +55,7 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .doc-actions button,
@@ -248,8 +249,8 @@
   .doc-title {
     width: 100%;
     min-width: 0;
-    height: 50px;
-    font-size: 20px;
+    height: 52px;
+    font-size: 17px;
   }
 
   .doc-actions {
@@ -288,9 +289,9 @@
   }
 
   .doc-title {
-    height: 46px;
+    height: 48px;
     border-radius: 8px;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .doc-actions {

@@ -129,6 +129,7 @@ function Community() {
             <h2>제목</h2>
             <div className="Community-title-content">
               <span className="view">조회수</span>
+              <span className="writer">글쓴이</span>
               <span className="date">등록일</span>
               <span className="comment">댓글</span>
             </div>
