@@ -379,3 +379,191 @@
   background: #f2f2f2;
   color: #333;
 }
+
+/* 메인페이지 보조 캘린더 compact 정리 */
+.main-cal-preview-wrap {
+  margin: 14px 0 18px;
+}
+
+.main-cal-preview {
+  width: min(980px, 92vw);
+  height: auto;
+  min-height: 520px;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 14px;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+}
+
+.main-cal-header {
+  padding: 4px 2px 9px;
+}
+
+.main-cal-title {
+  font-size: 18px;
+}
+
+.main-cal-hint {
+  font-size: 11px;
+}
+
+.main-cal-weekdays {
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.main-cal-weekday {
+  font-size: 10px;
+}
+
+.main-cal-grid {
+  gap: 5px;
+}
+
+.main-cal-cell {
+  min-height: 62px;
+  border-radius: 9px;
+  padding: 7px;
+}
+
+.main-cal-daynum {
+  font-size: 11px;
+}
+
+.main-cal-bars {
+  margin-top: 6px;
+  gap: 3px;
+}
+
+.main-cal-bar {
+  width: 56%;
+  height: 5px;
+}
+
+.main-cal-more {
+  font-size: 9px;
+  margin-top: 0;
+}
+
+.main-cal-right {
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.side-head {
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.side-head h4 {
+  font-size: 13px;
+}
+
+.side-picked,
+.side-empty,
+.side-card-sub {
+  font-size: 11px;
+}
+
+.go-btn {
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.side-list {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.side-card {
+  gap: 8px;
+  border-radius: 10px;
+  padding: 9px 10px;
+}
+
+.side-accent {
+  width: 4px;
+  flex-basis: 4px;
+}
+
+.side-card-title {
+  font-size: 13px;
+}
+
+.side-foot {
+  padding-top: 8px;
+  font-size: 10px;
+}
+
+@media (max-width: 1200px) {
+  .main-cal-preview {
+    width: min(980px, 92vw);
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .main-cal-right {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-cal-preview-wrap {
+    margin: 10px 0 14px;
+  }
+
+  .main-cal-preview {
+    width: min(100% - 12px, 980px);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .main-cal-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+    padding-bottom: 7px;
+  }
+
+  .main-cal-title {
+    font-size: 16px;
+  }
+
+  .main-cal-hint {
+    font-size: 10px;
+  }
+
+  .main-cal-weekdays,
+  .main-cal-grid {
+    gap: 4px;
+  }
+
+  .main-cal-cell {
+    min-height: 46px;
+    border-radius: 7px;
+    padding: 5px;
+  }
+
+  .main-cal-daynum {
+    font-size: 10px;
+  }
+
+  .main-cal-bars {
+    margin-top: 5px;
+    gap: 2px;
+  }
+
+  .main-cal-bar {
+    width: 42px;
+    max-width: 88%;
+    height: 4px;
+  }
+
+  .side-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

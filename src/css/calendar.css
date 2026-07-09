@@ -5,7 +5,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 22px 0 46px;
+  padding: 34px 0 46px;
 }
 
 .cal-card {
@@ -406,8 +406,10 @@
    2) Add Modal (일정 추가)
 ========================= */
 .cal-modal.add-ui {
-  padding: 20px 22px 18px;
-  width: min(560px, 92vw);
+  padding: 16px 18px 14px;
+  width: min(500px, 92vw);
+  max-height: min(720px, 90vh);
+  overflow: auto;
 }
 
 .add-head {
@@ -417,7 +419,7 @@
 }
 
 .add-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 900;
   color: #ef4444;
 }
@@ -425,7 +427,7 @@
 .add-close {
   border: none;
   background: transparent;
-  font-size: 30px;
+  font-size: 26px;
   cursor: pointer;
   color: #374151;
   line-height: 1;
@@ -434,7 +436,7 @@
 .add-line {
   height: 2px;
   width: 100%;
-  margin: 10px 0 14px;
+  margin: 8px 0 10px;
   background: rgba(59, 130, 246, 0.55);
   border-radius: 999px;
 }
@@ -444,14 +446,14 @@
   width: 100%;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-  padding: 12px 6px;
+  padding: 9px 6px;
   outline: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
 }
 
 .add-input.sub {
-  margin-top: 8px;
+  margin-top: 6px;
   font-weight: 700;
   color: #374151;
 }
@@ -459,21 +461,30 @@
 /* category chips */
 .cat-row {
   display: flex;
-  gap: 10px;
-  margin: 14px 0 10px;
+  gap: 7px;
+  row-gap: 7px;
+  margin: 10px 0 8px;
   flex-wrap: wrap;
   align-items: center;
+  align-content: flex-start;
+  max-height: 112px;
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .cat-chip {
   border: none;
-  padding: 10px 16px;
+  padding: 7px 11px;
   border-radius: 999px;
   background: #e5e7eb;
   font-weight: 900;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   color: #111827;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ✅ 선택된 카테고리 글자 흰색(안전빵) */
@@ -482,8 +493,8 @@
 }
 
 .cat-chip.plus {
-  width: 40px;
-  padding: 10px 0;
+  width: 34px;
+  padding: 7px 0;
   text-align: center;
 }
 
@@ -496,26 +507,28 @@
 .cat-add-box {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  margin: 8px 0 10px;
-  padding: 10px;
-  border-radius: 12px;
+  margin: 6px 0 8px;
+  padding: 8px;
+  border-radius: 10px;
   background: rgba(0, 0, 0, 0.03);
 }
 
 .cat-add-name {
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 8px;
   font-weight: 800;
+  font-size: 12px;
 }
 
 .cat-add-color {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-weight: 800;
+  font-size: 12px;
   color: #374151;
 }
 
@@ -524,9 +537,10 @@
   background: #60a5fa;
   color: #fff;
   font-weight: 900;
-  padding: 10px 14px;
-  border-radius: 10px;
+  padding: 8px 11px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .cat-add-btn:hover {
@@ -535,35 +549,39 @@
 
 /* category edit box */
 .cat-edit-box {
-  margin: 8px 0 10px;
-  padding: 10px;
-  border-radius: 12px;
+  margin: 6px 0 8px;
+  padding: 8px;
+  border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   background: #fff;
+  max-height: 190px;
+  overflow: auto;
 }
 
 .cat-edit-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 .cat-edit-name {
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 8px;
   font-weight: 800;
+  font-size: 12px;
 }
 
 .cat-del-btn {
   border: none;
   background: #e5e7eb;
   font-weight: 900;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .cat-del-btn:disabled {
@@ -572,8 +590,8 @@
 }
 
 .cat-edit-help {
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: 4px;
+  font-size: 11px;
   color: #6b7280;
   font-weight: 700;
 }
@@ -582,7 +600,7 @@
 .add-foot {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .add-confirm {
@@ -590,9 +608,10 @@
   background: #60a5fa;
   color: #fff;
   font-weight: 900;
-  padding: 12px 18px;
-  border-radius: 10px;
+  padding: 9px 15px;
+  border-radius: 9px;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .add-confirm:hover {
@@ -602,7 +621,7 @@
 /* ===== 반응형 ===== */
 @media (max-width: 600px) {
   .cal-wrap {
-    padding: 14px 0 28px;
+    padding: 24px 0 28px;
   }
 
   .cal-card {
@@ -688,5 +707,33 @@
   .cal-footer {
     padding-top: 6px;
     font-size: 10px;
+  }
+
+  .cal-modal-back {
+    padding: 14px;
+  }
+
+  .cal-modal.add-ui {
+    padding: 14px 14px 12px;
+    width: min(420px, 94vw);
+  }
+
+  .add-title {
+    font-size: 16px;
+  }
+
+  .cat-row {
+    max-height: 96px;
+  }
+
+  .cat-chip {
+    max-width: 104px;
+    padding: 6px 9px;
+    font-size: 10px;
+  }
+
+  .cat-add-box,
+  .cat-edit-row {
+    grid-template-columns: 1fr;
   }
 }
