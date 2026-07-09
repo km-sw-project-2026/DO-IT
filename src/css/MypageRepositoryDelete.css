@@ -226,6 +226,7 @@
 
   .mypagerepositorydelete-inventory {
     display: flex;
+    justify-content: center;
     gap: 6px;
     margin: 0 0 16px;
     overflow-x: auto;
@@ -242,12 +243,18 @@
     min-width: 96px;
     height: 38px;
     flex-shrink: 0;
+    justify-content: center;
     gap: 6px;
     padding: 0 10px;
     font-size: 12px;
     line-height: 1.2;
+    text-align: center;
     border-radius: 8px;
     background: #f7f7f7;
+  }
+
+  .mypagerepositorydelete-inventory button p {
+    margin: 0;
   }
 
   .mypagerepositorydelete-inventory button img {
@@ -402,6 +409,7 @@
   .mypagerepositorydelete-inventory button {
     min-width: 82px;
     height: 34px;
+    justify-content: center;
     font-size: 11px;
   }
 
@@ -709,6 +717,7 @@
 
   .mypagerepositorydelete-inventory {
     display: flex;
+    justify-content: center;
     gap: 6px;
     margin: 0 0 16px;
     overflow-x: auto;
@@ -725,12 +734,18 @@
     min-width: 96px;
     height: 38px;
     flex-shrink: 0;
+    justify-content: center;
     gap: 6px;
     padding: 0 10px;
     font-size: 12px;
     line-height: 1.2;
+    text-align: center;
     border-radius: 8px;
     background: #f7f7f7;
+  }
+
+  .mypagerepositorydelete-inventory button p {
+    margin: 0;
   }
 
   .mypagerepositorydelete-file-name {
