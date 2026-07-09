@@ -311,10 +311,15 @@
 
   .mypagerepositorydelete-file-suggestion .mr-date {
     grid-area: date;
+    margin-left: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mypagerepositorydelete-file-suggestion .mr-type {
     grid-area: type;
+    margin-left: 64px;
   }
 
   .mypagerepositorydelete-file-img-gather {
@@ -796,6 +801,8 @@
   .mr-type {
     font-size: 12px;
     line-height: 1.35;
+    margin-top: 0;
+    margin-bottom: 0;
     word-break: keep-all;
   }
 
@@ -813,6 +820,11 @@
     grid-template-columns: minmax(0, 1fr) auto;
     padding: 12px 10px;
     column-gap: 8px;
+  }
+
+  .mypagerepositorydelete-file-suggestion .mr-date,
+  .mypagerepositorydelete-file-suggestion .mr-type {
+    margin-left: 56px;
   }
 
   .mypagerepositorydelete-file-gather p,

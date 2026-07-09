@@ -930,14 +930,21 @@
     grid-area: check;
     width: auto;
     align-self: center;
+    justify-content: center;
   }
 
   .mypagerepository-file-gather {
     grid-area: title;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .mypagerepository-file-suggestion .mr-date {
     grid-area: date;
+    margin: 0 0 0 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mypagerepository-file-actions {
@@ -948,6 +955,17 @@
   .mypagerepository-file-gather a,
   .mypagerepository-file-gather button {
     gap: 6px !important;
+    min-width: 0;
+  }
+
+  .mypagerepository-file-gather > button,
+  .mypagerepository-file-gather a {
+    width: 100%;
+  }
+
+  .mypagerepository-file-gather a > button {
+    width: auto;
+    flex-shrink: 0;
   }
 
   .mypagerepository-file-gather img {
@@ -960,6 +978,8 @@
   .mr-select-all-label {
     font-size: 13px;
     line-height: 1.35;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .mypagerepository-file-badge {
@@ -1089,6 +1109,10 @@
     grid-template-columns: 20px minmax(0, 1fr) auto;
     column-gap: 8px;
     padding: 12px 10px;
+  }
+
+  .mypagerepository-file-suggestion .mr-date {
+    margin-left: 36px;
   }
 
   .mypagerepository-file-gather img {
