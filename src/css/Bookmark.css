@@ -675,8 +675,8 @@
   }
 
   .Bookmark-menu {
-    left: 0;
-    right: auto;
+    left: auto;
+    right: 0;
   }
 
   .Bookmark-file-empty {

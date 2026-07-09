@@ -960,6 +960,12 @@
     padding: 18px 0;
   }
 
+  .mypagerepositorydelete-title {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
   .mypagerepositorydelete-header .search {
     width: 100%;
     max-width: none;
