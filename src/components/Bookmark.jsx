@@ -197,7 +197,7 @@ function Bookmark() {
         <div className="Bookmark-inner">
           <div className="Bookmark-header">
             <div className="Bookmark-title">
-              <h2>즐겨찾기</h2>
+              <h2>내 자료함</h2>
               <img src="/images/mypagerepository.png" alt="" />
             </div>
 

@@ -637,7 +637,7 @@ function MypageRepository() {
         <div className="mypagerepository-inner">
           <div className="mypagerepository-header">
             <div className="mypagerepository-title">
-              <h2>자료함 홈</h2>
+              <h2>내 자료함</h2>
               <img src="/images/mypagerepository.png" alt="" />
             </div>
 
