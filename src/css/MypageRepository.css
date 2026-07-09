@@ -3,11 +3,14 @@
 ========================= */
 .mypagerepository {
   width: 100%;
+  min-width: 0;
 }
 
 .mypagerepository-inner {
   width: 100%;
-  padding: 0 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 40px);
 }
 
 /* =========================
@@ -19,6 +22,8 @@
   padding: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 40px;
   border-bottom: 1px solid #c4c4c4;
   margin-bottom: 10px;
 }
@@ -26,13 +31,17 @@
 .mypagerepository-header .search {
   display: flex;
   align-items: center;
-  margin-left: 40px;
+  flex: 1;
+  max-width: 934px;
+  min-width: 0;
+  margin-left: 0;
 }
 
 .mypagerepository-title {
-  margin-left: 220px;
   display: flex;
+  align-items: center;
   gap: 30px;
+  flex-shrink: 0;
 }
 
 .mypagerepository-title h2 {
@@ -42,11 +51,13 @@
 }
 
 .mypagerepository-title img {
-  width: 30%;
+  width: 90px;
+  flex-shrink: 0;
 }
 
 .mypagerepository-header .search input {
-  width: 722px;
+  width: 100%;
+  min-width: 0;
   height: 62px;
   border: 3px solid #3fb5ff;
   border-radius: 4px 0 0 4px;
@@ -92,14 +103,16 @@
 ========================= */
 .mypagerepository-contents {
   display: flex;
+  gap: 15px;
   padding: 0 20px;
+  min-width: 0;
 }
 
 /* =========================
    왼쪽 인벤토리
 ========================= */
 .mypagerepository-inventory {
-  margin-right: 15px;
+  flex: 0 0 200px;
 }
 
 .mypagerepository-inventory button {
@@ -131,16 +144,19 @@
 ========================= */
 .mypagerepository-collection {
   width: 100%;
+  min-width: 0;
 }
 
 .mypagerepository-main {
   width: 100%;
+  min-width: 0;
   margin-bottom: 0;
   overflow: visible;
 }
 
 .mypagerepository-file-bottom {
   width: 100%;
+  min-width: 0;
   margin-top: 16px;
 }
 
