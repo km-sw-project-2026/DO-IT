@@ -268,8 +268,8 @@
   }
 
   .doc-paper {
-    min-height: 720px;
-    padding: 30px 28px;
+    min-height: 600px;
+    padding: 26px 24px;
   }
 }
 
@@ -348,19 +348,19 @@
   }
 
   .doc-paper {
-    min-height: calc(100vh - 230px);
-    padding: 22px 18px;
+    min-height: 420px;
+    padding: 18px 16px;
     border-radius: 8px;
     font-size: 14px;
     line-height: 1.7;
   }
 
   .doc-paper h1 {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .doc-paper h2 {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .doc-footer {
