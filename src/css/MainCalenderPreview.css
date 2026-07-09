@@ -382,7 +382,7 @@
 
 /* 메인페이지 보조 캘린더 compact 정리 */
 .main-cal-preview-wrap {
-  margin: 14px 0 18px;
+  margin: 26px 0 18px;
 }
 
 .main-cal-preview {
@@ -511,7 +511,7 @@
 
 @media (max-width: 640px) {
   .main-cal-preview-wrap {
-    margin: 10px 0 14px;
+    margin: 18px 0 14px;
   }
 
   .main-cal-preview {
