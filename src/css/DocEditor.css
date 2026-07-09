@@ -39,13 +39,13 @@
 }
 
 .doc-title {
-  flex: 1 1 640px;
-  min-width: 320px;
-  height: 58px;
+  flex: 1 1 560px;
+  min-width: 260px;
+  height: 48px;
   border: 1px solid #d7dde4;
   border-radius: 10px;
-  padding: 0 18px;
-  font-size: 18px;
+  padding: 0 14px;
+  font-size: 16px;
   font-weight: 600;
   background: white;
   text-align: left;
@@ -249,8 +249,8 @@
   .doc-title {
     width: 100%;
     min-width: 0;
-    height: 52px;
-    font-size: 17px;
+    height: 46px;
+    font-size: 15px;
   }
 
   .doc-actions {
@@ -289,9 +289,9 @@
   }
 
   .doc-title {
-    height: 48px;
+    height: 42px;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .doc-actions {

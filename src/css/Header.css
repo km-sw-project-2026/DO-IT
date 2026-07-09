@@ -130,6 +130,8 @@ nav ul li a {
   top: calc(100% + 8px);
   right: 0;
   width: 300px;
+  max-width: calc(100vw - 16px);
+  box-sizing: border-box;
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -255,8 +257,12 @@ nav ul li a {
   }
 
   .notif-dropdown {
-    width: 260px;
-    right: -60px;
+    position: fixed;
+    top: 50px;
+    right: 8px;
+    left: auto;
+    width: min(280px, calc(100vw - 16px));
+    max-height: calc(100vh - 62px);
   }
 }
 
@@ -321,15 +327,19 @@ nav ul li a {
   }
 
   .notif-dropdown {
-    width: 220px;
-    right: -40px;
+    position: fixed;
+    top: 48px;
+    right: 8px;
+    left: auto;
+    width: min(260px, calc(100vw - 16px));
+    max-height: calc(100vh - 58px);
   }
 }
 
 @media (max-width: 768px) {
   .project-header {
     height: 42px;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .project-header .header-inner {
@@ -397,6 +407,15 @@ nav ul li a {
     height: 18px;
   }
 
+  .project-header .notif-dropdown {
+    position: fixed;
+    top: 46px;
+    right: 8px;
+    left: auto;
+    width: min(280px, calc(100vw - 16px));
+    max-height: calc(100vh - 56px);
+  }
+
   .project-header .user-avatar {
     width: 20px;
     height: 20px;
@@ -438,6 +457,11 @@ nav ul li a {
   .project-header .notif-bell img {
     width: 16px;
     height: 16px;
+  }
+
+  .project-header .notif-dropdown {
+    right: 6px;
+    width: min(250px, calc(100vw - 12px));
   }
 
   .project-header .user-avatar {
