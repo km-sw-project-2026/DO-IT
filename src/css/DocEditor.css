@@ -39,7 +39,7 @@
 }
 
 .doc-title {
-  flex: 1 1 560px;
+  flex: 1 1 auto;
   min-width: 260px;
   height: 48px;
   border: 1px solid #d7dde4;
@@ -247,6 +247,7 @@
   }
 
   .doc-title {
+    flex: 0 0 auto;
     width: 100%;
     min-width: 0;
     height: 46px;
@@ -289,6 +290,7 @@
   }
 
   .doc-title {
+    flex: 0 0 auto;
     height: 42px;
     border-radius: 8px;
     font-size: 14px;
