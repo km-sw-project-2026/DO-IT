@@ -406,6 +406,12 @@
     gap: 16px;
   }
 
+  .Bookmark-title {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
   .Bookmark-header .search {
     width: 100%;
     max-width: none;
@@ -685,15 +691,24 @@
 
 /* 모바일 검색 영역 공통 정리 */
 @media (max-width: 640px) {
+  .Bookmark-title {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
   .Bookmark-header .search {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 44px;
+    grid-template-areas:
+      "input button"
+      "select select";
     gap: 8px 0;
     width: 100%;
   }
 
   .Bookmark-header .search input {
-    grid-column: 1;
+    grid-area: input;
     width: 100%;
     height: 42px;
     border-width: 2px;
@@ -703,15 +718,14 @@
   }
 
   .Bookmark-header .search button {
-    grid-column: 2;
+    grid-area: button;
     width: 44px;
     height: 42px;
     border-radius: 0 4px 4px 0;
   }
 
   .Bookmark-sort-select {
-    grid-column: 1 / -1;
-    order: 0;
+    grid-area: select;
     width: 100%;
     min-width: 0;
     max-width: none;

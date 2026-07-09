@@ -939,12 +939,15 @@
   .mrfi-header .search {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 44px;
+    grid-template-areas:
+      "input button"
+      "select select";
     gap: 8px 0;
     width: 100%;
   }
 
   .mrfi-header .search input {
-    grid-column: 1;
+    grid-area: input;
     width: 100%;
     height: 42px;
     border-width: 2px;
@@ -954,15 +957,14 @@
   }
 
   .mrfi-header .search button {
-    grid-column: 2;
+    grid-area: button;
     width: 44px;
     height: 42px;
     border-radius: 0 4px 4px 0;
   }
 
   .mrfi-sort-select {
-    grid-column: 1 / -1;
-    order: 0;
+    grid-area: select;
     width: 100%;
     min-width: 0;
     max-width: none;
