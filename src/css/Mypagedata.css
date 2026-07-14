@@ -50,3 +50,20 @@
     background: #e6f4ff;
     color: #2383c4;
  }
+
+@media (max-width: 480px) {
+   .folder-name {
+      min-height: 48px;
+      gap: 8px;
+      padding: 0 12px;
+   }
+
+   .folder-name p {
+      font-size: 14px;
+   }
+
+   .folder-name-badge {
+      padding: 4px 8px;
+      font-size: 11px;
+   }
+}

@@ -7,12 +7,21 @@ import ChatHistoryModal from "./ChatHistoryModal.jsx";
 import Mentopage from "./Mentopage.jsx";
 import { getCurrentUser } from "../../utils/auth";
 
+const DESKTOP_PAGE_SIZE = 6;
+const RESPONSIVE_PAGE_SIZE = 2;
+const RESPONSIVE_QUERY = "(max-width: 768px)";
+
 function Mentypage() {
   const [showModal, setShowModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
   const navigate = useNavigate();
   const me = getCurrentUser();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia(RESPONSIVE_QUERY).matches
+      ? RESPONSIVE_PAGE_SIZE
+      : DESKTOP_PAGE_SIZE
+  );
 
   // mentor 권한 여부
   const [isMentor, setIsMentor] = useState(false);
@@ -24,7 +33,6 @@ function Mentypage() {
   const [mentorsLoaded, setMentorsLoaded] = useState(false);
   const [sort, setSort] = useState("recent"); // "rating" | "review" | "recent"
   const [filterOpen, setFilterOpen] = useState(false);
-  const PAGE_SIZE = 2;
 
   // ✅ 모든 hook을 조건부 return 전에 선언
   useEffect(() => {
@@ -42,8 +50,19 @@ function Mentypage() {
   }, [me]);
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia(RESPONSIVE_QUERY);
+    const handleResize = (event) => {
+      setPageSize(event.matches ? RESPONSIVE_PAGE_SIZE : DESKTOP_PAGE_SIZE);
+      setPage(1);
+    };
+
+    mediaQuery.addEventListener("change", handleResize);
+    return () => mediaQuery.removeEventListener("change", handleResize);
+  }, []);
+
+  useEffect(() => {
     setMentorsLoaded(false);
-    fetch(`/api/mentors?page=${page}&size=${PAGE_SIZE}&sort=${sort}`)
+    fetch(`/api/mentors?page=${page}&size=${pageSize}&sort=${sort}`)
       .then((r) => {
         if (!r.ok) throw new Error("failed to fetch mentors");
         return r.json();
@@ -59,7 +78,7 @@ function Mentypage() {
         setTotalPages(1);
         setMentorsLoaded(true);
       });
-  }, [page, sort]);
+  }, [page, pageSize, sort]);
 
   const handleSelectMentor = (mentor) => {
     setShowModal(false);

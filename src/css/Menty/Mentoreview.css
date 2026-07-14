@@ -264,6 +264,26 @@
     width: 56px;
     height: 56px;
   }
-}
 
+  .Mentoreview-content,
+  .Mentoreview-photos,
+  .Mentoreview-submit-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .Mentoreview-stars {
+    flex-wrap: wrap;
+  }
+
+  .Mentoreview-stars .star {
+    font-size: 22px;
+  }
+
+  .Mentoreview-photo-add,
+  .Mentoreview-photo-preview {
+    width: 88px;
+    height: 88px;
+  }
+}
 

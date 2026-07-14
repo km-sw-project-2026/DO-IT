@@ -476,7 +476,7 @@
     font-size: 16px;
   }
 
-  .community-view-main .comments-section .add-comment .file-upload-form .file-name {
+  .Community-view-main .comments-section .add-comment .file-upload-form .file-name {
     width: calc(100% - 130px);
   }
 
@@ -548,5 +548,27 @@
   .Community-view-main .post-content {
     font-size: 12px;
     line-height: 1.45;
+  }
+
+  .Community-view-main .comments-section .add-comment {
+    padding: 8px;
+  }
+
+  .Community-view-main .comments-section .add-comment .file-upload-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .Community-view-main .comments-section .add-comment .file-upload-form .custom-file-upload,
+  .Community-view-main .comments-section .add-comment .file-upload-form .file-name {
+    width: 100%;
+  }
+
+  .Community-view-main .comments-section .add-comment .comment-btn {
+    width: 100%;
+  }
+
+  .Community-view-footer {
+    height: 86px;
   }
 }
