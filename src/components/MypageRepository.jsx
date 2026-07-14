@@ -774,7 +774,7 @@ function MypageRepository() {
                                   <span className="mypagerepository-folder-badge">메인</span>
                                 )}
                                 <img src="/images/icon/folder.png" alt="" />
-                                <p>{f.name}</p>
+                                <p title={f.name}>{f.name}</p>
                               </div>
                             </Link>
 
