@@ -32,7 +32,7 @@ export async function onRequestGet({ request, env }) {
     if (!userId) return json({ message: "user_id가 필요합니다." }, 400, headers);
 
     const row = await env.D1_DB.prepare(
-      `SELECT u.user_id, u.login_id, u.nickname, u.profile_image, up.bio
+      `SELECT u.user_id, u.nickname, u.profile_image, up.bio
        FROM "user" u
        LEFT JOIN user_profile up ON up.user_id = u.user_id
        WHERE u.user_id = ? LIMIT 1`

@@ -17,6 +17,23 @@ async function isBanned(env, userId) {
   return until > new Date();
 }
 
+async function isRoomMember(env, roomId, userId) {
+  if (!Number.isFinite(roomId) || !Number.isFinite(userId)) return false;
+  const row = await env.D1_DB
+    .prepare(`
+      SELECT 1 AS ok
+      FROM chat_room cr
+      JOIN mentoring mt ON mt.mentoring_id = cr.mentoring_id
+      JOIN mentor men ON men.mentor_id = mt.mentor_id
+      JOIN mentee me ON me.mentee_id = mt.mentee_id
+      WHERE cr.room_id = ? AND (men.user_id = ? OR me.user_id = ?)
+      LIMIT 1
+    `)
+    .bind(roomId, userId, userId)
+    .first();
+  return !!row;
+}
+
 export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: CORS(request) });
 }
@@ -31,6 +48,11 @@ export async function onRequestGet({ env, url: _url, request }) {
     const room_id = Number(url.searchParams.get("room_id"));
     const after = Number(url.searchParams.get("after") || 0);
     if (!room_id) return json({ message: "room_id 필요" }, 400, request);
+
+    const viewer_id = Number(request.headers.get("x-user-id"));
+    if (!(await isRoomMember(env, room_id, viewer_id))) {
+      return json({ message: "채팅방 접근 권한이 없습니다." }, 403, request);
+    }
 
     let query, bindParams;
     if (after === 0) {
@@ -96,6 +118,10 @@ export async function onRequestPost({ env, request }) {
 
     if (await isBanned(env, Number(sender_id))) {
       return json({ message: "차단된 계정입니다. 메시지를 보낼 수 없어요." }, 403, request);
+    }
+
+    if (!(await isRoomMember(env, Number(room_id), Number(sender_id)))) {
+      return json({ message: "채팅방 접근 권한이 없습니다." }, 403, request);
     }
 
     const result = await env.D1_DB

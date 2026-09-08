@@ -14,6 +14,7 @@ import * as idCheck from "../functions/api/id-check.js";
 
 // ✅ 로그인 API
 import * as login from "../functions/api/login.js";
+import { getSessionSecret } from "../functions/api/login.js";
 
 import * as report from "../functions/api/report/index.js";
 import * as adminReports from "../functions/api/admin/reports.js";
@@ -59,10 +60,176 @@ import * as repoTrashNotePurge from "../functions/api/repository/trash/notes/[id
 
 
 
+const SESSION_COOKIE = "doit_session";
+
+const PUBLIC_PATHS = new Set(["/api/login", "/api/signup", "/api/id-check", "/api/ping"]);
+const PUBLIC_GET_PREFIXES = [
+  "/api/posts",
+  "/api/post/",
+  "/api/mentors",
+  "/api/mentor/",
+  "/api/profile",
+  "/api/mentor-profile",
+  "/api/reviews",
+];
+
+function isPublicRequest(path, method) {
+  if (method === "OPTIONS") return true;
+  if (path === "/api/login" && method === "DELETE") return false;
+  if (PUBLIC_PATHS.has(path)) return true;
+  if (method === "GET") {
+    return PUBLIC_GET_PREFIXES.some((p) => path === p || path.startsWith(p));
+  }
+  return false;
+}
+
+function readSessionCookie(request) {
+  const raw = request.headers.get("Cookie") || "";
+  for (const part of raw.split(";")) {
+    const [name, ...rest] = part.trim().split("=");
+    if (name === SESSION_COOKIE) return rest.join("=");
+  }
+  return null;
+}
+
+function b64UrlToBytes(s) {
+  const b64 = s.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(s.length / 4) * 4, "=");
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+async function verifySessionToken(env, token) {
+  if (!token) return null;
+
+  const secret = await getSessionSecret(env);
+  if (!secret) return null;
+
+  const idx = token.lastIndexOf(".");
+  if (idx < 0) return null;
+
+  const payload = token.slice(0, idx);
+  const sigPart = token.slice(idx + 1);
+
+  const enc = new TextEncoder();
+  let ok = false;
+  try {
+    const key = await crypto.subtle.importKey(
+      "raw",
+      enc.encode(secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["verify"]
+    );
+    ok = await crypto.subtle.verify("HMAC", key, b64UrlToBytes(sigPart), enc.encode(payload));
+  } catch {
+    return null;
+  }
+  if (!ok) return null;
+
+  const [uidStr, iatStr, expStr] = payload.split(".");
+  const uid = Number(uidStr);
+  const iat = Number(iatStr);
+  const exp = Number(expStr);
+  if (!Number.isFinite(uid) || uid <= 0) return null;
+  if (!Number.isFinite(iat) || iat <= 0) return null;
+  if (!Number.isFinite(exp) || exp <= Date.now()) return null;
+
+  return { uid, iat };
+}
+
+async function checkSessionState(env, session) {
+  const query = () =>
+    env.D1_DB.prepare(
+      `SELECT u.banned_until AS banned_until,
+              (SELECT value FROM app_secret WHERE name = ?) AS logout_at
+       FROM "user" u
+       WHERE u.user_id = ?
+       LIMIT 1`
+    )
+      .bind(`logout:${session.uid}`, session.uid)
+      .first();
+
+  let row = null;
+  try {
+    row = await query();
+  } catch {
+    await env.D1_DB.prepare(
+      `CREATE TABLE IF NOT EXISTS app_secret (name TEXT PRIMARY KEY, value TEXT NOT NULL)`
+    ).run();
+    row = await query().catch(() => null);
+  }
+
+  if (!row) return null;
+
+  const logoutAt = Number(row.logout_at);
+  if (Number.isFinite(logoutAt) && logoutAt >= session.iat) return null;
+
+  if (row.banned_until) {
+    const until = new Date(String(row.banned_until).replace(" ", "T") + "Z");
+    if (!Number.isNaN(until.getTime()) && until > new Date()) {
+      return { banned: true, until: row.banned_until };
+    }
+  }
+
+  return { banned: false };
+}
+
+async function withVerifiedIdentity(request, url, uid) {
+  const nextUrl = new URL(url);
+  if (nextUrl.searchParams.has("user_id")) nextUrl.searchParams.set("user_id", String(uid));
+
+  const headers = new Headers(request.headers);
+  headers.set("x-user-id", String(uid));
+  headers.delete("content-length");
+
+  let body;
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    if ((headers.get("content-type") || "").includes("application/json")) {
+      const raw = await request.text();
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          parsed.user_id = uid;
+          if ("sender_id" in parsed) parsed.sender_id = uid;
+          body = JSON.stringify(parsed);
+        } else {
+          body = raw;
+        }
+      } catch {
+        body = raw;
+      }
+    } else {
+      body = await request.arrayBuffer();
+    }
+  }
+
+  return { request: new Request(nextUrl, { method: request.method, headers, body }), url: nextUrl };
+}
+
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url);
+    let url = new URL(request.url);
     const path = url.pathname;
+
+    if ((path.startsWith("/api/") || path.startsWith("/me/")) && !isPublicRequest(path, request.method)) {
+      const session = await verifySessionToken(env, readSessionCookie(request));
+      const state = session ? await checkSessionState(env, session) : null;
+      if (!state) {
+        return new Response(JSON.stringify({ message: "로그인이 필요합니다." }), {
+          status: 401,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      if (state.banned) {
+        return new Response(
+          JSON.stringify({ message: "차단된 계정입니다.", code: "BANNED", banned_until: state.until }),
+          { status: 403, headers: { "content-type": "application/json" } }
+        );
+      }
+      ({ request, url } = await withVerifiedIdentity(request, url, session.uid));
+    }
 
     // ---------------------------
     // /api/posts
@@ -167,6 +334,7 @@ export default {
     if (path === "/api/login") {
       if (request.method === "OPTIONS") return login.onRequestOptions({ request });
       if (request.method === "POST") return login.onRequestPost({ request, env });
+      if (request.method === "DELETE") return login.onRequestDelete({ request, env });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

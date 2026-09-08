@@ -70,6 +70,7 @@ function Header() {
   };
 
   const onLogout = () => {
+    fetch("/api/login", { method: "DELETE" }).catch(() => {});
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
     setUser(null);
