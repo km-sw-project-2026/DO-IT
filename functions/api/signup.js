@@ -19,10 +19,11 @@ function corsHeaders(request) {
   };
 }
 
-async function hashPassword(password) {
+export const PBKDF2_ITERATIONS = 210000;
+
+export async function hashPassword(password, iterations = PBKDF2_ITERATIONS) {
   const enc = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iterations = 10000;
 
   const keyMaterial = await crypto.subtle.importKey(
     "raw",

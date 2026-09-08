@@ -1,3 +1,5 @@
+import { PBKDF2_ITERATIONS, hashPassword } from "./signup.js";
+
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -14,7 +16,6 @@ function corsHeaders(request) {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Methods": "POST, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Credentials": "true",
   };
 }
 
@@ -27,7 +28,8 @@ function bytesToB64Url(bytes) {
 
 async function createSessionToken(secret, userId, maxAgeSec) {
   const enc = new TextEncoder();
-  const payload = `${userId}.${Date.now() + maxAgeSec * 1000}`;
+  const now = Date.now();
+  const payload = `${userId}.${now}.${now + maxAgeSec * 1000}`;
   const key = await crypto.subtle.importKey(
     "raw",
     enc.encode(secret),
@@ -130,8 +132,21 @@ export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: corsHeaders(request) });
 }
 
-export async function onRequestDelete({ request }) {
+export async function onRequestDelete({ request, env }) {
   const headers = corsHeaders(request);
+
+  const userId = Number(request.headers.get("x-user-id"));
+  if (Number.isFinite(userId) && userId > 0) {
+    await env.D1_DB.prepare(
+      `CREATE TABLE IF NOT EXISTS app_secret (name TEXT PRIMARY KEY, value TEXT NOT NULL)`
+    ).run();
+    await env.D1_DB.prepare(
+      `INSERT OR REPLACE INTO app_secret (name, value) VALUES (?, ?)`
+    )
+      .bind(`logout:${userId}`, String(Date.now()))
+      .run();
+  }
+
   return json({ message: "로그아웃 되었습니다." }, 200, {
     ...headers,
     "Set-Cookie": `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
@@ -197,6 +212,14 @@ export async function onRequestPost({ request, env }) {
     const ok = await verifyPassword(password, user.password);
     if (!ok) {
       return json({ message: "아이디 또는 비밀번호가 올바르지 않습니다." }, 401, headers);
+    }
+
+    const storedIterations = Number(String(user.password).split("$")[1]);
+    if (!Number.isFinite(storedIterations) || storedIterations < PBKDF2_ITERATIONS) {
+      const upgraded = await hashPassword(password);
+      await env.D1_DB.prepare(`UPDATE "user" SET password = ? WHERE user_id = ?`)
+        .bind(upgraded, user.user_id)
+        .run();
     }
 
     // ✅ 성공: 비밀번호는 절대 내려주지 않기

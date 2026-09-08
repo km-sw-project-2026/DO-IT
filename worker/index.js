@@ -75,6 +75,7 @@ const PUBLIC_GET_PREFIXES = [
 
 function isPublicRequest(path, method) {
   if (method === "OPTIONS") return true;
+  if (path === "/api/login" && method === "DELETE") return false;
   if (PUBLIC_PATHS.has(path)) return true;
   if (method === "GET") {
     return PUBLIC_GET_PREFIXES.some((p) => path === p || path.startsWith(p));
@@ -127,13 +128,52 @@ async function verifySessionToken(env, token) {
   }
   if (!ok) return null;
 
-  const [uidStr, expStr] = payload.split(".");
+  const [uidStr, iatStr, expStr] = payload.split(".");
   const uid = Number(uidStr);
+  const iat = Number(iatStr);
   const exp = Number(expStr);
   if (!Number.isFinite(uid) || uid <= 0) return null;
+  if (!Number.isFinite(iat) || iat <= 0) return null;
   if (!Number.isFinite(exp) || exp <= Date.now()) return null;
 
-  return uid;
+  return { uid, iat };
+}
+
+async function checkSessionState(env, session) {
+  const query = () =>
+    env.D1_DB.prepare(
+      `SELECT u.banned_until AS banned_until,
+              (SELECT value FROM app_secret WHERE name = ?) AS logout_at
+       FROM "user" u
+       WHERE u.user_id = ?
+       LIMIT 1`
+    )
+      .bind(`logout:${session.uid}`, session.uid)
+      .first();
+
+  let row = null;
+  try {
+    row = await query();
+  } catch {
+    await env.D1_DB.prepare(
+      `CREATE TABLE IF NOT EXISTS app_secret (name TEXT PRIMARY KEY, value TEXT NOT NULL)`
+    ).run();
+    row = await query().catch(() => null);
+  }
+
+  if (!row) return null;
+
+  const logoutAt = Number(row.logout_at);
+  if (Number.isFinite(logoutAt) && logoutAt >= session.iat) return null;
+
+  if (row.banned_until) {
+    const until = new Date(String(row.banned_until).replace(" ", "T") + "Z");
+    if (!Number.isNaN(until.getTime()) && until > new Date()) {
+      return { banned: true, until: row.banned_until };
+    }
+  }
+
+  return { banned: false };
 }
 
 async function withVerifiedIdentity(request, url, uid) {
@@ -174,14 +214,21 @@ export default {
     const path = url.pathname;
 
     if ((path.startsWith("/api/") || path.startsWith("/me/")) && !isPublicRequest(path, request.method)) {
-      const uid = await verifySessionToken(env, readSessionCookie(request));
-      if (!uid) {
+      const session = await verifySessionToken(env, readSessionCookie(request));
+      const state = session ? await checkSessionState(env, session) : null;
+      if (!state) {
         return new Response(JSON.stringify({ message: "로그인이 필요합니다." }), {
           status: 401,
           headers: { "content-type": "application/json" },
         });
       }
-      ({ request, url } = await withVerifiedIdentity(request, url, uid));
+      if (state.banned) {
+        return new Response(
+          JSON.stringify({ message: "차단된 계정입니다.", code: "BANNED", banned_until: state.until }),
+          { status: 403, headers: { "content-type": "application/json" } }
+        );
+      }
+      ({ request, url } = await withVerifiedIdentity(request, url, session.uid));
     }
 
     // ---------------------------
@@ -287,7 +334,7 @@ export default {
     if (path === "/api/login") {
       if (request.method === "OPTIONS") return login.onRequestOptions({ request });
       if (request.method === "POST") return login.onRequestPost({ request, env });
-      if (request.method === "DELETE") return login.onRequestDelete({ request });
+      if (request.method === "DELETE") return login.onRequestDelete({ request, env });
       return new Response(JSON.stringify({ message: "method not allowed" }), {
         status: 405,
         headers: { "content-type": "application/json" },

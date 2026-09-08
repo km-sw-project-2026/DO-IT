@@ -54,9 +54,10 @@ export async function onRequestPost({ env, request }) {
 
     if (notification_id) {
       // 단일 읽음 처리
+      if (!user_id) return json({ message: "user_id 필요" }, 400, request);
       await env.D1_DB
-        .prepare(`UPDATE notification SET is_read = 1 WHERE notification_id = ?`)
-        .bind(Number(notification_id))
+        .prepare(`UPDATE notification SET is_read = 1 WHERE notification_id = ? AND user_id = ?`)
+        .bind(Number(notification_id), Number(user_id))
         .run();
     } else if (user_id) {
       // 전체 읽음 처리
