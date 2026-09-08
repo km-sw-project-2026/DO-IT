@@ -12,9 +12,61 @@ function corsHeaders(request) {
   const origin = request.headers.get("Origin") || "*";
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "POST, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Credentials": "true",
   };
+}
+
+const SESSION_COOKIE = "doit_session";
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+
+function bytesToB64Url(bytes) {
+  return bytesToB64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function createSessionToken(secret, userId, maxAgeSec) {
+  const enc = new TextEncoder();
+  const payload = `${userId}.${Date.now() + maxAgeSec * 1000}`;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(payload));
+  return `${payload}.${bytesToB64Url(new Uint8Array(sig))}`;
+}
+
+let cachedSessionSecret = null;
+
+export async function getSessionSecret(env) {
+  if (env.SESSION_SECRET) return env.SESSION_SECRET;
+  if (cachedSessionSecret) return cachedSessionSecret;
+
+  await env.D1_DB.prepare(
+    `CREATE TABLE IF NOT EXISTS app_secret (name TEXT PRIMARY KEY, value TEXT NOT NULL)`
+  ).run();
+
+  const generated = bytesToB64(crypto.getRandomValues(new Uint8Array(32)));
+  await env.D1_DB.prepare(
+    `INSERT OR IGNORE INTO app_secret (name, value) VALUES ('session', ?)`
+  )
+    .bind(generated)
+    .run();
+
+  const row = await env.D1_DB.prepare(
+    `SELECT value FROM app_secret WHERE name = 'session' LIMIT 1`
+  ).first();
+
+  cachedSessionSecret = row?.value || generated;
+  return cachedSessionSecret;
+}
+
+function sessionCookie(token, keepLogin) {
+  const base = `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax`;
+  return keepLogin ? `${base}; Max-Age=${SESSION_MAX_AGE}` : base;
 }
 
 function b64ToBytes(b64) {
@@ -78,6 +130,14 @@ export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: corsHeaders(request) });
 }
 
+export async function onRequestDelete({ request }) {
+  const headers = corsHeaders(request);
+  return json({ message: "로그아웃 되었습니다." }, 200, {
+    ...headers,
+    "Set-Cookie": `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
+  });
+}
+
 export async function onRequestPost({ request, env }) {
   try {
     const headers = corsHeaders(request);
@@ -85,6 +145,7 @@ export async function onRequestPost({ request, env }) {
     const body = await request.json().catch(() => null);
     if (!body) return json({ message: "JSON body가 필요합니다." }, 400, headers);
 
+    const keepLogin = body.keepLogin === true;
     const login_id = String(body.login_id || "").trim();
     const password = String(body.password || "");
 
@@ -139,6 +200,9 @@ export async function onRequestPost({ request, env }) {
     }
 
     // ✅ 성공: 비밀번호는 절대 내려주지 않기
+    const secret = await getSessionSecret(env);
+    const token = await createSessionToken(secret, user.user_id, SESSION_MAX_AGE);
+
     return json(
       {
         message: "로그인 성공",
@@ -152,7 +216,7 @@ export async function onRequestPost({ request, env }) {
         },
       },
       200,
-      headers
+      { ...headers, "Set-Cookie": sessionCookie(token, keepLogin) }
     );
   } catch (e) {
     console.error("login error:", e);
